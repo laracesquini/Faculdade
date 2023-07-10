@@ -1,0 +1,3 @@
+Aluno#Lara#001#computação#3#123
+Professor#Lucas#ala#sla#ss#123
+Aluno#Sofia#005#escola#5#123
