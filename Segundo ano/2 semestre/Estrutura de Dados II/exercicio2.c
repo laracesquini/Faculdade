@@ -16,7 +16,7 @@ int main()
         //verificar se o arquivo existe 
         if(fp == NULL)
         {
-            printf("Erro ao abrir o arquivo, tente novamente!");
+            printf("Erro ao abrir o arquivo, tente novamente!\n");
         }
     }while(fp == NULL);
 
