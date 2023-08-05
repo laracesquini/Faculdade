@@ -6,6 +6,7 @@ int main()
 {
     FILE *fp, *write;
     int i = 0, j;
+    //registro para salvar as informações
     typedef struct dados{
         char nome[40];
         float num_habitantes;
@@ -19,16 +20,19 @@ int main()
 
     while(!feof(fp))
     {
+        //ler o arquivo
         fscanf(fp, " %s", cidades[i].nome);
         fscanf(fp, " %f", &cidades[i].num_habitantes);
 
         i++;
     }
     
+    //define uma cidade como a maior
     maior = cidades[0];
 
     for(j = 0; j<i; j++)
     {
+        //comparar com as outras cidades e ver se tem uma maior que a atribuida inicialmente e, se tiver, essa é a nova cidade maior
         if(cidades[j].num_habitantes > maior.num_habitantes)
         {
             maior = cidades[j];
@@ -36,9 +40,11 @@ int main()
         
     }
 
+    //escrevendo no arquivo o resultado
     fprintf(write, "%s ", maior.nome);
     fprintf(write, "%.0f", maior.num_habitantes);
 
+    //fechando os arquivos
     fclose(fp);
     fclose(write);
 }
