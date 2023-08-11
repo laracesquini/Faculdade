@@ -17,14 +17,14 @@ typedef struct ind
 }Tindice;
 
 void ordenar(Tindice *indice);
+int busca_binaria(Tindice *indice, int num);
 
 int main()
 {
-    
-
     Taluno alunos[n];
     Tindice indice[n];
-    int i;
+    int i, nmr_buscado;
+    char nome[50];
     FILE *dados, *indices;
     dados = fopen("dados.txt", "w");
     indices = fopen("indices.txt", "w");
@@ -58,6 +58,22 @@ int main()
 
     fclose(dados);
     fclose(indices);
+
+    printf("Busca: \n");
+    printf("Digite o número UNESP do aluno: ");
+    scanf("%d", &nmr_buscado);
+
+    nmr_buscado = busca_binaria(indice, nmr_buscado);
+
+    if(nmr_buscado != -1)
+    {
+        dados = fopen("dados.txt", "r");
+        fseek(dados, indice[nmr_buscado].indice, SEEK_SET);
+        fscanf(dados, "%[^|]s", nome);
+        printf("%s", nome);
+    }
+    else
+    printf("Não encontrado\n");
 }
 
 void ordenar(Tindice *indice)
@@ -74,4 +90,31 @@ void ordenar(Tindice *indice)
             j-=1;
         }
     }
+}
+
+int busca_binaria(Tindice *indice, int num)
+{
+    int min = 0, max = (n-1), mid;
+
+    if(num == indice[min].nro_UNESP)
+    return min;
+    if(num == indice[max].nro_UNESP)
+    return max;
+
+    mid = (min+max)/2;
+
+    while(num != indice[mid].nro_UNESP && min < max)
+    {
+        if(num > indice[mid].nro_UNESP)
+        min = mid;
+        else
+        max = mid;
+
+        mid = (max+min)/2;
+    }
+
+    if(num != indice[mid].nro_UNESP)
+    return -1;
+    else
+    return mid;
 }
