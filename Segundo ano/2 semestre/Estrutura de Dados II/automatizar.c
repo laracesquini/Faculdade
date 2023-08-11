@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define n 3
+#define n 2
 
 typedef struct aluno {
     char nome[50];
@@ -24,7 +24,7 @@ int main()
     Taluno alunos[n];
     Tindice indice[n];
     int i, nmr_buscado;
-    char nome[50], curso[50], ano[5], email[50];
+    char nome[50], curso[50], ano[5], email[50], linha[2000];
     FILE *dados, *indices;
     dados = fopen("dados.txt", "w");
     indices = fopen("indices.txt", "w");
@@ -46,7 +46,7 @@ int main()
         indice[i].nro_UNESP = alunos[i].nro_UNESP;
         indice[i].indice = ftell(dados);
 
-        fprintf(dados, "%s|%s|%s|%s|%d|", alunos[i].nome, alunos[i].curso, alunos[i].ano, alunos[i].email, alunos[i].nro_UNESP);
+        fprintf(dados, "%s|%s|%s|%s|%d#", alunos[i].nome, alunos[i].curso, alunos[i].ano, alunos[i].email, alunos[i].nro_UNESP);
     }
 
     ordenar(indice);
@@ -69,15 +69,12 @@ int main()
     {
         dados = fopen("dados.txt", "r");
         fseek(dados, indice[nmr_buscado].indice, SEEK_SET);
-        fscanf(dados, "%[^|]s", nome);
-        fgetc(dados);
-        fscanf(dados, "%[^|]s", curso);
-        fgetc(dados);
-        fscanf(dados, "%[^|]s", ano);
-        fgetc(dados);
-        fscanf(dados, "%[^|]s", email);
-        
-        printf("Nome: %s\nCurso: %s\nAno: %s\nEmail: %s\n", nome, curso, ano, email);
+        fscanf(dados, "%[^#]s", linha);
+        while(fgetc(dados) != '#') //ver isso depois, não está funcionando
+        {
+            fscanf(dados, "%[^|]s", nome);
+            printf("%s\n", nome);
+        }
     }
     else
     printf("Não encontrado\n");
