@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define n 2
 
 typedef struct aluno {
@@ -10,8 +11,7 @@ typedef struct aluno {
     int nro_UNESP;
 }Taluno;
 
-typedef struct ind
-{
+typedef struct ind{
     int nro_UNESP;
     int indice;
 }Tindice;
@@ -23,8 +23,8 @@ int main()
 {
     Taluno alunos[n];
     Tindice indice[n];
-    int i, nmr_buscado;
-    char nome[50], curso[50], ano[5], email[50], linha[2000];
+    int i, nmr_buscado, k;
+    char nome[50], curso[50], ano[5], email[50], linha[2000], dado[4][100];
     FILE *dados, *indices;
     dados = fopen("dados.txt", "w");
     indices = fopen("indices.txt", "w");
@@ -67,13 +67,16 @@ int main()
 
     if(nmr_buscado != -1)
     {
+        printf("Aluno encontrado! Dados: \n");
         dados = fopen("dados.txt", "r");
         fseek(dados, indice[nmr_buscado].indice, SEEK_SET);
-        fscanf(dados, "%[^#]s", linha);
-        while(fgetc(dados) != '#') //ver isso depois, não está funcionando
+        fscanf(dados, " %[^#]s", linha);
+        char *token = strtok(linha, "|");
+        
+        while(token != NULL)
         {
-            fscanf(dados, "%[^|]s", nome);
-            printf("%s\n", nome);
+            printf("%s\n", token);
+            token = strtok(NULL, "|");
         }
     }
     else
