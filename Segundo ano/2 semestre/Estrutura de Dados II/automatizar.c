@@ -3,6 +3,7 @@
 #include <string.h>
 #define n 2
 
+//documentar
 typedef struct aluno {
     char nome[50];
     char curso[30];
@@ -23,9 +24,10 @@ int main()
 {
     Taluno alunos[n];
     Tindice indice[n];
-    int i, nmr_buscado, k;
-    char nome[50], curso[50], ano[5], email[50], linha[2000], dado[4][100];
+    int i, nmr_buscado;
+    char nome[50], curso[50], ano[5], email[50], linha[500];
     FILE *dados, *indices;
+
     dados = fopen("dados.txt", "w");
     indices = fopen("indices.txt", "w");
 
@@ -99,6 +101,7 @@ void ordenar(Tindice *indice)
     }
 }
 
+//arrumar aqui -> não encontrado não funciona
 int busca_binaria(Tindice *indice, int num)
 {
     int min = 0, max = (n-1), mid;
