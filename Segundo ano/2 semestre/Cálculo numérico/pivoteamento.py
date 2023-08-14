@@ -39,7 +39,7 @@ while k < n:
     pp = input() #lê o enter
     print(end = ' ')
 
-    max = k
+    max = k #ve o maior e troca as linhas
     for i in range(k+1, n+1):
         if abs(A[i][k]) > abs(A[max][k]):
             max = i
@@ -52,6 +52,7 @@ while k < n:
         b[k] = b[max]
         b[max] = temp
     
+    #pivoteamento
     for i in range(k+1, n+1):
         mult = A[i][k]/A[k][k]
         for j in range(k+1, n+1):
@@ -64,7 +65,8 @@ while k < n:
             print(A[i][j], end=' ')
         print()
     k = k+1
-    
+
+#resolução do sistema   
 x[n] = b[n]/A[n][n]
 for i in range(n-1, 0, -1):
     sum = 0
