@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define n 2
+#define n 5
 
 //struct com os dados dos alunos
 typedef struct aluno {
@@ -27,7 +27,7 @@ int main()
     Taluno alunos[n];
     Tindice indice[n];
     int i, nmr_buscado;
-    char nome[50], curso[50], ano[5], email[50], linha[500];
+    char linha[135];
     char campos[4][20] = {"Nome: ", "Curso: ", "Ano: ", "Email: "};
     FILE *dados, *indices;
 
