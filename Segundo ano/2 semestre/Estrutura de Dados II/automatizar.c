@@ -106,25 +106,17 @@ int busca_binaria(Tindice *indice, int num)
 {
     int min = 0, max = (n-1), mid;
 
-    if(num == indice[min].nro_UNESP)
-    return min;
-    if(num == indice[max].nro_UNESP)
-    return max;
-
-    mid = (min+max)/2;
-
-    while(num != indice[mid].nro_UNESP && min < max)
+    while(min <= max)
     {
-        if(num > indice[mid].nro_UNESP)
-        min = mid;
-        else
-        max = mid;
+        mid = (min + max)/2;
 
-        mid = (max+min)/2;
+        if(num == indice[mid].nro_UNESP)
+        return mid;
+        else if(num > indice[mid].nro_UNESP)
+        min = mid + 1;
+        else
+        max = mid - 1;
     }
 
-    if(num != indice[mid].nro_UNESP)
     return -1;
-    else
-    return mid;
 }
