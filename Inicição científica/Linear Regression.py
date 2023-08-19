@@ -13,6 +13,7 @@ def square_trick(base_price, price_per_room, num_rooms, price, learning_rate):
 def linear_regression(features, labels, learning_rate=0.01, epochs=1000):
     price_per_room = random.random()
     base_price = random.random()
+    
     for epoch in range(epochs):
         i = random.randint(0, len(features)-1)
         num_rooms = features[i]
