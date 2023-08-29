@@ -15,6 +15,8 @@ typedef struct iprimary{
 }Iprimario;
 
 typedef struct ititle{
-    char titulo;
+    char titulo[62];
     char first_key[5];
 }Isecundario;
+
+int file_exists(char *nome);

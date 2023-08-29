@@ -4,5 +4,15 @@
 #include <string.h>
 #include "arquivos.h"
 
-Iprimario vetp;
-Isecundario vets;
+int file_exists(char *nome)
+{
+    FILE *fp;
+
+    if(fp = fopen(nome, "r"))
+    {
+        fclose(fp);
+        return 1;
+    }
+
+    return 0;
+}
