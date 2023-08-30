@@ -108,3 +108,44 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
     else
     return h;
 }
+
+Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp, int quant)
+{
+    char *token, aux[quant];
+    Iprimario *auxp;
+
+    while(!feof(fp))
+    {
+        fread(aux, quant, 1, fp);
+        token = strtok(aux, "@");
+        auxp = malloc(sizeof(Iprimario));
+        strcpy(auxp->first_key, token);
+        token = strtok(NULL, "@");
+        auxp->RNN = atoi(token);
+        auxp->prox = NULL;
+        vetp = insereP(vetp, auxp);
+    }
+
+    return vetp;
+}
+
+Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets, int quant)
+{
+    char *token, aux[quant];
+    Isecundario *auxs;
+
+    while(!feof(fs))
+    {
+        fread(aux, quant, 1, fs);
+        token = strtok(aux, "@");
+        auxs = malloc(sizeof(Isecundario));
+        strcpy(auxs->titulo, token);
+        token = strtok(NULL, "@");
+        strcpy(auxs->first_key, token);
+        auxs->prox = NULL;
+        vets = insereS(vets, auxs);
+        //vets = inserir(vets, aux)
+    }
+
+    return vets;
+}

@@ -11,10 +11,9 @@ int main()
      //fazer tudo isso em funções 
      
      int flagp, flags;
-     char aux[192], *token;
      FILE *fd, *fp, *fs;
-     Iprimario *vetp = NULL, *auxp;
-     Isecundario *vets = NULL, *auxs;
+     Iprimario *vetp = NULL;
+     Isecundario *vets = NULL;
 
      if(file_exists("movies.dat"))
      {
@@ -28,19 +27,7 @@ int main()
           fscanf(fs, "%d", &flags);
           if(flagp == 1)
           {
-               while(!feof(fp))
-               {
-                    fscanf(fp, " %[^#]s", aux);
-                    fgetc(fp);
-                    token = strtok(aux, "@");
-                    auxp = malloc(sizeof(Iprimario));
-                    strcpy(auxp->first_key, token);
-                    token = strtok(NULL, "@");
-                    auxp->RNN = atoi(token);
-                    auxp->prox = NULL;
-                    vetp = insereP(vetp, auxp);
-                    //inserir vetp = inserir(, vetp, aux)
-               }
+               vetp = carrega_indicesP(fp, vetp, 9);
           }
           else
           {
@@ -49,19 +36,7 @@ int main()
 
           if(flags == 1)
           {
-               while(!feof(fs))
-               {
-                    fscanf(fs, " %[^#]s", aux);
-                    fgetc(fs);
-                    token = strtok(aux, "@");
-                    auxs = malloc(sizeof(Isecundario));
-                    strcpy(auxs->titulo, token);
-                    token = strtok(NULL, "@");
-                    strcpy(auxs->first_key, token);
-                    auxs->prox = NULL;
-                    vets = insereS(vets, auxs);
-                    //vets = inserir(vets, aux)
-               }
+               vets = carrega_indicesS(fs, vets, 67);
           }
           else
           {
@@ -75,7 +50,8 @@ int main()
           fd = fopen("movies.dat", "a+");
           int count = 0;
 
-          while(!feof(fd))
+          //tentar colocar isso em uma função -< possivelmente vai ser ponteiro duplo para alterar vetp e vets em uma única função
+          /*while(!feof(fd))
           {
                fread(aux, 192, 1, fd);
                token = strtok(aux, "@");
@@ -88,11 +64,11 @@ int main()
                strcpy(auxs->titulo, token);
                auxp->RNN = count;
                count++;
-               
+
                vetp = insereP(vetp, auxp);
                vets = insereS(vets, auxs);
                //inserir auxp e auxs
-          }
+          }*/
           fprintf(fp, "%d\n", 1);
           fprintf(fs, "%d\n", 1);
           //salvar no arquivo
