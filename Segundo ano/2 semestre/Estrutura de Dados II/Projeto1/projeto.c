@@ -8,7 +8,6 @@
 
 int main()
 {
-     //fazer tudo isso em funções 
      
      int flagp, flags;
      FILE *fd, *fp, *fs;
@@ -27,6 +26,7 @@ int main()
           fscanf(fs, "%d", &flags);
           if(flagp == 1)
           {
+               //ver se o fread ta lendo certo, se coloquei a quantidade certa para leitura. Senão, fazer daquele outro jeito
                vetp = carrega_indicesP(fp, vetp, 9);
           }
           else
@@ -50,7 +50,7 @@ int main()
           fd = fopen("movies.dat", "a+");
           int count = 0;
 
-          //tentar colocar isso em uma função -< possivelmente vai ser ponteiro duplo para alterar vetp e vets em uma única função
+          //tentar colocar isso em uma função -> possivelmente vai ser ponteiro duplo para alterar vetp e vets em uma única função
           /*while(!feof(fd))
           {
                fread(aux, 192, 1, fd);
