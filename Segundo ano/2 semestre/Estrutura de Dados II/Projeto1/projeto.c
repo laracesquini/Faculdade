@@ -8,11 +8,13 @@
 
 int main()
 {
-     int flagp, flags, i = 0, j = 0;
+     //fazer tudo isso em funções 
+     
+     int flagp, flags;
      char aux[192], *token;
      FILE *fd, *fp, *fs;
-     Iprimario vetp[1000];
-     Isecundario vets[1000];
+     Iprimario *vetp = NULL, *auxp;
+     Isecundario *vets = NULL, *auxs;
 
      if(file_exists("movies.dat"))
      {
@@ -31,10 +33,13 @@ int main()
                     fscanf(fp, " %[^#]s", aux);
                     fgetc(fp);
                     token = strtok(aux, "@");
-                    strcpy(vetp[i].first_key, token);
+                    auxp = malloc(sizeof(Iprimario));
+                    strcpy(auxp->first_key, token);
                     token = strtok(NULL, "@");
-                    vetp[i].RNN = atoi(token);
-                    i++;
+                    auxp->RNN = atoi(token);
+                    auxp->prox = NULL;
+                    vetp = insereP(vetp, auxp);
+                    //inserir vetp = inserir(, vetp, aux)
                }
           }
           else
@@ -49,10 +54,13 @@ int main()
                     fscanf(fs, " %[^#]s", aux);
                     fgetc(fs);
                     token = strtok(aux, "@");
-                    strcpy(vets[j].titulo, token);
+                    auxs = malloc(sizeof(Isecundario));
+                    strcpy(auxs->titulo, token);
                     token = strtok(NULL, "@");
-                    strcpy(vets[j].first_key, token);
-                    j++;
+                    strcpy(auxs->first_key, token);
+                    auxs->prox = NULL;
+                    vets = insereS(vets, auxs);
+                    //vets = inserir(vets, aux)
                }
           }
           else
@@ -65,20 +73,26 @@ int main()
           fp = fopen("iprimary.idx", "a+");
           fs = fopen("ititle.idx", "a+");
           fd = fopen("movies.dat", "a+");
+          int count = 0;
 
           while(!feof(fd))
           {
                fread(aux, 192, 1, fd);
                token = strtok(aux, "@");
-               strcpy(vetp[i].first_key, token);
-               strcpy(vets[j].first_key, token);
+               //mallos e inserir ordenado
+               auxp = malloc(sizeof(Iprimario));
+               auxs = malloc(sizeof(Isecundario));
+               strcpy(auxp->first_key, token);
+               strcpy(auxs->first_key, token);
                token = strtok(NULL, "@");
-               strcpy(vets[j].titulo, token);
-               vetp[i].RNN = i;
-               i++;
-               j++;
+               strcpy(auxs->titulo, token);
+               auxp->RNN = count;
+               count++;
+               
+               vetp = insereP(vetp, auxp);
+               vets = insereS(vets, auxs);
+               //inserir auxp e auxs
           }
-          //ordenar pela chave
           fprintf(fp, "%d\n", 1);
           fprintf(fs, "%d\n", 1);
           //salvar no arquivo
