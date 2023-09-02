@@ -26,8 +26,7 @@ int main()
           fscanf(fs, "%d", &flags);
           if(flagp == 1)
           {
-               //ver se o fread ta lendo certo, se coloquei a quantidade certa para leitura. Senão, fazer daquele outro jeito
-               vetp = carrega_indicesP(fp, vetp, 9);
+               vetp = carrega_indicesP(fp, vetp);
           }
           else
           {
@@ -36,7 +35,7 @@ int main()
 
           if(flags == 1)
           {
-               vets = carrega_indicesS(fs, vets, 67);
+               vets = carrega_indicesS(fs, vets);
           }
           else
           {
@@ -51,24 +50,7 @@ int main()
           int count = 0;
 
           //tentar colocar isso em uma função -> possivelmente vai ser ponteiro duplo para alterar vetp e vets em uma única função
-          /*while(!feof(fd))
-          {
-               fread(aux, 192, 1, fd);
-               token = strtok(aux, "@");
-               //mallos e inserir ordenado
-               auxp = malloc(sizeof(Iprimario));
-               auxs = malloc(sizeof(Isecundario));
-               strcpy(auxp->first_key, token);
-               strcpy(auxs->first_key, token);
-               token = strtok(NULL, "@");
-               strcpy(auxs->titulo, token);
-               auxp->RNN = count;
-               count++;
-
-               vetp = insereP(vetp, auxp);
-               vets = insereS(vets, auxs);
-               //inserir auxp e auxs
-          }*/
+          cria_indices(fd, &vetp, &vets);
           fprintf(fp, "%d\n", 1);
           fprintf(fs, "%d\n", 1);
           //salvar no arquivo

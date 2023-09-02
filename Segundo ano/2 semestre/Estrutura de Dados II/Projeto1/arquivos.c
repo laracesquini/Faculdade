@@ -109,14 +109,15 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
     return h;
 }
 
-Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp, int quant)
+Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
 {
-    char *token, aux[quant];
+    char *token, aux[20];
     Iprimario *auxp;
 
     while(!feof(fp))
     {
-        fread(aux, quant, 1, fp);
+        fscanf(fp, "%[^#]s", aux);
+        fgetc(fp);
         token = strtok(aux, "@");
         auxp = malloc(sizeof(Iprimario));
         strcpy(auxp->first_key, token);
@@ -129,14 +130,15 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp, int quant)
     return vetp;
 }
 
-Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets, int quant)
+Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 {
-    char *token, aux[quant];
+    char *token, aux[100];
     Isecundario *auxs;
 
     while(!feof(fs))
     {
-        fread(aux, quant, 1, fs);
+        fscanf(fs, "%[^#]s", aux);
+        fgetc(fs);
         token = strtok(aux, "@");
         auxs = malloc(sizeof(Isecundario));
         strcpy(auxs->titulo, token);
@@ -144,8 +146,34 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets, int quant)
         strcpy(auxs->first_key, token);
         auxs->prox = NULL;
         vets = insereS(vets, auxs);
-        //vets = inserir(vets, aux)
     }
 
     return vets;
+}
+
+void cria_indices(FILE *fd, Iprimario **vetp, Isecundario **vets)
+{
+    char *token, aux[193];
+    Iprimario *auxp;
+    Isecundario *auxs;
+    int count = 0;
+
+    while(!feof(fd))
+    {
+        fread(aux, 192, 1, fd);
+        token = strtok(aux, "@");
+        //mallos e inserir ordenado
+        auxp = malloc(sizeof(Iprimario));
+        auxs = malloc(sizeof(Isecundario));
+        strcpy(auxp->first_key, token);
+        strcpy(auxs->first_key, token);
+        token = strtok(NULL, "@");
+        strcpy(auxs->titulo, token);
+        auxp->RNN = count;
+        count++;
+
+        *vetp = insereP((*vetp), auxp);
+        *vets = insereS((*vets), auxs);
+        //inserir auxp e auxs
+    }
 }
