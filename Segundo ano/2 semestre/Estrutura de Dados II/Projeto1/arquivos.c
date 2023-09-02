@@ -151,7 +151,7 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
     return vets;
 }
 
-void cria_indices(FILE *fd, Iprimario **vetp, Isecundario **vets)
+void cria_indices(FILE *fd, Iprimario *vetp, Isecundario *vets)
 {
     char aux[193];
     Iprimario *auxp;
@@ -171,14 +171,8 @@ void cria_indices(FILE *fd, Iprimario **vetp, Isecundario **vets)
         auxp->RNN = count;
         count++;
 
-        *vetp = insereP((*vetp), auxp);
-        *vets = insereS((*vets), auxs);
-
-        vetp = &(*vetp);
-        vets = &(*vets);
         
-        printf("Vetp: %s, %d\n", (*vetp)->first_key, (*vetp)->RNN);
-        printf("Vets: %s, %s\n", (*vets)->titulo, (*vets)->first_key);
+        
     }
 
     fclose(fd);
