@@ -153,7 +153,7 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 
 void cria_indices(FILE *fd, Iprimario **vetp, Isecundario **vets)
 {
-    char *token, aux[193];
+    char aux[193];
     Iprimario *auxp;
     Isecundario *auxs;
     int count = 0;
@@ -161,8 +161,7 @@ void cria_indices(FILE *fd, Iprimario **vetp, Isecundario **vets)
     while(!feof(fd))
     {
         fread(aux, 192, 1, fd);
-        token = strtok(aux, "@");
-        //mallos e inserir ordenado
+        char *token = strtok(aux, "@");
         auxp = malloc(sizeof(Iprimario));
         auxs = malloc(sizeof(Isecundario));
         strcpy(auxp->first_key, token);
@@ -174,6 +173,13 @@ void cria_indices(FILE *fd, Iprimario **vetp, Isecundario **vets)
 
         *vetp = insereP((*vetp), auxp);
         *vets = insereS((*vets), auxs);
-        //inserir auxp e auxs
+
+        vetp = &(*vetp);
+        vets = &(*vets);
+        
+        printf("Vetp: %s, %d\n", (*vetp)->first_key, (*vetp)->RNN);
+        printf("Vets: %s, %s\n", (*vets)->titulo, (*vets)->first_key);
     }
+
+    fclose(fd);
 }
