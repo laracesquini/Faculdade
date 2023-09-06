@@ -13,7 +13,7 @@ int main()
      Iprimario *vetp = NULL;
      Isecundario *vets = NULL;
      Tdados aux;
-
+     
      if(file_exists("movies.txt"))
      {
         fd = fopen("movies.txt", "a+");
@@ -88,8 +88,9 @@ int main()
                printf("Nota: ");
                scanf(" %s", aux.nota);
                strcpy(aux.first_key, cria_chave(aux));
-               printf("%s", aux.first_key);
-
+               printf("Chave: %s\n", aux.first_key); //colocar as letras em maiúsculo.
+               //ver essa função depois
+               formata_dados(aux);
           }
 
      }while(op != 6);

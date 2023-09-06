@@ -241,3 +241,37 @@ char *cria_chave(Tdados aux)
     
     return aux1;
 }
+
+char *formata_dados(Tdados aux)
+{
+    char *dados = (char *)malloc(193);
+    int i;
+    
+    strcpy(dados, aux.first_key);
+    strcat(dados, "@");
+    strcat(dados, aux.titulo_portugues);
+    strcat(dados, "@");
+    strcat(dados, aux.titulo_original);
+    strcat(dados, "@");
+    strcat(dados, aux.diretor);
+    strcat(dados, "@");
+    strcat(dados, aux.ano);
+    strcat(dados, "@");
+    strcat(dados, aux.pais);
+    strcat(dados, "@");
+    strcat(dados, aux.nota);
+    strcat(dados, "@");
+
+    int len = strlen(dados);
+
+    for(i = len; i < 192; i++)
+    {
+        dados[i] = '#';
+    }
+
+    dados[192] = '\0';
+
+    printf("%s\n", dados);
+
+    return dados;
+}
