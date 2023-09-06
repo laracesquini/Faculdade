@@ -114,9 +114,8 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
     char *token, aux[20];
     Iprimario *auxp;
 
-    while(!feof(fp))
+    while(fscanf(fp, "%[^#]s", aux) > 0)
     {
-        fscanf(fp, "%[^#]s", aux);
         fgetc(fp);
         token = strtok(aux, "@");
         auxp = malloc(sizeof(Iprimario));
@@ -126,7 +125,7 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
         auxp->prox = NULL;
         vetp = insereP(vetp, auxp);
     }
-
+    
     return vetp;
 }
 
@@ -135,9 +134,8 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
     char *token, aux[100];
     Isecundario *auxs;
 
-    while(!feof(fs))
+    while(fscanf(fs, "%[^#]s", aux) > 0)
     {
-        fscanf(fs, "%[^#]s", aux);
         fgetc(fs);
         token = strtok(aux, "@");
         auxs = malloc(sizeof(Isecundario));
@@ -224,4 +222,19 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     fclose(fp);
     fclose(fs);
     fclose(fd);
+}
+
+char *cria_chave(Tdados aux)
+{
+    int i;
+    char chave[6], aux1[4], aux2[3];
+    
+    strncpy(aux1, aux.diretor + 0, 3);
+    strncpy(aux2, aux.ano + 2, 2);
+    aux1[3] = '\0';
+    aux2[2] = '\0';
+
+    strcat(aux1, aux2);
+
+    return *aux1;
 }

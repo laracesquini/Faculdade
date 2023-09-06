@@ -8,15 +8,15 @@
 
 int main()
 {
-     
-     int flagp, flags;
+     int flagp, flags, op;
      FILE *fd, *fp, *fs;
      Iprimario *vetp = NULL;
      Isecundario *vets = NULL;
+     Tdados aux;
 
      if(file_exists("movies.txt"))
      {
-        fd = fopen("movies.txt", "r");
+        fd = fopen("movies.txt", "a+");
         if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
         {
           fp = fopen("iprimary.idx", "r");
@@ -48,7 +48,7 @@ int main()
           }
         }
         else
-        { //criar os indices nos vetores e salvar no arquivo -> ainda vou ter os indices em RAM, e em qualquer alteração, muda a flag para 0.
+        { 
           cria_indices(fd, fp, fs, vetp, vets, 0, 0);
         }
      }
@@ -57,5 +57,43 @@ int main()
         fd = fopen("movies.txt", "a+");
      }
 
-     //fechar os arquivos
+     do{
+          do{
+               printf("Bem-vindo!!\n");
+               printf("Escolha uma opção: ");
+               printf("[1]Inserir um novo filme no catálogo\n");
+               printf("[2]Remover um filme\n");
+               printf("[3]Modificar um campo\n");
+               printf("[4]Buscar filmes\n");
+               printf("[5]Ver catálogo\n");
+               printf("[6]Sair\n");
+               scanf("%d", &op);
+               if(op < 1 || op > 6)
+               printf("Opção inválida\n");
+          }while(op < 1 || op > 6);
+
+          if(op == 1)
+          {
+               printf("Adicione as informações necessárias: \n");
+               printf("Título em português: ");
+               scanf(" %[^\n]s", aux.titulo_portugues);
+               printf("Título original: ");
+               scanf(" %[^\n]s", aux.titulo_original);
+               printf("Diretor(Sobrenome, Nome): ");
+               scanf(" %[^\n]s", aux.diretor);
+               printf("Ano de lançamento: ");
+               scanf(" %s", aux.ano);
+               printf("País: ");
+               scanf(" %[^\n]s", aux.pais);
+               printf("Nota: ");
+               scanf(" %s", aux.nota);
+               //resolver isso
+               //strcpy(aux.first_key, cria_chave(aux));
+               //printf("%s", aux.first_key);
+
+          }
+
+     }while(op != 6);
+
+     
 }
