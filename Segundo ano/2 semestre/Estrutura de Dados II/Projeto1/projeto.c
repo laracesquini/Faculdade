@@ -60,7 +60,7 @@ int main()
      do{
           do{
                printf("Bem-vindo!!\n");
-               printf("Escolha uma opção: ");
+               printf("Escolha uma opção: \n");
                printf("[1]Inserir um novo filme no catálogo\n");
                printf("[2]Remover um filme\n");
                printf("[3]Modificar um campo\n");
@@ -87,9 +87,8 @@ int main()
                scanf(" %[^\n]s", aux.pais);
                printf("Nota: ");
                scanf(" %s", aux.nota);
-               //resolver isso
-               //strcpy(aux.first_key, cria_chave(aux));
-               //printf("%s", aux.first_key);
+               strcpy(aux.first_key, cria_chave(aux));
+               printf("%s", aux.first_key);
 
           }
 

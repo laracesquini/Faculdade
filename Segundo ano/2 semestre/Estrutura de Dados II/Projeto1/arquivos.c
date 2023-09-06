@@ -227,14 +227,17 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
 char *cria_chave(Tdados aux)
 {
     int i;
-    char chave[6], aux1[4], aux2[3];
-    
+    char *aux1, *aux2;
+    aux1 = malloc(4);
+    aux2 = malloc(3);
+
     strncpy(aux1, aux.diretor + 0, 3);
+    
     strncpy(aux2, aux.ano + 2, 2);
     aux1[3] = '\0';
     aux2[2] = '\0';
 
     strcat(aux1, aux2);
-
-    return *aux1;
+    
+    return aux1;
 }
