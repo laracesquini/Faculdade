@@ -26,4 +26,4 @@ Iprimario *insereP(Iprimario *h, Iprimario *p);
 Isecundario *insereS(Isecundario *h, Isecundario *p);
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp);
 Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets);
-void cria_indices(FILE *fd, Iprimario *vetp, Isecundario *vets);
+void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags);

@@ -151,29 +151,77 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
     return vets;
 }
 
-void cria_indices(FILE *fd, Iprimario *vetp, Isecundario *vets)
+void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags)
 {
-    char aux[193];
+    char aux[193], *token;
     Iprimario *auxp;
     Isecundario *auxs;
     int count = 0;
 
-    while(!feof(fd))
-    {
-        fread(aux, 192, 1, fd);
-        char *token = strtok(aux, "@");
-        auxp = malloc(sizeof(Iprimario));
-        auxs = malloc(sizeof(Isecundario));
-        strcpy(auxp->first_key, token);
-        strcpy(auxs->first_key, token);
-        token = strtok(NULL, "@");
-        strcpy(auxs->titulo, token);
-        auxp->RNN = count;
-        count++;
+    fd = fopen("movies.txt", "r");
 
-        
-        
+    if(flagp == 0)
+    {
+        fp = fopen("iprimary.idx", "w");
+
     }
 
+    if(flags == 0)
+    {
+        fs = fopen("ititle.idx", "w");
+    }
+    
+    while(fread(aux, 192, 1, fd) == 1)
+    {
+        token = strtok(aux, "@");
+        if(flagp == 0)
+        {
+            auxp = malloc(sizeof(Iprimario));
+            strcpy(auxp->first_key, token);
+            auxp->RNN = count;
+            auxp->prox = NULL;
+            count++;
+
+            vetp = insereP(vetp, auxp);
+        }
+        if(flags == 0)
+        {
+            auxs = malloc(sizeof(Isecundario));
+            strcpy(auxs->first_key, token);
+            token = strtok(NULL, "@");
+            strcpy(auxs->titulo, token);
+            auxs->prox = NULL;
+
+            vets = insereS(vets, auxs);
+        }
+    }
+    
+    if(flagp == 0)
+    {
+        fprintf(fp, "%d\n", 1);
+
+        auxp = vetp;
+        while(auxp != NULL)
+        {
+            fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RNN);
+            auxp = auxp->prox;
+        }
+    }
+    
+    if(flags == 0)
+    {
+        fprintf(fs, "%d\n", 1);
+        
+        auxs = vets;
+        while(auxs != NULL)
+        {
+            fprintf(fs, "%s@%s@#", auxs->titulo, auxs->first_key);
+            auxs = auxs->prox;
+        }
+    }
+    
+    
+    fclose(fp);
+    fclose(fs);
     fclose(fd);
 }
