@@ -1,12 +1,12 @@
 //estruturas e protótipos das funções
 typedef struct dados{
-    char first_key[5];
-    char titulo_portugues[62];
-    char titulo_original[63];
+    char first_key[6];
+    char titulo_portugues[60];
+    char titulo_original[59];
     char diretor[30];
-    char ano[4];
+    char ano[5];
     char pais[20];
-    char nota[1]; 
+    char nota[2]; 
 }Tdados;
 
 typedef struct iprimary{

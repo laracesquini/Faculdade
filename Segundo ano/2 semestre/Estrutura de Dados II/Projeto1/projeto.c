@@ -13,6 +13,7 @@ int main()
      Iprimario *vetp = NULL;
      Isecundario *vets = NULL;
      Tdados aux;
+     char *dados;
      
      if(file_exists("movies.txt"))
      {
@@ -90,7 +91,7 @@ int main()
                strcpy(aux.first_key, cria_chave(aux));
                printf("Chave: %s\n", aux.first_key); //colocar as letras em maiúsculo.
                //ver essa função depois
-               formata_dados(aux);
+               dados = formata_dados(aux); 
           }
 
      }while(op != 6);

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "arquivos.h"
 
 int file_exists(char *nome)
@@ -227,17 +228,16 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
 char *cria_chave(Tdados aux)
 {
     int i;
-    char *aux1, *aux2;
-    aux1 = malloc(4);
-    aux2 = malloc(3);
-
+    char *aux1 = (char *)malloc(4);
+    char *aux2 = (char *)malloc(3);
+    char upper[30];
+    
     strncpy(aux1, aux.diretor + 0, 3);
     
     strncpy(aux2, aux.ano + 2, 2);
-    aux1[3] = '\0';
-    aux2[2] = '\0';
-
+    
     strcat(aux1, aux2);
+    aux1[5] = '\0';
     
     return aux1;
 }
@@ -270,8 +270,6 @@ char *formata_dados(Tdados aux)
     }
 
     dados[192] = '\0';
-
-    printf("%s\n", dados);
 
     return dados;
 }
