@@ -89,9 +89,9 @@ int main()
                printf("Nota: ");
                scanf(" %s", aux.nota);
                strcpy(aux.first_key, cria_chave(aux));
-               printf("Chave: %s\n", aux.first_key); //colocar as letras em maiúsculo.
-               //ver essa função depois
-               dados = formata_dados(aux); 
+               dados = formata_dados(aux);
+               fprintf(fd, "%s", dados);
+               //lembrar de: alterar flag no arquivo de indices quando fizer a alteração e salvar no arquivo de indices quando fechar.
           }
 
      }while(op != 6);

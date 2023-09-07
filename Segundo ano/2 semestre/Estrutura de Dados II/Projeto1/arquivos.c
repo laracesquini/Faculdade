@@ -238,6 +238,11 @@ char *cria_chave(Tdados aux)
     
     strcat(aux1, aux2);
     aux1[5] = '\0';
+
+    for (int i = 0; i < strlen(aux1); i++) 
+    {
+        aux1[i] = toupper(aux1[i]); // Converte cada caractere para maiúsculo
+    }
     
     return aux1;
 }
