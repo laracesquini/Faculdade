@@ -157,7 +157,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     Isecundario *auxs;
     int count = 0;
 
-    fd = fopen("movies.txt", "r");
+    //fd = fopen("movies.txt", "r");
 
     if(flagp == 0)
     {
