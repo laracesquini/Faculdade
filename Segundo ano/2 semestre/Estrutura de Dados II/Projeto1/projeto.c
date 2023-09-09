@@ -10,8 +10,8 @@ int main()
 {
      int flagp, flags, op;
      FILE *fd, *fp, *fs;
-     Iprimario *vetp = NULL;
-     Isecundario *vets = NULL;
+     Iprimario *vetp = NULL, *auxp;
+     Isecundario *vets = NULL, *auxs;
      Tdados aux;
      char *dados;
      
@@ -27,37 +27,35 @@ int main()
           fscanf(fs, "%d", &flags);
 
           if(flagp == 1)
-          {
-               vetp = carrega_indicesP(fp, vetp);
-          }
+          vetp = carrega_indicesP(fp, vetp);
           else
           {
                fclose(fp);
                
                cria_indices(fd, fp, fs, vetp, vets, flagp, flags);
+               fp = fopen("iprimary.idx", "r");
+               vetp = carrega_indicesP(fp, vetp);
+               flagp = 1;
           }
 
           if(flags == 1)
-          {
-               vets = carrega_indicesS(fs, vets);
-          }
+          vets = carrega_indicesS(fs, vets);
           else
           {
                fclose(fs);
 
                cria_indices(fd, fp, fs, vetp, vets, flagp, flags);
+               fs = fopen("ititle.idx", "r");
+               vets = carrega_indicesS(fs, vets);
+               flags = 1;
           }
         }
         else
-        { 
-          cria_indices(fd, fp, fs, vetp, vets, 0, 0);
-        }
+        cria_indices(fd, fp, fs, vetp, vets, 0, 0);
      }
      else
-     {
-        fd = fopen("movies.txt", "a+");
-     }
-
+     fd = fopen("movies.txt", "a+");
+     
      do{
           do{
                printf("Bem-vindo!!\n");
@@ -91,7 +89,33 @@ int main()
                strcpy(aux.first_key, cria_chave(aux));
                dados = formata_dados(aux);
                fprintf(fd, "%s", dados);
-               //lembrar de: alterar flag no arquivo de indices quando fizer a alteração e salvar no arquivo de indices quando fechar.
+               auxp = alocarP(aux.first_key, novo_RRN(vetp) + 1);
+               auxs = alocarS(aux.first_key, aux.titulo_portugues);
+
+               vetp = insereP(vetp, auxp);
+               vets = insereS(vets, auxs);
+
+               if(flagp == 1)
+               {
+                    //alterar para 0 no arquivo
+                    flagp = 0;
+               }
+               if(flags == 1)
+               {
+                    //alterar pata 0 no arquivo
+                    flags = 0;
+               }
+
+
+               //lembrar de: alterar flag no arquivo de indices quando fizer a alteração, salvar na lista em RAM e salvar no arquivo de indices quando fechar.
+          }
+          if(op == 6)
+          {
+               fclose(fp);
+               fclose(fs);
+               fclose(fd);
+
+               salvar(fp, fs, vetp, vets);
           }
 
      }while(op != 6);

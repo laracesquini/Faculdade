@@ -11,7 +11,7 @@ typedef struct dados{
 
 typedef struct iprimary{
     char first_key[5];
-    int RNN;
+    int RRN;
     struct iprimary *prox;
 }Iprimario;
 
@@ -29,3 +29,7 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets);
 void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags);
 char *cria_chave(Tdados aux);
 char *formata_dados(Tdados aux);
+Iprimario *alocarP(char *chave, int RRN);
+Isecundario *alocarS(char *chave, char *titulo);
+int novo_RRN(Iprimario *vetp);
+void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets);

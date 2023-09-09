@@ -122,11 +122,11 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
         auxp = malloc(sizeof(Iprimario));
         strcpy(auxp->first_key, token);
         token = strtok(NULL, "@");
-        auxp->RNN = atoi(token);
+        auxp->RRN = atoi(token);
         auxp->prox = NULL;
         vetp = insereP(vetp, auxp);
     }
-    
+
     return vetp;
 }
 
@@ -177,7 +177,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
         {
             auxp = malloc(sizeof(Iprimario));
             strcpy(auxp->first_key, token);
-            auxp->RNN = count;
+            auxp->RRN = count;
             auxp->prox = NULL;
             count++;
 
@@ -202,7 +202,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
         auxp = vetp;
         while(auxp != NULL)
         {
-            fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RNN);
+            fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RRN);
             auxp = auxp->prox;
         }
     }
@@ -223,6 +223,8 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     fclose(fp);
     fclose(fs);
     fclose(fd);
+
+    return;
 }
 
 char *cria_chave(Tdados aux)
@@ -241,7 +243,7 @@ char *cria_chave(Tdados aux)
 
     for (int i = 0; i < strlen(aux1); i++) 
     {
-        aux1[i] = toupper(aux1[i]); // Converte cada caractere para maiúsculo
+        aux1[i] = toupper(aux1[i]); 
     }
     
     return aux1;
@@ -277,4 +279,76 @@ char *formata_dados(Tdados aux)
     dados[192] = '\0';
 
     return dados;
+}
+
+Iprimario *alocarP(char *chave, int RRN)
+{
+    Iprimario *aux;
+
+    aux = malloc(sizeof(Iprimario));
+    strcpy(aux->first_key, chave);
+    aux->RRN = RRN;
+    aux->prox = NULL;
+
+    return aux;
+}
+
+Isecundario *alocarS(char *chave, char *titulo)
+{
+    Isecundario *aux;
+
+    aux = malloc(sizeof(Isecundario));
+    strcpy(aux->first_key, chave);
+    strcpy(aux->titulo, titulo);
+
+    return aux;
+}
+
+int novo_RRN(Iprimario *vetp)
+{
+    Iprimario *aux;
+    int maior;
+
+    aux = vetp;
+    maior = aux->RRN;
+
+    while(aux != NULL)
+    {
+        if(aux->RRN > maior)
+        maior = aux->RRN;
+
+        aux = aux->prox;
+    }
+
+    return maior;
+}
+
+void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets)
+{
+    Iprimario *auxp;
+    Isecundario *auxs;
+
+    fp = fopen("iprimary.idx", "w");
+    fs = fopen("ititle.idx", "w");
+
+    fprintf(fp, "%d\n", 1);
+    auxp = vetp;
+    while(auxp != NULL)
+    {
+        fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RRN);
+        auxp = auxp->prox;
+    }
+
+    fprintf(fs, "%d\n", 1);
+    auxs = vets;
+    while(auxs != NULL)
+    {
+        fprintf(fs, "%s@%s@#", auxs->titulo, auxs->first_key);
+        auxs = auxs->prox;
+    }
+
+    fclose(fp);
+    fclose(fs);
+
+    return;
 }
