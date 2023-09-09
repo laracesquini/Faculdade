@@ -107,12 +107,12 @@ int main()
 
                     if(flagp == 1)
                     {
-                         //alterar para 0 no arquivo
+                         atualiza_flag(fp, "iprimary.idx");
                          flagp = 0;
                     }
                     if(flags == 1)
                     {
-                         //alterar pata 0 no arquivo
+                         atualiza_flag(fs, "ititle.idx");
                          flags = 0;
                     }
                }

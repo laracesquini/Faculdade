@@ -33,3 +33,4 @@ Iprimario *alocarP(char *chave, int RRN);
 Isecundario *alocarS(char *chave, char *titulo);
 int novo_RRN(Iprimario *vetp);
 void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets);
+void atualiza_flag(FILE *file, char *nome);

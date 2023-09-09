@@ -362,3 +362,17 @@ void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets)
 
     return;
 }
+
+void atualiza_flag(FILE *file, char *nome)
+{
+    char c;
+
+    file = fopen(nome, "r+");
+    c = fgetc(file);
+    fseek(file, 0, SEEK_SET);
+    fputc('0', file);
+
+    fclose(file);
+
+    return;
+}
