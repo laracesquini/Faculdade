@@ -5,6 +5,8 @@
 
 //0 - desatualizado
 //1 - atualizado
+int menu();
+Tdados insercao();
 
 int main()
 {
@@ -67,35 +69,12 @@ int main()
      
      do{
           do{
-               printf("Bem-vindo!!\n");
-               printf("Escolha uma opção: \n");
-               printf("[1]Inserir um novo filme no catálogo\n");
-               printf("[2]Remover um filme\n");
-               printf("[3]Modificar um campo\n");
-               printf("[4]Buscar filmes\n");
-               printf("[5]Ver catálogo\n");
-               printf("[6]Sair\n");
-               scanf("%d", &op);
-               if(op < 1 || op > 6)
-               printf("Opção inválida\n");
+              op = menu();
           }while(op < 1 || op > 6);
 
           if(op == 1)
           {
-               printf("Adicione as informações necessárias: \n");
-               printf("Título em português: ");
-               scanf(" %[^\n]s", aux.titulo_portugues);
-               printf("Título original: ");
-               scanf(" %[^\n]s", aux.titulo_original);
-               printf("Diretor(Sobrenome, Nome): ");
-               scanf(" %[^\n]s", aux.diretor);
-               printf("Ano de lançamento: ");
-               scanf(" %s", aux.ano);
-               printf("País: ");
-               scanf(" %[^\n]s", aux.pais);
-               printf("Nota: ");
-               scanf(" %s", aux.nota);
-               strcpy(aux.first_key, cria_chave(aux));
+               aux = insercao();
                dados = formata_dados(aux);
                fprintf(fd, "%s", dados);
                if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
@@ -116,9 +95,10 @@ int main()
                          flags = 0;
                     }
                }
-              
-
-               //lembrar de: alterar flag no arquivo de indices quando fizer a alteração, salvar na lista em RAM e salvar no arquivo de indices quando fechar.
+          }
+          else if(op == 2)
+          {
+               //remoção: no arquivo de dados-> substituir os dois primeiros caracteres por *|. Nos indices: remover das listas, atualizando a flag para 0, se for 1, e dps salva automaticamente na op 6. Quando for criar ou atualizar o arquivo de indices, fazer verificação(ver se o registro nao tem *|)
           }
           else
           {
@@ -130,4 +110,46 @@ int main()
      }while(op != 6);
 
      
+}
+
+int menu()
+{
+     int op;
+
+     printf("Bem-vindo!!\n");
+     printf("Escolha uma opção: \n");
+     printf("[1]Inserir um novo filme no catálogo\n");
+     printf("[2]Remover um filme\n");
+     printf("[3]Modificar um campo\n");
+     printf("[4]Buscar filmes\n");
+     printf("[5]Ver catálogo\n");
+     printf("[6]Sair\n");
+     scanf("%d", &op);
+     if(op < 1 || op > 6)
+     printf("Opção inválida\n");
+
+     return op;
+}
+
+Tdados insercao()
+{
+     Tdados aux;
+     
+     printf("Adicione as informações necessárias: \n");
+     printf("Título em português: ");
+     scanf(" %[^\n]s", aux.titulo_portugues);
+     printf("Título original: ");
+     scanf(" %[^\n]s", aux.titulo_original);
+     printf("Diretor(Sobrenome, Nome): ");
+     scanf(" %[^\n]s", aux.diretor);
+     printf("Ano de lançamento: ");
+     scanf(" %s", aux.ano);
+     printf("País: ");
+     scanf(" %[^\n]s", aux.pais);
+     printf("Nota: ");
+     scanf(" %s", aux.nota);
+     
+     strcpy(aux.first_key, cria_chave(aux));
+
+     return aux;
 }

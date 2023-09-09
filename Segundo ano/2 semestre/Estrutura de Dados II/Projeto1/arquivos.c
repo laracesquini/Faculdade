@@ -183,6 +183,9 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     
     while(fread(aux, 192, 1, fd) == 1)
     {
+        if(aux[0] == '*') //testar se isso funciona depois
+        continue;
+
         token = strtok(aux, "@");
         if(flagp == 0)
         {
