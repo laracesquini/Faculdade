@@ -33,7 +33,7 @@ int main()
                fclose(fp);
                
                cria_indices(fd, fp, fs, vetp, vets, flagp, flags);
-               fp = fopen("iprimary.idx", "r");
+               
                vetp = carrega_indicesP(fp, vetp);
                flagp = 1;
           }
@@ -43,9 +43,9 @@ int main()
           else
           {
                fclose(fs);
-
+               
                cria_indices(fd, fp, fs, vetp, vets, flagp, flags);
-               fs = fopen("ititle.idx", "r");
+
                vets = carrega_indicesS(fs, vets);
                flags = 1;
           }
@@ -53,10 +53,8 @@ int main()
         else
         {
           cria_indices(fd, fp, fs, vetp, vets, 0, 0);
-
-          fp = fopen("iprimary.idx", "r");
+     
           vetp = carrega_indicesP(fp, vetp);
-          fs = fopen("ititle.idx", "r");
           vets = carrega_indicesS(fs, vets);
 
           flagp = 1;
@@ -106,8 +104,6 @@ int main()
                     auxs = alocarS(aux.first_key, aux.titulo_portugues);
                     vetp = insereP(vetp, auxp);
                     vets = insereS(vets, auxs);
-                    printf("Vetp: %s\n", vetp->first_key);
-                    printf("Vets: %s\n", vets->titulo);
 
                     if(flagp == 1)
                     {
@@ -124,17 +120,11 @@ int main()
 
                //lembrar de: alterar flag no arquivo de indices quando fizer a alteração, salvar na lista em RAM e salvar no arquivo de indices quando fechar.
           }
-          if(op == 6)
+          else
           {
                fclose(fd);
                if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
-               {
-                    fclose(fp);
-                    fclose(fs);
-
-                    //salvar(fp, fs, vetp, vets);
-               }
-               
+               salvar(fp, fs, vetp, vets);
           }
 
      }while(op != 6);

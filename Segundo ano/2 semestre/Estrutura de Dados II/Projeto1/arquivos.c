@@ -113,7 +113,11 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
 {
     char *token, aux[20];
+    int sla;
     Iprimario *auxp;
+
+    fp = fopen("iprimary.idx", "r");
+    fscanf(fp, "%d", &sla);
 
     while(fscanf(fp, "%[^#]s", aux) > 0)
     {
@@ -127,13 +131,19 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
         vetp = insereP(vetp, auxp);
     }
 
+    fclose(fp);
+
     return vetp;
 }
 
 Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 {
     char *token, aux[100];
+    int sla;
     Isecundario *auxs;
+
+    fs = fopen("ititle.idx", "r");
+    fscanf(fs, "%d", &sla);
 
     while(fscanf(fs, "%[^#]s", aux) > 0)
     {
@@ -147,6 +157,8 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
         vets = insereS(vets, auxs);
     }
 
+    fclose(fs);
+
     return vets;
 }
 
@@ -157,7 +169,6 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     Isecundario *auxs;
     int count = 0;
 
-    //fd = fopen("movies.txt", "r");
 
     if(flagp == 0)
     {
@@ -197,7 +208,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     
     if(flagp == 0)
     {
-        fprintf(fp, "%d\n", 1);
+        fprintf(fp, "%d", 1);
 
         auxp = vetp;
         while(auxp != NULL)
@@ -209,7 +220,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     
     if(flags == 0)
     {
-        fprintf(fs, "%d\n", 1);
+        fprintf(fs, "%d", 1);
         
         auxs = vets;
         while(auxs != NULL)
@@ -222,7 +233,6 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     
     fclose(fp);
     fclose(fs);
-    fclose(fd);
 
     return;
 }
@@ -331,7 +341,7 @@ void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets)
     fp = fopen("iprimary.idx", "w");
     fs = fopen("ititle.idx", "w");
 
-    fprintf(fp, "%d\n", 1);
+    fprintf(fp, "%d", 1);
     auxp = vetp;
     while(auxp != NULL)
     {
@@ -339,7 +349,7 @@ void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets)
         auxp = auxp->prox;
     }
 
-    fprintf(fs, "%d\n", 1);
+    fprintf(fs, "%d", 1);
     auxs = vets;
     while(auxs != NULL)
     {
