@@ -132,7 +132,7 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
     }
 
     fclose(fp);
-
+    
     return vetp;
 }
 
@@ -144,7 +144,7 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 
     fs = fopen("ititle.idx", "r");
     fscanf(fs, "%d", &sla);
-
+    
     while(fscanf(fs, "%[^#]s", aux) > 0)
     {
         fgetc(fs);
@@ -156,9 +156,9 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
         auxs->prox = NULL;
         vets = insereS(vets, auxs);
     }
-
+    
     fclose(fs);
-
+    
     return vets;
 }
 
@@ -173,9 +173,12 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
 
     while(fread(aux, 192, 1, fd) == 1)
     {
-        if(aux[0] == '*') //testar se isso funciona depois
-        continue;
-
+        if(aux[0] == '*')
+        {
+            count++;
+            continue;
+        }
+        
         token = strtok(aux, "@");
         if(flagp == 0)
         {
@@ -283,23 +286,19 @@ Isecundario *alocarS(char *chave, char *titulo)
     return aux;
 }
 
-int novo_RRN(Iprimario *vetp)
+int novo_RRN(FILE *fd)
 {
-    Iprimario *aux;
-    int maior;
+    int novo;
 
-    aux = vetp;
-    maior = aux->RRN;
+    fd = fopen("teste.txt", "r");
 
-    while(aux != NULL)
-    {
-        if(aux->RRN > maior)
-        maior = aux->RRN;
+    fseek(fd, 0, SEEK_END);
 
-        aux = aux->prox;
-    }
+    novo = ftell(fd);
 
-    return maior;
+    fclose(fd);
+
+    return novo/192;
 }
 
 void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags)
@@ -432,6 +431,7 @@ void remove_arquivo(Iprimario *aux, FILE *fd)
 
     fseek(fd, byte_offset, SEEK_SET);
     fprintf(fd, "*|");
+
     fclose(fd);
 
     return;

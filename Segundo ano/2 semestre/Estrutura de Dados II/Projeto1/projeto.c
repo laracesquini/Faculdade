@@ -51,7 +51,7 @@ int main()
 
                fscanf(fp, "%d", &flagp);
                fscanf(fs, "%d", &flags);
-
+               
                if(flagp == 1)
                vetp = carrega_indicesP(fp, vetp);
                else
@@ -92,16 +92,18 @@ int main()
                do{
                op = menu();
                }while(op < 1 || op > 6);
-
+               
                if(op == 1)
                {
                     aux = insercao();
                     dados = formata_dados(aux);
                     fd = fopen("movies.txt", "a+");
                     fprintf(fd, "%s", dados);
+                    fclose(fd); //ver isso do RRN deposi, não está funcionando -> ver um jeito que da certo para o começo e para a inserção.
                     
-                    auxp = alocarP(aux.first_key, novo_RRN(vetp) + 1);
+                    auxp = alocarP(aux.first_key, novo_RRN(fd));
                     auxs = alocarS(aux.first_key, aux.titulo_portugues);
+                   
                     vetp = insereP(vetp, auxp);
                     vets = insereS(vets, auxs);
 
@@ -115,39 +117,45 @@ int main()
                          atualiza_flag(fs, "ititle.idx");
                          flags = 0;
                     }
-                    
-                    fclose(fd);
+
+                    printf("\nFilme inserido!\n");
                }
                else if(op == 2)
                {
-                    //verificar se o arquivo de filmes existe -> se não existir, nenhum filme foi inserido, não tem como remover. Se existir, da para remover, mas só se o de indices existirem
-                    do{
-                         dados = remocao();
-                         auxp = busca(vetp, dados);
+                    if(vetp == NULL && vets == NULL)
+                    {
+                         printf("Lista vazia! Nenhum filme disponível para a remoção!\n");
+                    }
+                    else
+                    {
+                         do{
+                              dados = remocao();
+                              auxp = busca(vetp, dados);
 
-                         if(auxp == NULL)
-                         printf("Filme não encontrado. Tente novamente!\n");
-                    }while(auxp == NULL);
-                    remove_arquivo(auxp, fd);
-                    vetp = removerP(vetp, dados);
-                    vets = removerS(vets, dados);
-               
-                    if(flagp == 1)
-                    {
-                         atualiza_flag(fp, "iprimary.idx");
-                         flagp = 0;
+                              if(auxp == NULL)
+                              printf("Filme não encontrado. Tente novamente!\n");
+                         }while(auxp == NULL);
+
+                         remove_arquivo(auxp, fd);
+                         vetp = removerP(vetp, dados);
+                         vets = removerS(vets, dados);
+                    
+                         if(flagp == 1)
+                         {
+                              atualiza_flag(fp, "iprimary.idx");
+                              flagp = 0;
+                         }
+                         if(flags == 1)
+                         {
+                              atualiza_flag(fs, "ititle.idx");
+                              flags = 0;
+                         }
+                         
+                         printf("\nFilme removido!\n");
                     }
-                    if(flags == 1)
-                    {
-                         atualiza_flag(fs, "ititle.idx");
-                         flags = 0;
-                    }
-                    //remoção: no arquivo de dados-> substituir os dois primeiros caracteres por *|. Nos indices: remover das listas, atualizando a flag para 0, se for 1, e dps salva automaticamente na op 6. Quando for criar ou atualizar o arquivo de indices, fazer verificação(ver se o registro nao tem *|)
-                    //uma unica funcao de busca(para buscar com a cheve primaria), talvez de para fazer uma unica de remoçao tbm, ja que é pela chave primaria
                }
                else
                {
-                    fclose(fd);
                     if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
                     salvar(fp, fs, vetp, vets, 0, 0);
                }

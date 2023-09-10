@@ -31,7 +31,7 @@ char *cria_chave(Tdados aux);
 char *formata_dados(Tdados aux);
 Iprimario *alocarP(char *chave, int RRN);
 Isecundario *alocarS(char *chave, char *titulo);
-int novo_RRN(Iprimario *vetp);
+int novo_RRN(FILE *fd);
 void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags);
 void atualiza_flag(FILE *file, char *nome);
 Iprimario *busca(Iprimario *vetp, char *chave);
