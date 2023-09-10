@@ -39,6 +39,7 @@ int main()
                
                vetp = carrega_indicesP(fp, vetp);
                flagp = 1;
+               flags = 1;
           }
 
           if(flags == 1)

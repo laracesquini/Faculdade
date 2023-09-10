@@ -334,7 +334,7 @@ void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, i
         fclose(fs);
     }
 
-    
+
     return;
 }
 
@@ -423,11 +423,12 @@ Iprimario *busca(Iprimario *vetp, char *chave)
 void remove_arquivo(Iprimario *aux, FILE *fd)
 {
     int byte_offset = 192*aux->RRN;
+    printf("Byteoffset: %d\nRRN: %d\n", byte_offset, aux->RRN);
+
+    fclose(fd);
+    fd = fopen("movies.txt", "r+");
 
     fseek(fd, byte_offset, SEEK_SET);
-    fgetc(fd);
-    fgetc(fd);
-    fseek(fd, byte_offset, SEEK_CUR);
     fprintf(fd, "*|");
 
     return;
