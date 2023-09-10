@@ -169,6 +169,8 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     Isecundario *auxs;
     int count = 0;
 
+    fd = fopen("movies.txt", "r");
+
     while(fread(aux, 192, 1, fd) == 1)
     {
         if(aux[0] == '*') //testar se isso funciona depois
@@ -197,6 +199,8 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
         }
     }
     
+    fclose(fd);
+
     salvar(fp, fs, vetp, vets, flagp, flags);
     
     return;
@@ -423,13 +427,12 @@ Iprimario *busca(Iprimario *vetp, char *chave)
 void remove_arquivo(Iprimario *aux, FILE *fd)
 {
     int byte_offset = 192*aux->RRN;
-    printf("Byteoffset: %d\nRRN: %d\n", byte_offset, aux->RRN);
-
-    fclose(fd);
+    
     fd = fopen("movies.txt", "r+");
 
     fseek(fd, byte_offset, SEEK_SET);
     fprintf(fd, "*|");
+    fclose(fd);
 
     return;
 }
