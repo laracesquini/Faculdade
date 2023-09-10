@@ -169,18 +169,6 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     Isecundario *auxs;
     int count = 0;
 
-
-    if(flagp == 0)
-    {
-        fp = fopen("iprimary.idx", "w");
-
-    }
-
-    if(flags == 0)
-    {
-        fs = fopen("ititle.idx", "w");
-    }
-    
     while(fread(aux, 192, 1, fd) == 1)
     {
         if(aux[0] == '*') //testar se isso funciona depois
@@ -209,34 +197,8 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
         }
     }
     
-    if(flagp == 0)
-    {
-        fprintf(fp, "%d", 1);
-
-        auxp = vetp;
-        while(auxp != NULL)
-        {
-            fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RRN);
-            auxp = auxp->prox;
-        }
-    }
+    salvar(fp, fs, vetp, vets, flagp, flags);
     
-    if(flags == 0)
-    {
-        fprintf(fs, "%d", 1);
-        
-        auxs = vets;
-        while(auxs != NULL)
-        {
-            fprintf(fs, "%s@%s@#", auxs->titulo, auxs->first_key);
-            auxs = auxs->prox;
-        }
-    }
-    
-    
-    fclose(fp);
-    fclose(fs);
-
     return;
 }
 
@@ -336,33 +298,43 @@ int novo_RRN(Iprimario *vetp)
     return maior;
 }
 
-void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets)
+void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags)
 {
     Iprimario *auxp;
     Isecundario *auxs;
 
-    fp = fopen("iprimary.idx", "w");
-    fs = fopen("ititle.idx", "w");
-
-    fprintf(fp, "%d", 1);
-    auxp = vetp;
-    while(auxp != NULL)
+    if(flagp == 0)
     {
-        fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RRN);
-        auxp = auxp->prox;
+        fp = fopen("iprimary.idx", "w");
+
+        fprintf(fp, "%d", 1);
+
+        auxp = vetp;
+        while(auxp != NULL)
+        {
+            fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RRN);
+            auxp = auxp->prox;
+        }
+
+        fclose(fp);
     }
 
-    fprintf(fs, "%d", 1);
-    auxs = vets;
-    while(auxs != NULL)
+    if(flags == 0)
     {
-        fprintf(fs, "%s@%s@#", auxs->titulo, auxs->first_key);
-        auxs = auxs->prox;
+        fs = fopen("ititle.idx", "w");
+
+        fprintf(fs, "%d", 1);
+        auxs = vets;
+        while(auxs != NULL)
+        {
+            fprintf(fs, "%s@%s@#", auxs->titulo, auxs->first_key);
+            auxs = auxs->prox;
+        }
+
+        fclose(fs);
     }
 
-    fclose(fp);
-    fclose(fs);
-
+    
     return;
 }
 
@@ -376,6 +348,87 @@ void atualiza_flag(FILE *file, char *nome)
     fputc('0', file);
 
     fclose(file);
+
+    return;
+}
+
+Iprimario *removerP(Iprimario *h, char *chave)
+{
+    Iprimario *aux, *antes;
+
+    aux = h;
+
+    if(aux != NULL && strcmp(aux->first_key, chave) == 0)
+    {
+        h = aux->prox;
+        free(aux);
+        return h;
+    }
+
+    while(aux != NULL && strcmp(aux->first_key, chave) != 0)
+    {
+        antes = aux;
+        aux = aux->prox;
+    }
+    if(aux == NULL)
+    return aux;
+
+    antes->prox = aux->prox;
+    free(aux);
+
+    return h;
+}
+
+Isecundario *removerS(Isecundario *h, char *chave)
+{
+    Isecundario *aux, *antes;
+
+    aux = h;
+
+    if(aux != NULL && strcmp(aux->first_key, chave) == 0)
+    {
+        h = aux->prox;
+        free(aux);
+        return h;
+    }
+
+    while(aux != NULL && strcmp(aux->first_key, chave) != 0)
+    {
+        antes = aux;
+        aux = aux->prox;
+    }
+    if(aux == NULL)
+    return aux;
+
+    antes->prox = aux->prox;
+    free(aux);
+
+    return h;
+}
+
+Iprimario *busca(Iprimario *vetp, char *chave)
+{
+    Iprimario *aux;
+
+    aux = vetp;
+
+    while(aux != NULL && strcmp(aux->first_key, chave) != 0)
+    {
+        aux = aux->prox;
+    }
+
+    return aux;
+}
+
+void remove_arquivo(Iprimario *aux, FILE *fd)
+{
+    int byte_offset = 192*aux->RRN;
+
+    fseek(fd, byte_offset, SEEK_SET);
+    fgetc(fd);
+    fgetc(fd);
+    fseek(fd, byte_offset, SEEK_CUR);
+    fprintf(fd, "*|");
 
     return;
 }

@@ -7,6 +7,7 @@
 //1 - atualizado
 int menu();
 Tdados insercao();
+char *remocao();
 
 int main()
 {
@@ -98,13 +99,35 @@ int main()
           }
           else if(op == 2)
           {
+               do{
+                    dados = remocao();
+                    auxp = busca(vetp, dados);
+
+                    if(auxp == NULL)
+                    printf("Filme não encontrado. Tente novamente!\n");
+               }while(auxp == NULL);
+               remove_arquivo(auxp, fd);
+               vetp = removerP(vetp, dados);
+               vets = removerS(vets, dados);
+              
+               if(flagp == 1)
+               {
+                    atualiza_flag(fp, "iprimary.idx");
+                    flagp = 0;
+               }
+               if(flags == 1)
+               {
+                    atualiza_flag(fs, "ititle.idx");
+                    flags = 0;
+               }
                //remoção: no arquivo de dados-> substituir os dois primeiros caracteres por *|. Nos indices: remover das listas, atualizando a flag para 0, se for 1, e dps salva automaticamente na op 6. Quando for criar ou atualizar o arquivo de indices, fazer verificação(ver se o registro nao tem *|)
+               //uma unica funcao de busca(para buscar com a cheve primaria), talvez de para fazer uma unica de remoçao tbm, ja que é pela chave primaria
           }
           else
           {
                fclose(fd);
                if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
-               salvar(fp, fs, vetp, vets);
+               salvar(fp, fs, vetp, vets, 0, 0);
           }
 
      }while(op != 6);
@@ -152,4 +175,14 @@ Tdados insercao()
      strcpy(aux.first_key, cria_chave(aux));
 
      return aux;
+}
+
+char *remocao()
+{
+     char *chave;
+     chave = (char *)malloc(6);
+
+     printf("Adicione a chave do filme que será removido: ");
+     scanf(" %s", chave);
+     return chave;
 }
