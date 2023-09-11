@@ -26,6 +26,7 @@ int main()
         printf("Aperte enter para iniciar ");
         getchar();
 
+        fd = fopen("movies.txt", "a+");
         do{
           do{
                op = menu();
@@ -35,7 +36,6 @@ int main()
           {
                aux = insercao();
                dados = formata_dados(aux);
-               fd = fopen("movies.txt", "a+");
                fprintf(fd, "%s", dados);   
           }
           else
@@ -134,6 +134,7 @@ int main()
 
                               if(auxp == NULL)
                               printf("Filme não encontrado. Tente novamente!\n");
+                              //fazer opção de sair aqui (nao usar op pq está sendo usado, vai desconfigurar). Se o usuario apertar sair, naõ pode ontinuar a execução normal.
                          }while(auxp == NULL);
 
                          remove_arquivo(auxp, fd);
