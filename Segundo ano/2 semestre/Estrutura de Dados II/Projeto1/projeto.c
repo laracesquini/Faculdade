@@ -99,7 +99,7 @@ int main()
                     dados = formata_dados(aux);
                     fd = fopen("movies.txt", "a+");
                     fprintf(fd, "%s", dados);
-                    fclose(fd); //ver isso do RRN deposi, não está funcionando -> ver um jeito que da certo para o começo e para a inserção.
+                    fclose(fd); 
                     
                     auxp = alocarP(aux.first_key, novo_RRN(fd));
                     auxs = alocarS(aux.first_key, aux.titulo_portugues);

@@ -290,15 +290,17 @@ int novo_RRN(FILE *fd)
 {
     int novo;
 
-    fd = fopen("teste.txt", "r");
+    fd = fopen("movies.txt", "r");
 
     fseek(fd, 0, SEEK_END);
 
     novo = ftell(fd);
 
     fclose(fd);
+    
+    novo = (novo/192) - 1;
 
-    return novo/192;
+    return novo;
 }
 
 void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags)
