@@ -155,6 +155,10 @@ int main()
                          printf("\nFilme removido!\n");
                     }
                }
+               else if(op == 3)
+               {
+                    
+               }
                else
                {
                     if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
