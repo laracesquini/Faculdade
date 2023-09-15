@@ -8,10 +8,12 @@
 int menu();
 Tdados insercao();
 char *remocao();
+char *modificacao();
+int busca_filme();
 
 int main()
 {
-     int flagp, flags, op;
+     int flagp, flags, op, busca;
      FILE *fd, *fp, *fs;
      Iprimario *vetp = NULL, *auxp;
      Isecundario *vets = NULL, *auxs;
@@ -128,36 +130,54 @@ int main()
                     }
                     else
                     {
-                         do{
-                              dados = remocao();
-                              auxp = busca(vetp, dados);
-
-                              if(auxp == NULL)
-                              printf("Filme não encontrado. Tente novamente!\n");
-                              //fazer opção de sair aqui (nao usar op pq está sendo usado, vai desconfigurar). Se o usuario apertar sair, naõ pode ontinuar a execução normal.
-                         }while(auxp == NULL);
-
-                         remove_arquivo(auxp, fd);
-                         vetp = removerP(vetp, dados);
-                         vets = removerS(vets, dados);
-                    
-                         if(flagp == 1)
-                         {
-                              atualiza_flag(fp, "iprimary.idx");
-                              flagp = 0;
-                         }
-                         if(flags == 1)
-                         {
-                              atualiza_flag(fs, "ititle.idx");
-                              flags = 0;
-                         }
                          
-                         printf("\nFilme removido!\n");
+                         dados = remocao();
+                         auxp = busca(vetp, dados);
+
+                         if(auxp == NULL)
+                         printf("Filme não encontrado. Tente novamente!\n");
+                         else
+                         {
+                              remove_arquivo(auxp, fd);
+                              vetp = removerP(vetp, dados);
+                              vets = removerS(vets, dados);
+                         
+                              if(flagp == 1)
+                              {
+                                   atualiza_flag(fp, "iprimary.idx");
+                                   flagp = 0;
+                              }
+                              if(flags == 1)
+                              {
+                                   atualiza_flag(fs, "ititle.idx");
+                                   flags = 0;
+                              }
+                              
+                              printf("\nFilme removido!\n");
+                         }
                     }
                }
                else if(op == 3)
                {
-                    
+                    dados = modificacao();
+                    auxp = busca(vetp, dados);
+
+                    if(auxp == NULL)
+                    {
+                         printf("Esse filme não existe! Tente novamente.\n");
+                    }
+                    else
+                    {
+                         printf("Digite a nova nota: ");
+                         scanf(" %s", dados);
+                         att_arquivo(fd, auxp->RRN, dados);
+                         printf("Nota atualizada!\n");
+                    }
+               }
+               else if(op == 4)
+               {
+                    busca = busca_filme();
+
                }
                else
                {
@@ -179,7 +199,7 @@ int menu()
           printf("Escolha uma opção: \n");
           printf("[1]Inserir um novo filme no catálogo\n");
           printf("[2]Remover um filme\n");
-          printf("[3]Modificar um campo\n");
+          printf("[3]Modificar a nota de um filme\n");
           printf("[4]Buscar filmes\n");
           printf("[5]Ver catálogo\n");
           printf("[6]Sair\n");
@@ -229,5 +249,22 @@ char *remocao()
 
      printf("Adicione a chave do filme que será removido: ");
      scanf(" %s", chave);
+
      return chave;
+}
+
+char *modificacao()
+{
+     char *chave;
+     chave = (char *)malloc(6);
+
+     printf("Adicione a chave do filme que será modificado: ");
+     scanf(" %s", chave);
+
+     return chave;
+}
+
+int busca_filme()
+{
+
 }

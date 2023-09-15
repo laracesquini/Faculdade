@@ -438,3 +438,18 @@ void remove_arquivo(Iprimario *aux, FILE *fd)
 
     return;
 }
+
+void att_arquivo(FILE *fd, int RRN, char *nota)
+{
+    int byte_offset = 192*RRN;
+    char string[193];
+
+    fd = fopen("movies.txt", "r+");
+
+    fseek(fd, byte_offset, SEEK_SET);
+    fscanf(fd, "%[^#]s", string);
+    fseek(fd, -2, SEEK_CUR);
+    fprintf(fd, "%s", nota);
+
+    fclose(fd);
+}
