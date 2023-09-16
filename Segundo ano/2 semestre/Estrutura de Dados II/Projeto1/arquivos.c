@@ -505,5 +505,38 @@ Iprimario *busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo)
 
         return auxp;
     }
+}
 
+void catalogo(FILE *fd)
+{
+    char filme[193], *token;
+    char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
+    int j =1;
+    
+    fd = fopen("movies.txt", "r");
+
+    while(fread(filme, 192, 1, fd) == 1)
+    {
+        if(filme[0] == '*')
+        continue;
+        else
+        {
+            token = strtok(filme, "@");
+
+            int i = 0;
+            printf("\nFilme %d: \n", j);
+            while(token != NULL && i < 7)
+            {
+                printf(campos[i]);
+                printf("%s\n", token);
+                token = strtok(NULL, "@");
+                i++;
+            }
+            j++;
+        }
+    }
+    
+    fclose(fd);
+
+    return;
 }

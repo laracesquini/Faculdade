@@ -208,7 +208,7 @@ int main()
                }
                else if(op == 5)
                {
-                    
+                    catalogo(fd);
                }
                else
                {
