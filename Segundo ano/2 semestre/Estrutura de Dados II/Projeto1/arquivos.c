@@ -452,4 +452,58 @@ void att_arquivo(FILE *fd, int RRN, char *nota)
     fprintf(fd, "%s", nota);
 
     fclose(fd);
+
+    return;
+}
+
+void imprime_filme(Iprimario *aux, FILE *fd)
+{
+    int byte_offset = 192*aux->RRN;
+    char filme[193], *token;
+    char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
+    
+    fd = fopen("movies.txt", "r");
+
+    fseek(fd, byte_offset, SEEK_SET);
+    fscanf(fd, " %[^#]s", filme);
+    token = strtok(filme, "@");
+
+    int i = 0;
+    while(token != NULL && i < 7)
+    {
+        printf(campos[i]);
+        printf("%s\n", token);
+        token = strtok(NULL, "@");
+        i++;
+    }
+    
+    fclose(fd);
+
+    return;
+}
+
+Iprimario *busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo)
+{
+    Isecundario *auxs;
+    Iprimario *auxp;
+
+    auxs = vets;
+    while(auxs != NULL && strcmp(auxs->titulo, titulo) != 0)
+    {
+        auxs = auxs->prox;
+    }
+
+    if(auxs == NULL)
+    return NULL;
+    else
+    {
+        auxp = vetp;
+        while(auxp != NULL && strcmp(auxp->first_key, auxs->first_key) != 0)
+        {
+            auxp = auxp->prox;
+        }
+
+        return auxp;
+    }
+
 }

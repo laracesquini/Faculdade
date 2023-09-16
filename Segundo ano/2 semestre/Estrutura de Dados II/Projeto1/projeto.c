@@ -13,7 +13,7 @@ int busca_filme();
 
 int main()
 {
-     int flagp, flags, op, busca;
+     int flagp, flags, op, op_busca;
      FILE *fd, *fp, *fs;
      Iprimario *vetp = NULL, *auxp;
      Isecundario *vets = NULL, *auxs;
@@ -176,8 +176,39 @@ int main()
                }
                else if(op == 4)
                {
-                    busca = busca_filme();
+                    op_busca = busca_filme();
+                    if(op_busca == 1)
+                    {
+                         char chave[6];
 
+                         printf("Digite a chave do filme buscado: ");
+                         scanf(" %s", chave);
+                         auxp = busca(vetp, chave);
+                         if(auxp == NULL)
+                         printf("Filme não encontrado!");
+                         else
+                         {
+                              imprime_filme(auxp, fd);
+                         }
+                    }
+                    else if(op_busca == 2)
+                    {
+                         char titulo[62];
+
+                         printf("Digite o título: ");
+                         scanf(" %s", titulo);
+                         auxp = busca_secundario(vetp, vets, titulo);
+                         if(auxp == NULL)
+                         printf("Filme não encontrado!");
+                         else
+                         {
+                              imprime_filme(auxp, fd);
+                         }
+                    }
+               }
+               else if(op == 5)
+               {
+                    
                }
                else
                {
@@ -266,5 +297,18 @@ char *modificacao()
 
 int busca_filme()
 {
+     int op;
 
+     printf("Escolha uma opção: \n");
+
+     do{
+          printf("[1]Buscar pela chave\n");
+          printf("[2]Buscar pelo título em português\n");
+          printf("[3]Voltar\n");
+          scanf("%d", &op);
+          if(op < 1 || op > 3)
+          printf("Opção Inválida!\n");
+     }while(op < 1 || op > 3);
+
+     return op;
 }
