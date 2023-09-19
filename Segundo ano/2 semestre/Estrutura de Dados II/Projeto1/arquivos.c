@@ -113,11 +113,11 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
 {
     char *token, aux[20];
-    int sla;
+    int flag;
     Iprimario *auxp;
 
     fp = fopen("iprimary.idx", "r");
-    fscanf(fp, "%d", &sla);
+    fscanf(fp, "%d", &flag);
 
     while(fscanf(fp, "%[^#]s", aux) > 0)
     {
@@ -139,11 +139,11 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
 Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 {
     char *token, aux[100];
-    int sla;
+    int flag;
     Isecundario *auxs;
 
     fs = fopen("ititle.idx", "r");
-    fscanf(fs, "%d", &sla);
+    fscanf(fs, "%d", &flag);
     
     while(fscanf(fs, "%[^#]s", aux) > 0)
     {
@@ -538,5 +538,40 @@ void catalogo(FILE *fd)
     
     fclose(fd);
 
+    return;
+}
+
+void compactar(FILE *fd)
+{
+    FILE *aux;
+    char linha[193];
+
+    fd = fopen("movies.txt", "r");
+    aux = fopen("aux.txt", "w");
+
+    while(fread(linha, 192, 1, fd) == 1)
+    {
+        if(linha[0] == '*')
+        continue;
+        else
+        fwrite(linha, 192, 1, aux);
+    }
+
+    fclose(fd);
+    fclose(aux);
+
+    fd = fopen("movies.txt", "w");
+    aux = fopen("aux.txt", "r");
+
+    while(fread(linha, 192, 1, aux) == 1)
+    {
+        fwrite(linha, 192, 1, fd);
+    }
+    fclose(fd);
+    fclose(aux);
+
+    remove("aux.txt");
+    free(aux);
+    
     return;
 }

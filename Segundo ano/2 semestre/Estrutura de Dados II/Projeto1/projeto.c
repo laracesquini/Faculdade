@@ -53,13 +53,14 @@ int main()
 
                fscanf(fp, "%d", &flagp);
                fscanf(fs, "%d", &flags);
+
+               fclose(fp);
+               fclose(fs);
                
                if(flagp == 1)
                vetp = carrega_indicesP(fp, vetp);
                else
                {
-                    fclose(fp);
-                    
                     cria_indices(fd, fp, fs, vetp, vets, flagp, flags);
                     
                     vetp = carrega_indicesP(fp, vetp);
@@ -71,8 +72,6 @@ int main()
                vets = carrega_indicesS(fs, vets);
                else
                {
-                    fclose(fs);
-                    
                     cria_indices(fd, fp, fs, vetp, vets, flagp, flags);
 
                     vets = carrega_indicesS(fs, vets);
@@ -93,7 +92,7 @@ int main()
           do{
                do{
                op = menu();
-               }while(op < 1 || op > 6);
+               }while(op < 1 || op > 7);
                
                if(op == 1)
                {
@@ -172,7 +171,18 @@ int main()
                          scanf(" %s", dados);
                          att_arquivo(fd, auxp->RRN, dados);
                          printf("Nota atualizada!\n");
-                    }
+
+                         if(flagp == 1)
+                         {
+                              atualiza_flag(fp, "iprimary.idx");
+                              flagp = 0;
+                         }
+                         if(flags == 1)
+                         {
+                              atualiza_flag(fs, "ititle.idx");
+                              flags = 0;
+                         }
+               }
                }
                else if(op == 4)
                {
@@ -210,13 +220,25 @@ int main()
                {
                     catalogo(fd);
                }
+               else if(op == 6)
+               {    //possivel problema -> zerar a cabeça da lista
+                    /*compactar(fd);
+                    cria_indices(fd, fp, fs, vetp, vets, 0, 0);
+                    vetp = carrega_indicesP(fp, vetp);
+                    vets = carrega_indicesS(fs, vets);
+
+                    printf("Vetp: %s", vetp->first_key);
+
+                    flagp = 1;
+                    flags = 1;*/
+               }
                else
                {
                     if(file_exists("iprimary.idx") && file_exists("ititle.idx"))
                     salvar(fp, fs, vetp, vets, 0, 0);
                }
 
-          }while(op != 6);
+          }while(op != 7);
      }
 }
 
@@ -233,9 +255,10 @@ int menu()
           printf("[3]Modificar a nota de um filme\n");
           printf("[4]Buscar filmes\n");
           printf("[5]Ver catálogo\n");
-          printf("[6]Sair\n");
+          printf("[6]Compactar arquivo de dados\n");
+          printf("[7]Sair\n");
           scanf("%d", &op);
-          if(op < 1 || op > 6)
+          if(op < 1 || op > 7)
           printf("Opção inválida\n");
      }
      else
