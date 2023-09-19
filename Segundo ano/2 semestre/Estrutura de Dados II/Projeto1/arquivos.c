@@ -535,6 +535,7 @@ void catalogo(FILE *fd)
             j++;
         }
     }
+    printf("\n");
     
     fclose(fd);
 

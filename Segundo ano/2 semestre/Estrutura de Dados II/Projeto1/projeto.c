@@ -221,16 +221,16 @@ int main()
                     catalogo(fd);
                }
                else if(op == 6)
-               {    //possivel problema -> zerar a cabeça da lista
-                    /*compactar(fd);
+               {    //acho que funcionou
+                    vetp = NULL;
+                    vets = NULL;
+                    compactar(fd);
                     cria_indices(fd, fp, fs, vetp, vets, 0, 0);
                     vetp = carrega_indicesP(fp, vetp);
                     vets = carrega_indicesS(fs, vets);
 
-                    printf("Vetp: %s", vetp->first_key);
-
                     flagp = 1;
-                    flags = 1;*/
+                    flags = 1;
                }
                else
                {
