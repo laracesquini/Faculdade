@@ -206,7 +206,7 @@ int main()
                          char titulo[62];
 
                          printf("Digite o título: ");
-                         scanf(" %s", titulo);
+                         scanf(" %[^\n]s", titulo);
                          auxp = busca_secundario(vetp, vets, titulo);
                          if(auxp == NULL)
                          printf("Filme não encontrado!");

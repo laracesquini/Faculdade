@@ -94,16 +94,14 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
             return p;
         }
         //insere depois da cabeça
-        else if(strcmp(p->titulo, h->titulo)>0)
+        else if(strcmp(p->titulo, h->titulo)>=0)
         {
             p->prox = h->prox;
             h->prox = p;
             return h;
         }
-        else
-        return h;
     }
-    if(strcmp(p->titulo, aux->titulo)<0) //insere no meio da lista
+    if(strcmp(p->titulo, aux->titulo)<=0) //insere no meio da lista
     {
         antes->prox = p;
         p->prox = aux;
@@ -115,8 +113,6 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
         aux->prox = p;
         return h;
     }
-    else
-    return h;
 }
 
 //função que percorre o arquivo de índices primários e carrega eles para a memória RAM
@@ -482,13 +478,20 @@ void remove_arquivo(Iprimario *aux, FILE *fd)
 //ver de mudar essa função, se o campo inteiro for preenchudo, não vai funcionar
 void att_arquivo(FILE *fd, int RRN, char *nota)
 {
-    int byte_offset = 192*RRN;
-    char string[193];
+    int byte_offset = 192*RRN, count;
+    char c;
 
+    count = 0;
     fd = fopen("movies.txt", "r+");
-
+    
     fseek(fd, byte_offset, SEEK_SET);
-    fscanf(fd, "%[^#]s", string);
+    while(count < 7)
+    {
+        c = fgetc(fd);
+        if(c == '@')
+        count++;
+    }
+
     fseek(fd, -2, SEEK_CUR);
     fprintf(fd, "%s", nota);
 
