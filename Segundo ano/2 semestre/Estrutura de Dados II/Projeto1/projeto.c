@@ -207,13 +207,7 @@ int main()
 
                          printf("Digite o título: ");
                          scanf(" %[^\n]s", titulo);
-                         auxp = busca_secundario(vetp, vets, titulo);
-                         if(auxp == NULL)
-                         printf("Filme não encontrado!");
-                         else
-                         {
-                              imprime_filme(auxp, fd);
-                         }
+                         busca_secundario(vetp, vets, titulo, fd);
                     }
                }
                else if(op == 5)
@@ -248,7 +242,7 @@ int menu()
 
      if(file_exists("iprimary.idx"))
      {
-          printf("Bem-vindo!!\n");
+          printf("\nBem-vindo!!\n");
           printf("Escolha uma opção: \n");
           printf("[1]Inserir um novo filme no catálogo\n");
           printf("[2]Remover um filme\n");

@@ -512,6 +512,7 @@ void imprime_filme(Iprimario *aux, FILE *fd)
     fscanf(fd, " %[^#]s", filme);
     token = strtok(filme, "@");
 
+    printf("\n");
     int i = 0;
     while(token != NULL && i < 7)
     {
@@ -526,29 +527,32 @@ void imprime_filme(Iprimario *aux, FILE *fd)
     return;
 }
 
-Iprimario *busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo)
+void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd)
 {
     Isecundario *auxs;
     Iprimario *auxp;
+    int stt = 0;
 
     auxs = vets;
-    while(auxs != NULL && strcmp(auxs->titulo, titulo) != 0)
+    while(auxs != NULL)
     {
+        if(strcmp(auxs->titulo, titulo) == 0)
+        {
+            stt = 1;
+            auxp = vetp;
+            while(auxp != NULL && strcmp(auxp->first_key, auxs->first_key) != 0)
+            {
+                auxp = auxp->prox;
+            }
+            imprime_filme(auxp, fd);
+            auxs = auxs->prox;
+        }
+        else
         auxs = auxs->prox;
     }
 
-    if(auxs == NULL)
-    return NULL;
-    else
-    {
-        auxp = vetp;
-        while(auxp != NULL && strcmp(auxp->first_key, auxs->first_key) != 0)
-        {
-            auxp = auxp->prox;
-        }
-
-        return auxp;
-    }
+    if(stt == 0)
+    printf("Filme não encontrado!\n");
 }
 
 void catalogo(FILE *fd)

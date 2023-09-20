@@ -41,6 +41,6 @@ Isecundario *removerS(Isecundario *h, char *chave);
 void remove_arquivo(Iprimario *aux, FILE *fd);
 void att_arquivo(FILE *fd, int RRN, char *nota);
 void imprime_filme(Iprimario *aux, FILE *fd);
-Iprimario *busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo);
+void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd);
 void catalogo(FILE *fd);
 void compactar(FILE *fd);
