@@ -3,8 +3,7 @@
 #include <string.h>
 #include "arquivos.h"
 
-//0 - desatualizado
-//1 - atualizado
+//declaração das funções utilizadas
 int menu();
 Tdados insercao();
 char *remocao();
@@ -20,15 +19,17 @@ int main()
      Tdados aux;
      char *dados;
      
-     if(file_exists("movies.txt") == 0)
+     //verificar se o arquivo de filmes existe
+     if(file_exists("movies.dat") == 0)
      {
-        printf("Olá! Essa é sua primeira interação com o programa.\n");
-        printf("Logo, somente a operação de inserção está disponível.\n");
-        printf("A partir das outras interações, as outras opções estarão disponíveis\n");
-        printf("Aperte enter para iniciar ");
+        printf("Olá! Essa é sua primeira interação com o programa. Leia as regras para melhor entendimento de seu funcionamento.\n");
+        printf("\t*Nessa interação, somente a operação de inserção está disponível.\n\t*A partir das outras interações, as outras opções estarão disponíveis também.\n");
+        printf("\t*Evite usar acentos e caratceres especiais.\n");
+        printf("\t*O atributo nota só permite números de 0 a 9.\n");
+        printf("\tAperte enter para iniciar ");
         getchar();
 
-        fd = fopen("movies.txt", "a+");
+        fd = fopen("movies.dat", "a+");
         do{
           do{
                op = menu();
@@ -98,7 +99,7 @@ int main()
                {
                     aux = insercao();
                     dados = formata_dados(aux);
-                    fd = fopen("movies.txt", "a+");
+                    fd = fopen("movies.dat", "a+");
                     fprintf(fd, "%s", dados);
                     fclose(fd); 
                     

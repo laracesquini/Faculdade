@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include "arquivos.h"
 
-//função que verifica se um arquivo existe
+//função que verifica se um arquivo existe, retorna 1 se ele existe e 0 se não existe
 int file_exists(char *nome)
 {
     FILE *fp;
@@ -115,7 +115,7 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
     }
 }
 
-//função que percorre o arquivo de índices primários e carrega eles para a memória RAM
+//função que percorre o arquivo de índices primários e carrega eles para a memória RAM, retorna a cabeça da lista
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
 {
     char *token, aux[20];
@@ -144,7 +144,7 @@ Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
     return vetp;
 }
 
-//função que percorre o arquivo de índices secundários e carrega eles para a memória RAM
+//função que percorre o arquivo de índices secundários e carrega eles para a memória RAM, retorna a cabeça da lista
 Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 {
     char *token, aux[100];
@@ -180,7 +180,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     Isecundario *auxs;
     int count = 0;
 
-    fd = fopen("movies.txt", "r");
+    fd = fopen("movies.dat", "r");
 
     while(fread(aux, 192, 1, fd) == 1)
     {
@@ -224,7 +224,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
     return;
 }
 
-//função que cria a chave no formato pedido
+//função que cria a chave no formato pedido, retorna a chave
 char *cria_chave(Tdados aux)
 {
     int i;
@@ -251,7 +251,7 @@ char *cria_chave(Tdados aux)
     return aux1;
 }
 
-//função que formata os dados que foram inseridos pelos usuários
+//função que formata os dados que foram inseridos pelos usuários, retorna os dados formatados
 char *formata_dados(Tdados aux)
 {
     char *dados = (char *)malloc(193);
@@ -286,7 +286,7 @@ char *formata_dados(Tdados aux)
     return dados;
 }
 
-//função que aloca memória para um elemento do tipo Iprimário
+//função que aloca memória para um elemento do tipo Iprimário, retorna o elemento
 Iprimario *alocarP(char *chave, int RRN)
 {
     Iprimario *aux;
@@ -299,7 +299,7 @@ Iprimario *alocarP(char *chave, int RRN)
     return aux;
 }
 
-//função que aloca memória para um elemento do tipo Isecundário
+//função que aloca memória para um elemento do tipo Isecundário, retorna o elemento
 Isecundario *alocarS(char *chave, char *titulo)
 {
     Isecundario *aux;
@@ -311,12 +311,12 @@ Isecundario *alocarS(char *chave, char *titulo)
     return aux;
 }
 
-//função que calcula o RRN do filme que será inserido a seguir
+//função que calcula o RRN do filme que será inserido a seguir, retorna o RRN
 int novo_RRN(FILE *fd)
 {
     int novo;
 
-    fd = fopen("movies.txt", "r");
+    fd = fopen("movies.dat", "r");
 
     fseek(fd, 0, SEEK_END);
 
@@ -389,7 +389,7 @@ void atualiza_flag(FILE *file, char *nome)
     return;
 }
 
-//função que remove o índice primário da lista de índices primários
+//função que remove o índice primário da lista de índices primários, retorna a cabeça da lista
 Iprimario *removerP(Iprimario *h, char *chave)
 {
     Iprimario *aux, *antes;
@@ -417,7 +417,7 @@ Iprimario *removerP(Iprimario *h, char *chave)
     return h;
 }
 
-//função que remove o índice secundário da lista de índices secundários
+//função que remove o índice secundário da lista de índices secundários, retorna a cabeça da lista
 Isecundario *removerS(Isecundario *h, char *chave)
 {
     Isecundario *aux, *antes;
@@ -445,7 +445,7 @@ Isecundario *removerS(Isecundario *h, char *chave)
     return h;
 }
 
-//função que busca um índice primário pela chave
+//função que busca um índice primário pela chave, retorna o elemento encontrado ou NULL
 Iprimario *busca(Iprimario *vetp, char *chave)
 {
     Iprimario *aux;
@@ -465,7 +465,7 @@ void remove_arquivo(Iprimario *aux, FILE *fd)
 {
     int byte_offset = 192*aux->RRN;
     
-    fd = fopen("movies.txt", "r+");
+    fd = fopen("movies.dat", "r+");
 
     fseek(fd, byte_offset, SEEK_SET);
     fprintf(fd, "*|");
@@ -475,14 +475,14 @@ void remove_arquivo(Iprimario *aux, FILE *fd)
     return;
 }
 
-//ver de mudar essa função, se o campo inteiro for preenchudo, não vai funcionar
+//função que atualiza a nota no arquivo de dados
 void att_arquivo(FILE *fd, int RRN, char *nota)
 {
     int byte_offset = 192*RRN, count;
     char c;
 
     count = 0;
-    fd = fopen("movies.txt", "r+");
+    fd = fopen("movies.dat", "r+");
     
     fseek(fd, byte_offset, SEEK_SET);
     while(count < 7)
@@ -500,13 +500,14 @@ void att_arquivo(FILE *fd, int RRN, char *nota)
     return;
 }
 
+//função que imprime o filme buscado pelo usuário
 void imprime_filme(Iprimario *aux, FILE *fd)
 {
     int byte_offset = 192*aux->RRN;
     char filme[193], *token;
     char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
     
-    fd = fopen("movies.txt", "r");
+    fd = fopen("movies.dat", "r");
 
     fseek(fd, byte_offset, SEEK_SET);
     fscanf(fd, " %[^#]s", filme);
@@ -527,6 +528,7 @@ void imprime_filme(Iprimario *aux, FILE *fd)
     return;
 }
 
+//função que busca o filme pelo título e printa os filmes encontrados
 void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd)
 {
     Isecundario *auxs;
@@ -555,13 +557,14 @@ void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd
     printf("Filme não encontrado!\n");
 }
 
+//função que printa o catálogo 
 void catalogo(FILE *fd)
 {
     char filme[193], *token;
     char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
     int j =1;
     
-    fd = fopen("movies.txt", "r");
+    fd = fopen("movies.dat", "r");
 
     while(fread(filme, 192, 1, fd) == 1)
     {
@@ -590,13 +593,14 @@ void catalogo(FILE *fd)
     return;
 }
 
+//função para compactar o arquivo de dados
 void compactar(FILE *fd)
 {
     FILE *aux;
     char linha[193];
 
-    fd = fopen("movies.txt", "r");
-    aux = fopen("aux.txt", "w");
+    fd = fopen("movies.dat", "r");
+    aux = fopen("aux.dat", "w");
 
     while(fread(linha, 192, 1, fd) == 1)
     {
@@ -609,8 +613,8 @@ void compactar(FILE *fd)
     fclose(fd);
     fclose(aux);
 
-    fd = fopen("movies.txt", "w");
-    aux = fopen("aux.txt", "r");
+    fd = fopen("movies.dat", "w");
+    aux = fopen("aux.dat", "r");
 
     while(fread(linha, 192, 1, aux) == 1)
     {
@@ -619,7 +623,7 @@ void compactar(FILE *fd)
     fclose(fd);
     fclose(aux);
 
-    remove("aux.txt");
+    remove("aux.dat");
     free(aux);
     
     return;
