@@ -1,4 +1,4 @@
-//estruturas e protótipos das funções
+//declaração das estruturas utilizadas
 typedef struct dados{
     char first_key[6];
     char titulo_portugues[60];
@@ -21,6 +21,7 @@ typedef struct ititle{
     struct ititle *prox;
 }Isecundario;
 
+//declaração dos protótipos das funções utilizadas
 int file_exists(char *nome);
 Iprimario *insereP(Iprimario *h, Iprimario *p);
 Isecundario *insereS(Isecundario *h, Isecundario *p);
