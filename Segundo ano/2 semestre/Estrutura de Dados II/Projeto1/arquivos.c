@@ -191,7 +191,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
             continue;
         }
 
-        //no caso de estar atualizando os índices, verifica a flag para ver qual índice será atualizado 
+        //no caso de estar atualizando os índices, verifica a flag para ver qual índice será atualizado
         token = strtok(aux, "@");
         if(flagp == 0)
         {
@@ -216,7 +216,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
             vets = insereS(vets, auxs);
         }
     }
-    
+
     fclose(fd);
     //chama a função para escrever os índices atualizados no arquivo
     salvar(fp, fs, vetp, vets, flagp, flags);
@@ -307,6 +307,7 @@ Isecundario *alocarS(char *chave, char *titulo)
     aux = malloc(sizeof(Isecundario));
     strcpy(aux->first_key, chave);
     strcpy(aux->titulo, titulo);
+    aux->prox = NULL;
 
     return aux;
 }
