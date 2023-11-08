@@ -22,7 +22,7 @@ typedef struct ititle{
     struct ititle *prox;
 }Isecundario;
 
-typedef struct node{
+typedef struct no{
     int RRN;
     int folha; //0 não é, 1 é
     char chaves[ordem][6]; 
@@ -31,12 +31,14 @@ typedef struct node{
     int numeroChaves;
     int pai;
     int prox; //so nó folha
-}no;
+}node;
 
 //declaração dos protótipos das funções utilizadas
 int file_exists(char *nome);
 Iprimario *insereP(Iprimario *h, Iprimario *p);
-void  insere_folha(no *folha, char *chave, int RRN);
+void  insere_folha(node *folha, char *chave, int RRN);
+void escreve_no(int RRN, node *no, FILE *fp);
+node *le_no(int RRN, FILE *fp);
 
 
 Isecundario *insereS(Isecundario *h, Isecundario *p);

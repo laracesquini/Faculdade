@@ -630,7 +630,79 @@ void compactar(FILE *fd)
     return;
 }
 
-void  insere_folha(no *folha, char *chave, int RRN)
+void escreve_no(int RRN, node *no, FILE *fp)
+{
+    fp = fopen("ibtree.idx", "r+");
+    fseek(fp, RRN, SEEK_SET);
+    fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
+
+    for(int i = 0; i < no->numeroChaves; i++)
+    {
+        fprintf(fp, "%s,", no->chaves);
+    }
+    fputc('|', fp);
+    for(int i = 0; i < no->numeroChaves; i++)
+    {
+        fprintf(fp, "%d,", no->dadosRRN);
+    }
+    fputc('|', fp);
+    for(int i = 0; i < (no->numeroChaves + 1); i++)
+    {
+        fprintf(fp, "%d,", no->filhos);
+    }
+    fputc('#', fp);
+    fclose(fp);
+}
+
+node *le_no(int RRN, FILE *fp)
+{
+    node *no_lido;
+    char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5;
+
+    fp = fopen("ibtree.idx", "r");
+    fseek(fp, RRN, SEEK_SET);
+    fscanf(fp, "%[^#]s", linha);
+    
+    no_lido = malloc(sizeof(node));
+
+    no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
+    no_lido->folha = strtol(strtok(NULL, "|"), &aux2, 10);
+    no_lido->numeroChaves = strtol(strtok(NULL, "|"), &aux2, 10);
+    no_lido->pai = strtol(strtok(NULL, "|"), &aux2, 10);
+    no_lido->prox = strtol(strtok(NULL, "|"), &aux2, 10);
+
+    aux1 = strtok(NULL, "|");
+    aux2 = strtok(NULL, "|");
+    aux3 = strtok(NULL, "|");
+
+    aux4 = strtok(aux1, ",");
+    strcpy(no_lido->chaves[0], aux4);
+    for(int i = 1; i<no_lido->numeroChaves; i++)
+    {
+        aux4 = strtok(NULL, ",");
+        strcpy(no_lido->chaves[i], aux4);
+    }
+    
+    aux4 = strtok(aux2, ",");
+    no_lido->dadosRRN[0] = strtol(aux4, &aux5, 10);
+    for(int i = 1; i<no_lido->numeroChaves; i++)
+    {
+        aux4 = strtok(NULL, ",");
+        no_lido->dadosRRN[i] = strtol(aux4, &aux5, 10);
+    }
+
+    aux4 = strtok(aux3, ",");
+    no_lido->filhos[0] = strtol(aux4, &aux5, 10);
+    for(int i = 1; i<(no_lido->numeroChaves + 1); i++)
+    {
+        aux4 = strtok(NULL, ",");
+        no_lido->filhos[i] = strtol(aux4, &aux5, 10);;
+    } 
+
+    return no_lido;
+}
+
+void  insere_folha(node *folha, char *chave, int RRN)
 {
     if(folha->numeroChaves != 0)
     {
