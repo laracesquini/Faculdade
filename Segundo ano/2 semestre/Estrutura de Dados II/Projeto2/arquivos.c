@@ -702,6 +702,15 @@ node *le_no(int RRN, FILE *fp)
     return no_lido;
 }
 
+void inicializa_no(node *no)
+{
+    no->RRN = no->pai = no->prox = -1;
+    no->numeroChaves = 0;
+    for(int i = 0; i < ordem; i++)
+    {
+        no->filhos[i] = -1;
+    }
+}
 void  insere_folha(node *folha, char *chave, int RRN)
 {
     if(folha->numeroChaves != 0)
