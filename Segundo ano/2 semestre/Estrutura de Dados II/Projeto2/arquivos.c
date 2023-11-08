@@ -630,37 +630,52 @@ void compactar(FILE *fd)
     return;
 }
 
-void  insere_folha(no folha, char *chave, int RRN)
+void  insere_folha(no *folha, char *chave, int RRN)
 {
-    if(strcmp(folha.chaves[0], "NULL") != 0)
+    if(folha->numeroChaves != 0)
     {
-        char temp1[ordem];
-        for(int i = 0; i<ordem; i++)
-        temp1[i] = folha.chaves[i];
+        char temp1[ordem][6]; 
+        int RRNs[ordem], tam; 
 
-        for(int i = 0; i <= (sizeof(temp1) - 1); i++)
+        for(int i = 0; i < folha->numeroChaves; i++)
+        {
+            strcpy(temp1[i], folha->chaves[i]);
+            RRNs[i] = folha->dadosRRN[i];
+        }
+
+        tam = folha->numeroChaves + 1;
+        for(int i = 0; i < tam; i++)
         {
             if(strcmp(chave, temp1[i]) == 0)
             {
-                printf("Essa chave já existe, nãi é possível realizar a inserção\n");
+                printf("Essa chave já existe, não é possível realizar a inserção\n");
                 break;
             }
             else if(strcmp(chave, temp1[i]) < 0)
             {
-                strcpy(folha.chaves[i], chave);
-
-                for(int j = i+1; j < sizeof(temp1); j++)
+                
+                strcpy(folha->chaves[i], chave);
+                folha->dadosRRN[i] = RRN;
+                
+                for(int j = i+1; j < tam; j++)
                 {
-                    strcpy(folha.chaves[j], temp1[j-1]);
+                    strcpy(folha->chaves[j], temp1[j-1]);
+                    folha->dadosRRN[j] = RRNs[j-1];
                 }
+                folha->numeroChaves++;
                 break;
             }
-            else if(i + 1 == sizeof(temp1))
+            else if(i + 1 == (tam - 1))
             {
-                strcmp(folha.chaves[i], chave);
+                printf("Chega aqui");
+                strcpy(folha->chaves[i+1], chave);
+                folha->dadosRRN[i+1] = RRN;
+                folha->numeroChaves++;
                 break;
             }
             //testar isso depois
         }
     }
+    
+    
 }

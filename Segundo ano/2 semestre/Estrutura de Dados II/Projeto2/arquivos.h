@@ -25,7 +25,7 @@ typedef struct ititle{
 typedef struct node{
     int RRN;
     int folha; //0 não é, 1 é
-    char chaves[ordem][5]; 
+    char chaves[ordem][6]; 
     int dadosRRN[ordem]; //só usado se for folha
     int filhos[ordem + 1]; //usado se não for folha
     int numeroChaves;
@@ -36,7 +36,7 @@ typedef struct node{
 //declaração dos protótipos das funções utilizadas
 int file_exists(char *nome);
 Iprimario *insereP(Iprimario *h, Iprimario *p);
-void  insere_folha(no folha, char *chave, int RRN);
+void  insere_folha(no *folha, char *chave, int RRN);
 
 
 Isecundario *insereS(Isecundario *h, Isecundario *p);
