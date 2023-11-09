@@ -40,7 +40,7 @@ void  insere_folha(node *folha, char *chave, int RRN);
 void escreve_no(int RRN, node *no, FILE *fp);
 node *le_no(int RRN, FILE *fp);
 void inicializa_no(node *no);
-
+node *busca_no(node *raiz, char *chave, FILE *fp);
 
 Isecundario *insereS(Isecundario *h, Isecundario *p);
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp);

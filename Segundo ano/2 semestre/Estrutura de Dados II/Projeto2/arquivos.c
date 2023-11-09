@@ -748,7 +748,6 @@ void  insere_folha(node *folha, char *chave, int RRN)
             }
             else if(i + 1 == (tam - 1))
             {
-                printf("Chega aqui");
                 strcpy(folha->chaves[i+1], chave);
                 folha->dadosRRN[i+1] = RRN;
                 folha->numeroChaves++;
@@ -757,6 +756,43 @@ void  insere_folha(node *folha, char *chave, int RRN)
             //testar isso depois
         }
     }
+    else
+    {
+        strcpy(folha->chaves[0], chave);
+        folha->dadosRRN[0] = RRN;
+        folha->numeroChaves++;
+    }
+}
+
+node *busca_no(node *raiz, char *chave, FILE *fp)
+{
+    node *no_atual;
+    char temp1[ordem][6];
+    int RRNs[ordem], tam; 
+
+    no_atual = raiz;
     
-    
+    while(no_atual->folha == 0)
+    {
+        for(int i = 0; i < no_atual->numeroChaves; i++)
+        {
+            strcpy(temp1[i], no_atual->chaves[i]);
+            RRNs[i] = no_atual->dadosRRN[i];
+        }
+        tam = no_atual->numeroChaves + 1;
+        for(int i = 0; i < tam; i++)
+        {
+            if(strcmp(chave, temp1[i] == 0))
+            {
+                no_atual = le_no(no_atual->filhos[i+1], fp);
+                break;
+            }
+            else if(strcmp(chave, temp1[i]) < 0)
+            {
+                no_atual = le_no((no_atual->filhos[i]), fp);
+                break;
+            }
+            //desenhar situação e ver parada do for e último if 
+        }
+    }
 }
