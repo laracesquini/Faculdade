@@ -39,7 +39,7 @@ Iprimario *insereP(Iprimario *h, Iprimario *p);
 void  insere_folha(node *folha, char *chave, int RRN);
 void escreve_no(int RRN, node *no, FILE *fp);
 node *le_no(int RRN, FILE *fp);
-void inicializa_no(node *no);
+node *cria_no();
 node *busca_no(node *raiz, char *chave, FILE *fp);
 
 Isecundario *insereS(Isecundario *h, Isecundario *p);

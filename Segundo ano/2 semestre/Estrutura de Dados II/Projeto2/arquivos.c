@@ -632,23 +632,25 @@ void compactar(FILE *fd)
 
 void escreve_no(int RRN, node *no, FILE *fp)
 {
+    int byte_offset = 65*RRN;
+    
     fp = fopen("ibtree.idx", "r+");
-    fseek(fp, RRN, SEEK_SET);
+    fseek(fp, byte_offset, SEEK_SET);
     fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
 
-    for(int i = 0; i < no->numeroChaves; i++)
+    for(int i = 0; i < ordem - 1; i++)
     {
-        fprintf(fp, "%s,", no->chaves);
+        fprintf(fp, "%s,", no->chaves[i]);
     }
     fputc('|', fp);
-    for(int i = 0; i < no->numeroChaves; i++)
+    for(int i = 0; i < ordem - 1 ; i++)
     {
-        fprintf(fp, "%d,", no->dadosRRN);
+        fprintf(fp, "%d,", no->dadosRRN[i]);
     }
     fputc('|', fp);
-    for(int i = 0; i < (no->numeroChaves + 1); i++)
+    for(int i = 0; i < ordem; i++)
     {
-        fprintf(fp, "%d,", no->filhos);
+        fprintf(fp, "%d,", no->filhos[i]);
     }
     fputc('#', fp);
     fclose(fp);
@@ -657,13 +659,14 @@ void escreve_no(int RRN, node *no, FILE *fp)
 node *le_no(int RRN, FILE *fp)
 {
     node *no_lido;
+    int byte_offset = 65*RRN;
     char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5;
 
     fp = fopen("ibtree.idx", "r");
-    fseek(fp, RRN, SEEK_SET);
+    fseek(fp, byte_offset, SEEK_SET);
     fscanf(fp, "%[^#]s", linha);
     
-    no_lido = malloc(sizeof(node));
+    no_lido = cria_no();
 
     no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
     no_lido->folha = strtol(strtok(NULL, "|"), &aux2, 10);
@@ -702,14 +705,24 @@ node *le_no(int RRN, FILE *fp)
     return no_lido;
 }
 
-void inicializa_no(node *no)
+node *cria_no()
 {
-    no->RRN = no->pai = no->prox = -1;
+    node *no;
+    no = malloc(sizeof(node));
+
+    no->RRN = no->pai = no->prox = no->folha = 0;
     no->numeroChaves = 0;
+    for(int i = 0; i < ordem - 1; i++)
+    {
+        no->dadosRRN[i] = 0;
+        strcpy(no->chaves[i], "#####");
+    }
     for(int i = 0; i < ordem; i++)
     {
-        no->filhos[i] = -1;
+        no->filhos[i] = 0;
     }
+
+    return no;
 }
 void  insere_folha(node *folha, char *chave, int RRN)
 {
@@ -753,7 +766,6 @@ void  insere_folha(node *folha, char *chave, int RRN)
                 folha->numeroChaves++;
                 break;
             }
-            //testar isso depois
         }
     }
     else
@@ -779,10 +791,10 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
             strcpy(temp1[i], no_atual->chaves[i]);
             RRNs[i] = no_atual->dadosRRN[i];
         }
-        tam = no_atual->numeroChaves + 1;
-        for(int i = 0; i < tam; i++)
+
+        for(int i = 0; i < no_atual->numeroChaves; i++)
         {
-            if(strcmp(chave, temp1[i] == 0))
+            if(strcmp(chave, temp1[i]) == 0)
             {
                 no_atual = le_no(no_atual->filhos[i+1], fp);
                 break;
@@ -792,7 +804,13 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
                 no_atual = le_no((no_atual->filhos[i]), fp);
                 break;
             }
-            //desenhar situação e ver parada do for e último if 
+            else if(i+1 == no_atual->numeroChaves)
+            {
+                no_atual = le_no((no_atual->filhos[i+1]), fp);
+                break;
+            }
         }
     }
+
+    return no_atual;
 }
