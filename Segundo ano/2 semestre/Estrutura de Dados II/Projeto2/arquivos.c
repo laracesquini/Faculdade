@@ -652,7 +652,7 @@ void escreve_no(int RRN, node *no, FILE *fp)
     {
         fprintf(fp, "%d,", no->filhos[i]);
     }
-    fputc('#', fp);
+    fputc('@', fp);
     fclose(fp);
 }
 
@@ -660,12 +660,11 @@ node *le_no(int RRN, FILE *fp)
 {
     node *no_lido;
     int byte_offset = 65*RRN;
-    char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5;
+    char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
     fp = fopen("ibtree.idx", "r");
     fseek(fp, byte_offset, SEEK_SET);
-    fscanf(fp, "%[^#]s", linha);
-    
+    fscanf(fp, "%[^@]s", linha);
     no_lido = cria_no();
 
     no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
@@ -789,6 +788,7 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
         for(int i = 0; i < no_atual->numeroChaves; i++)
         {
             strcpy(temp1[i], no_atual->chaves[i]);
+            //printf("%s ", temp1[i]);
             RRNs[i] = no_atual->dadosRRN[i];
         }
 
@@ -800,7 +800,8 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
                 break;
             }
             else if(strcmp(chave, temp1[i]) < 0)
-            {
+            {   
+                //printf("%d ", no_atual->filhos[i]);
                 no_atual = le_no((no_atual->filhos[i]), fp);
                 break;
             }
@@ -813,4 +814,35 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
     }
 
     return no_atual;
+}
+
+void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp)
+{
+   node *no_antigo = cria_no();
+
+   no_antigo = busca_no(raiz, chave, fp); 
+   insere_folha(no_antigo, chave, RRN_dado);
+
+   if(no_antigo->numeroChaves == ordem)
+   {
+        node *novo_no = cria_no();
+        novo_no->folha = 1;
+        novo_no->pai = no_antigo->pai;
+        int meio = (ordem/2);
+        for(int i = meio; i < ordem; i++)
+        {
+            strcpy(novo_no->chaves[i-meio], no_antigo->chaves[i]);
+            novo_no->dadosRRN[i-meio] = no_antigo->dadosRRN[i]; 
+
+            strcpy(no_antigo->chaves[i], "#####");
+            no_antigo->dadosRRN[i] = 0;
+        }
+        novo_no->prox = no_antigo->prox;
+        no_antigo->prox = novo_no->RRN;
+        //VER POSSIBILIDADE DE CRIAR NOVO NÓ COM RRN CERTO, OU SETAR DEPOIS(PARA NÃO ATRAPALHAR NO CADO DE NÓS AUXILIXARES)
+        //ESCREVER OS NOVSO NÓS(COM AS CHAVES SEPARADAS) NO ARQUIVO AGORA?
+        //ESCREVER O NÓ QUE RECEBE NOVA CHAVE QUANDO?
+        //ACHO QUE REESCREVER NO ANTIGO E ESCREVER NOVO NÓ AGORA 
+        //NA FUNÇÃO INSERIR NO PAI, ESCREVER A CADA CHAMADA RECURSIVA?
+   }
 }

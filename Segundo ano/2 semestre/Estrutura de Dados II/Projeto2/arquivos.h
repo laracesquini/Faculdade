@@ -41,6 +41,7 @@ void escreve_no(int RRN, node *no, FILE *fp);
 node *le_no(int RRN, FILE *fp);
 node *cria_no();
 node *busca_no(node *raiz, char *chave, FILE *fp);
+void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp);
 
 Isecundario *insereS(Isecundario *h, Isecundario *p);
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp);
