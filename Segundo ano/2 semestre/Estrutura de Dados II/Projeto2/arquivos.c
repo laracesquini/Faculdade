@@ -845,4 +845,5 @@ void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp)
         //ACHO QUE REESCREVER NO ANTIGO E ESCREVER NOVO NÓ AGORA 
         //NA FUNÇÃO INSERIR NO PAI, ESCREVER A CADA CHAMADA RECURSIVA?
    }
+   //else -> escreve no arquivo
 }
