@@ -897,7 +897,42 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node *rai
         return;
     }
 
-    //node *pai = le_no(no_antigo->pai, fp);
+    node *pai = le_no(no_antigo->pai, fp);
+    int temp1[ordem];
+    char temp2[ordem][6];
+    int tam = pai->numeroChaves + 1;
+
+    for(int i = 0; i < tam; i++)
+    temp1[i] = pai->filhos[i];
+    
+    for(int i = 0; i < tam - 1; i++)
+    strcpy(temp2[i], pai->chaves[i]);
     
 
+    for(int i = 0; i < tam; i++)
+    {
+        if(temp1[i] == no_antigo->RRN)
+        {
+            strcpy(pai->chaves[i], chave_promovida);
+            pai->filhos[i+1] = novo_no->RRN;
+
+            for(int j = i+1; j < tam; j++)
+            {
+                strcpy(pai->chaves[j], temp2[j-1]);
+                pai->filhos[j+1] = temp1[j];
+            }
+            pai->numeroChaves++;
+        }
+
+        if(pai->numeroChaves == ordem)
+        {
+
+        }
+        else
+        {
+            escreve_no(pai->RRN, pai, fp);
+        }
+    }
+    //ACHO QUE ATÉ AQUI ESTÁ CERTO, CONFIRMAR DEPOIS 
+    //RESOLVER QUESTÃO DE LIDA E ESCRITA NO ARQUIVO-> RRNS MAIORES QUE 9, VAI MUDAR O BYTEOFFSET
 }
