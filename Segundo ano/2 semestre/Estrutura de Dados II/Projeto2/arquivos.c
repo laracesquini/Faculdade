@@ -632,11 +632,16 @@ void compactar(FILE *fd)
 
 void escreve_no(int RRN, node *no, FILE *fp)
 {
-    int byte_offset = 65*RRN;
+    int byte_offset = 81*RRN;
     
-    fp = fopen("ibtree.idx", "r+");
+    fp = fopen("ibtree.idx", "r+b");
     fseek(fp, byte_offset, SEEK_SET);
-    fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
+    char linha[100];
+    strcpy(linha, "10|1|3|2|3|ABV12,BLU23,CUL12,#####,#####,|0,4,7,0,0,|0,0,0,0,0,0,@");
+    fwrite(linha, 81, 1, fp);
+    //FORMATAR NÓS
+    //APARENTEMENTE FUNCIONANDO
+    /*fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
 
     for(int i = 0; i < ordem - 1; i++)
     {
@@ -652,19 +657,20 @@ void escreve_no(int RRN, node *no, FILE *fp)
     {
         fprintf(fp, "%d,", no->filhos[i]);
     }
-    fputc('@', fp);
+    fputc('@', fp);*/
     fclose(fp);
 }
 
 node *le_no(int RRN, FILE *fp)
 {
     node *no_lido;
-    int byte_offset = 65*RRN;
+    int byte_offset = 81*RRN;
     char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
-    fp = fopen("ibtree.idx", "r");
+    fp = fopen("ibtree.idx", "rb");
     fseek(fp, byte_offset, SEEK_SET);
-    fscanf(fp, "%[^@]s", linha);
+    fread(linha, 81, 1, fp);
+    //printf("%s \n", linha);
     no_lido = cria_no();
 
     no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
@@ -856,7 +862,6 @@ void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp)
         }
         novo_no->numeroChaves = no_antigo->numeroChaves = ordem/2;
         novo_no->RRN = novo_RRN_no(fp);
-        printf("%d", novo_no->RRN);
         novo_no->prox = no_antigo->prox;
         no_antigo->prox = novo_no->RRN;
         escreve_no(no_antigo->RRN, no_antigo, fp);
