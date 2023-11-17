@@ -42,8 +42,8 @@ node *cria_no();
 int novo_RRN_no(FILE *fp);
 void  insere_folha(node *folha, char *chave, int RRN);
 node *busca_no(node *raiz, char *chave, FILE *fp);
-void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp);
-void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node *raiz, FILE *fp);
+void inserir(char *chave, int RRN_dado, node **raiz, FILE *fp);
+void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **raiz, FILE *fp);
 
 Isecundario *insereS(Isecundario *h, Isecundario *p);
 Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp);

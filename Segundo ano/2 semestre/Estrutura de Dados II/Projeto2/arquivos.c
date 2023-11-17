@@ -632,16 +632,13 @@ void compactar(FILE *fd)
 
 void escreve_no(int RRN, node *no, FILE *fp)
 {
-    int byte_offset = 81*RRN;
+    int byte_offset = 65*RRN;
     
-    fp = fopen("ibtree.idx", "r+b");
+    fp = fopen("ibtree.idx", "r+");
     fseek(fp, byte_offset, SEEK_SET);
-    char linha[100];
-    strcpy(linha, "10|1|3|2|3|ABV12,BLU23,CUL12,#####,#####,|0,4,7,0,0,|0,0,0,0,0,0,@");
-    fwrite(linha, 81, 1, fp);
     //FORMATAR NÓS
     //APARENTEMENTE FUNCIONANDO
-    /*fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
+    fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
 
     for(int i = 0; i < ordem - 1; i++)
     {
@@ -657,20 +654,21 @@ void escreve_no(int RRN, node *no, FILE *fp)
     {
         fprintf(fp, "%d,", no->filhos[i]);
     }
-    fputc('@', fp);*/
+    fputc('@', fp);
     fclose(fp);
 }
 
 node *le_no(int RRN, FILE *fp)
 {
     node *no_lido;
-    int byte_offset = 81*RRN;
+    int byte_offset = 65*RRN;
     char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
-    fp = fopen("ibtree.idx", "rb");
+    fp = fopen("ibtree.idx", "r");
     fseek(fp, byte_offset, SEEK_SET);
-    fread(linha, 81, 1, fp);
+    //fread(linha, 81, 1, fp);
     //printf("%s \n", linha);
+    fscanf(fp, "%[^@]s", linha);
     no_lido = cria_no();
 
     no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
@@ -707,6 +705,7 @@ node *le_no(int RRN, FILE *fp)
         no_lido->filhos[i] = strtol(aux4, &aux5, 10);;
     } 
     fclose(fp);
+
     return no_lido;
 }
 
@@ -805,14 +804,17 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
     char temp1[ordem][6];
     int RRNs[ordem], tam; 
 
+    if(raiz->RRN == 0)
     no_atual = raiz;
-    
+    else
+    no_atual = le_no(raiz->RRN, fp);
+
     while(no_atual->folha == 0)
     {
         for(int i = 0; i < no_atual->numeroChaves; i++)
         {
             strcpy(temp1[i], no_atual->chaves[i]);
-            RRNs[i] = no_atual->dadosRRN[i];
+            printf("%s ", temp1[i]);
         }
 
         for(int i = 0; i < no_atual->numeroChaves; i++)
@@ -824,8 +826,10 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
             }
             else if(strcmp(chave, temp1[i]) < 0)
             {   
-                //printf("%d ", no_atual->filhos[i]);
+                printf("2 - ENtra aqui");
+                //printf("Filhos: %d \n", no_atual->filhos[i]);
                 no_atual = le_no((no_atual->filhos[i]), fp);
+                //printf("%d ", no_atual->RRN);
                 break;
             }
             else if(i+1 == no_atual->numeroChaves)
@@ -839,11 +843,12 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
     return no_atual;
 }
 
-void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp)
+void inserir(char *chave, int RRN_dado, node **raiz, FILE *fp)
 {
    node *no_antigo;
 
-   no_antigo = busca_no(raiz, chave, fp); 
+   no_antigo = busca_no((*raiz), chave, fp);
+   printf("No antigo: %d\n", no_antigo->RRN); 
    insere_folha(no_antigo, chave, RRN_dado);
 
    if(no_antigo->numeroChaves == ordem)
@@ -866,23 +871,26 @@ void inserir(char *chave, int RRN_dado, node *raiz, FILE *fp)
         no_antigo->prox = novo_no->RRN;
         escreve_no(no_antigo->RRN, no_antigo, fp);
         escreve_no(novo_no->RRN, novo_no, fp);
+        getchar();
         //VER POSSIBILIDADE DE CRIAR NOVO NÓ COM RRN CERTO, OU SETAR DEPOIS(PARA NÃO ATRAPALHAR NO CADO DE NÓS AUXILIXARES)
         //ESCREVER OS NOVSO NÓS(COM AS CHAVES SEPARADAS) NO ARQUIVO AGORA?
         //ESCREVER O NÓ QUE RECEBE NOVA CHAVE QUANDO?
         //ACHO QUE REESCREVER NO ANTIGO E ESCREVER NOVO NÓ AGORA 
         //NA FUNÇÃO INSERIR NO PAI, ESCREVER A CADA CHAMADA RECURSIVA?
+        
         insere_pai(no_antigo, novo_no->chaves[0], novo_no, raiz, fp);
    }
    else
    {
         escreve_no(no_antigo->RRN, no_antigo, fp);
+        getchar();
    }
    //else -> escreve no arquivo
 }
 
-void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node *raiz, FILE *fp)
+void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **raiz, FILE *fp)
 {
-    if(raiz->RRN == no_antigo->RRN)
+    if((*raiz)->RRN == no_antigo->RRN)
     {
         node *nova_raiz = cria_no();
         strcpy(nova_raiz->chaves[0], chave_promovida);
@@ -890,12 +898,13 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node *rai
         nova_raiz->filhos[0] = no_antigo->RRN;
         nova_raiz->filhos[1] = novo_no->RRN;
         nova_raiz->RRN = novo_RRN_no(fp);
-        raiz = nova_raiz;
-        no_antigo->pai = raiz->RRN;
-        novo_no->pai = raiz->RRN;
+        *raiz = nova_raiz;
+        no_antigo->pai = (*raiz)->RRN;
+        novo_no->pai = (*raiz)->RRN;
         escreve_no(no_antigo->RRN, no_antigo, fp);
         escreve_no(novo_no->RRN, novo_no, fp);
-        escreve_no(raiz->RRN, raiz, fp);
+        escreve_no((*raiz)->RRN, (*raiz), fp);
+        getchar();
 
         //RRN DA NOVA RAIZ VAI PRECISAR SER SOBREESCRITO NO HEADER DO ARQUIVO
         //VERIFICAÇÃO NA MAIN-> SE ARQUIVO IBTREE NÃO EXISTE, RAIZ É 0 E CRIA PRIMEIRO NÓ
@@ -907,17 +916,30 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node *rai
     char temp2[ordem][6];
     int tam = pai->numeroChaves + 1;
 
+    //printf("RNN nó antigo: %d", no_antigo->RRN);
+    //printf("\nRRN no novo: %d", novo_no->RRN);
     for(int i = 0; i < tam; i++)
-    temp1[i] = pai->filhos[i];
+    {
+        temp1[i] = pai->filhos[i];
+        printf("%d ", temp1[i]);
+    }
+    
     
     for(int i = 0; i < tam - 1; i++)
-    strcpy(temp2[i], pai->chaves[i]);
+    {
+        strcpy(temp2[i], pai->chaves[i]);
+        printf("%s ", temp2[i]);
+    }
     
+    printf("no antigo rrn: %d", no_antigo->RRN);
 
     for(int i = 0; i < tam; i++)
     {
+        printf("entra aqui");
+        printf("%d ", temp1[i]);
         if(temp1[i] == no_antigo->RRN)
         {
+            printf("Entra aqui split i = %d", i);
             strcpy(pai->chaves[i], chave_promovida);
             pai->filhos[i+1] = novo_no->RRN;
 
@@ -931,11 +953,51 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node *rai
 
         if(pai->numeroChaves == ordem)
         {
+            node *outro_no = cria_no();
+            outro_no->folha = 0;
+            outro_no->pai = pai->pai;
 
+            int meio = (ordem/2);
+            for(int i = meio+1; i < ordem; i++)
+            {
+                strcpy(outro_no->chaves[i-(meio+1)], pai->chaves[i]);
+                 
+
+                strcpy(pai->chaves[i], "#####");
+            }
+            for(int i = meio+1; i< ordem + 1; i++)
+            {
+                outro_no->filhos[i-(meio+1)] = pai->filhos[i];
+                pai->filhos[i] = 0;
+            }
+            strcpy(chave_promovida, pai->chaves[meio]);
+            strcpy(pai->chaves[meio], "#####");
+            pai->numeroChaves = ordem/2;
+            outro_no->numeroChaves = (ordem/2) - 1;
+            outro_no->RRN = novo_RRN_no(fp);
+            
+            for(int i = 0; i < pai->numeroChaves + 1; i++)
+            {
+                node *aux = le_no(pai->filhos[i], fp);
+                aux->pai = pai->RRN;
+            }
+
+            for(int i = 0; i < outro_no->numeroChaves + 1; i++)
+            {
+                node *aux = le_no(outro_no->filhos[i], fp);
+                aux->pai = outro_no->RRN;
+            }
+            escreve_no(pai->RRN, pai, fp);
+            escreve_no(outro_no->RRN, outro_no, fp);
+
+            insere_pai(pai, chave_promovida, outro_no, raiz, fp);
+            //talvez reescrever os filhos aqui
         }
         else
         {
             escreve_no(pai->RRN, pai, fp);
+            getchar();
+            //talvez reescrever os filhos também
         }
     }
     //ACHO QUE ATÉ AQUI ESTÁ CERTO, CONFIRMAR DEPOIS 
