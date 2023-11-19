@@ -35,33 +35,26 @@ typedef struct no{
 
 //declaração dos protótipos das funções utilizadas
 int file_exists(char *nome);
-Iprimario *insereP(Iprimario *h, Iprimario *p);
 void escreve_no(int RRN, node *no, FILE *fp);
 node *le_no(int RRN, FILE *fp);
 node *cria_no();
 int novo_RRN_no(FILE *fp);
-void  insere_folha(node *folha, char *chave, int RRN);
+int insere_folha(node *folha, char *chave, int RRN);
 node *busca_no(node *raiz, char *chave, FILE *fp);
-void inserir(char *chave, int RRN_dado, node **raiz, FILE *fp);
+int inserir(char *chave, int RRN_dado, node **raiz, FILE *fp);
 void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **raiz, FILE *fp);
-
+int busca(node *raiz, char *chave, FILE *fp);
 Isecundario *insereS(Isecundario *h, Isecundario *p);
-Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp);
 Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets);
-void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags);
+void cria_indices(FILE *fd, FILE *fs, Isecundario *vets, int flags);
 char *cria_chave(Tdados aux);
 char *formata_dados(Tdados aux);
-Iprimario *alocarP(char *chave, int RRN);
 Isecundario *alocarS(char *chave, char *titulo);
 int novo_RRN(FILE *fd);
-void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags);
+void salvar(FILE *fs, Isecundario *vets, int flags);
 void atualiza_flag(FILE *file, char *nome);
-Iprimario *busca(Iprimario *vetp, char *chave);
-Iprimario *removerP(Iprimario *h, char *chave);
-Isecundario *removerS(Isecundario *h, char *chave);
-void remove_arquivo(Iprimario *aux, FILE *fd);
 void att_arquivo(FILE *fd, int RRN, char *nota);
+
 void imprime_filme(Iprimario *aux, FILE *fd);
 void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd);
 void catalogo(FILE *fd);
-void compactar(FILE *fd);

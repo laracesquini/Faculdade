@@ -19,56 +19,6 @@ int file_exists(char *nome)
     return 0;
 }
 
-//função que insere de forma ordenada o índice primário na lista de índices primários, retornando a nova cabeça da lista
-Iprimario *insereP(Iprimario *h, Iprimario *p)
-{
-    Iprimario *aux, *antes;
-
-    //se a cabeça for nula, retorna o próprio elemento, que será a nova cabeça
-    if(!h)
-    {
-        return p;
-    }
-    aux = antes = h; //senão, as variáveis auxiliares apontam para a cabeça para começar a busca pelo lugar que o elemento será inserido
-    while(aux->prox && strcmp(p->first_key, aux->first_key)>0) //se não chegou no final da lista e o código que será inserido é maior que o atual, continua procurando
-    {
-        antes = aux;
-        aux = aux->prox;
-    }
-    if(aux == h) //insere antes ou depois da cabeça
-    {
-        //insere antes da cabeça
-        if(strcmp(p->first_key, h->first_key)<0)
-        {
-            p->prox = h;
-            return p;
-        }
-        //insere depois da cabeça
-        else if(strcmp(p->first_key, h->first_key)>0)
-        {
-            p->prox = h->prox;
-            h->prox = p;
-            return h;
-        }
-        else
-        return h;
-    }
-    if(strcmp(p->first_key, aux->first_key)<0) //insere no meio da lista
-    {
-        antes->prox = p;
-        p->prox = aux;
-        return h;
-    }
-    else if(strcmp(p->first_key, aux->first_key)>0) //insere como ultimo elemento
-    {
-        p->prox = aux->prox;
-        aux->prox = p;
-        return h;
-    }
-    else
-    return h;
-}
-
 //função que insere de forma ordenada o índice secundário na lista de índices secundários, retornando a nova cabeça da lista
 Isecundario *insereS(Isecundario *h, Isecundario *p)
 {
@@ -115,35 +65,6 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
     }
 }
 
-//função que percorre o arquivo de índices primários e carrega eles para a memória RAM, retorna a cabeça da lista
-Iprimario *carrega_indicesP(FILE *fp, Iprimario *vetp)
-{
-    char *token, aux[20];
-    int flag;
-    Iprimario *auxp;
-
-    //abre o arquivo para leitura e lê a flag
-    fp = fopen("iprimary.idx", "r");
-    fscanf(fp, "%d", &flag);
-    
-    //lê cada índice separando o RRN e o código e inserindo na lista que está na memória RAM
-    while(fscanf(fp, "%[^#]s", aux) > 0)
-    {
-        fgetc(fp);
-        token = strtok(aux, "@");
-        auxp = malloc(sizeof(Iprimario));
-        strcpy(auxp->first_key, token);
-        token = strtok(NULL, "@");
-        auxp->RRN = atoi(token);
-        auxp->prox = NULL;
-        vetp = insereP(vetp, auxp);
-    }
-
-    fclose(fp);
-    
-    return vetp;
-}
-
 //função que percorre o arquivo de índices secundários e carrega eles para a memória RAM, retorna a cabeça da lista
 Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 {
@@ -173,10 +94,9 @@ Isecundario *carrega_indicesS(FILE *fs, Isecundario *vets)
 }
 
 //função que cria ou atualiza os índices com base no arquivo de dados
-void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags)
+void cria_indices(FILE *fd, FILE *fs,  Isecundario *vets,  int flags)
 {
     char aux[193], *token;
-    Iprimario *auxp;
     Isecundario *auxs;
     int count = 0;
 
@@ -193,17 +113,6 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
 
         //no caso de estar atualizando os índices, verifica a flag para ver qual índice será atualizado
         token = strtok(aux, "@");
-        if(flagp == 0)
-        {
-            //inicializa as informações do índice primário e adiciona na lista
-            auxp = malloc(sizeof(Iprimario));
-            strcpy(auxp->first_key, token);
-            auxp->RRN = count;
-            auxp->prox = NULL;
-            count++;
-
-            vetp = insereP(vetp, auxp);
-        }
         if(flags == 0)
         {
             //inicializa as informações do índice secundário e adiciona na lista
@@ -219,7 +128,7 @@ void cria_indices(FILE *fd, FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *ve
 
     fclose(fd);
     //chama a função para escrever os índices atualizados no arquivo
-    salvar(fp, fs, vetp, vets, flagp, flags);
+    salvar(fs, vets, flags);
     
     return;
 }
@@ -286,19 +195,6 @@ char *formata_dados(Tdados aux)
     return dados;
 }
 
-//função que aloca memória para um elemento do tipo Iprimário, retorna o elemento
-Iprimario *alocarP(char *chave, int RRN)
-{
-    Iprimario *aux;
-
-    aux = malloc(sizeof(Iprimario));
-    strcpy(aux->first_key, chave);
-    aux->RRN = RRN;
-    aux->prox = NULL;
-
-    return aux;
-}
-
 //função que aloca memória para um elemento do tipo Isecundário, retorna o elemento
 Isecundario *alocarS(char *chave, char *titulo)
 {
@@ -325,34 +221,15 @@ int novo_RRN(FILE *fd)
 
     fclose(fd);
     
-    novo = (novo/192) - 1;
+    novo = (novo/192);
 
     return novo;
 }
 
 //função que salva os índices no arquivo
-void salvar(FILE *fp, FILE *fs, Iprimario *vetp, Isecundario *vets, int flagp, int flags)
+void salvar(FILE *fs, Isecundario *vets, int flags)
 {
-    Iprimario *auxp;
     Isecundario *auxs;
-
-    if(flagp == 0)
-    {
-        fp = fopen("iprimary.idx", "w");
-
-        //printa a flag no arquivo
-        fprintf(fp, "%d", 1);
-
-        auxp = vetp;
-        //printa os dados
-        while(auxp != NULL)
-        {
-            fprintf(fp, "%s@%d@#", auxp->first_key, auxp->RRN);
-            auxp = auxp->prox;
-        }
-
-        fclose(fp);
-    }
 
     if(flags == 0)
     {
@@ -390,75 +267,20 @@ void atualiza_flag(FILE *file, char *nome)
     return;
 }
 
-//função que remove o índice primário da lista de índices primários, retorna a cabeça da lista
-Iprimario *removerP(Iprimario *h, char *chave)
-{
-    Iprimario *aux, *antes;
-
-    aux = h;
-
-    if(aux != NULL && strcmp(aux->first_key, chave) == 0)
-    {
-        h = aux->prox;
-        free(aux);
-        return h;
-    }
-
-    while(aux != NULL && strcmp(aux->first_key, chave) != 0)
-    {
-        antes = aux;
-        aux = aux->prox;
-    }
-    if(aux == NULL)
-    return aux;
-
-    antes->prox = aux->prox;
-    free(aux);
-
-    return h;
-}
-
-//função que remove o índice secundário da lista de índices secundários, retorna a cabeça da lista
-Isecundario *removerS(Isecundario *h, char *chave)
-{
-    Isecundario *aux, *antes;
-
-    aux = h;
-
-    if(aux != NULL && strcmp(aux->first_key, chave) == 0)
-    {
-        h = aux->prox;
-        free(aux);
-        return h;
-    }
-
-    while(aux != NULL && strcmp(aux->first_key, chave) != 0)
-    {
-        antes = aux;
-        aux = aux->prox;
-    }
-    if(aux == NULL)
-    return aux;
-
-    antes->prox = aux->prox;
-    free(aux);
-
-    return h;
-}
-
 //função que busca um índice primário pela chave, retorna o elemento encontrado ou NULL
-Iprimario *busca(Iprimario *vetp, char *chave)
+int busca(node *raiz, char *chave, FILE *fp)
 {
-    Iprimario *aux;
+    node *no;
 
-    aux = vetp;
+    no = busca_no(raiz, chave, fp);
 
-    while(aux != NULL && strcmp(aux->first_key, chave) != 0)
+    for(int i = 0; i<no->numeroChaves; i++)
     {
-        aux = aux->prox;
+        if(strcmp(no->chaves[i], chave) == 0)
+        return no->dadosRRN[i];
     }
 
-    return aux;
+    return -1;
 }
 
 //função que remove o filme do arquivo de filmes
@@ -594,45 +416,9 @@ void catalogo(FILE *fd)
     return;
 }
 
-//função para compactar o arquivo de dados
-void compactar(FILE *fd)
-{
-    FILE *aux;
-    char linha[193];
-
-    fd = fopen("movies.dat", "r");
-    aux = fopen("aux.dat", "w");
-
-    while(fread(linha, 192, 1, fd) == 1)
-    {
-        if(linha[0] == '*')
-        continue;
-        else
-        fwrite(linha, 192, 1, aux);
-    }
-
-    fclose(fd);
-    fclose(aux);
-
-    fd = fopen("movies.dat", "w");
-    aux = fopen("aux.dat", "r");
-
-    while(fread(linha, 192, 1, aux) == 1)
-    {
-        fwrite(linha, 192, 1, fd);
-    }
-    fclose(fd);
-    fclose(aux);
-
-    remove("aux.dat");
-    free(aux);
-    
-    return;
-}
-
 void escreve_no(int RRN, node *no, FILE *fp)
 {
-    int byte_offset = 65*RRN;
+    int byte_offset = (65*RRN) + 1;
     
     fp = fopen("ibtree.idx", "r+");
     fseek(fp, byte_offset, SEEK_SET);
@@ -661,10 +447,11 @@ void escreve_no(int RRN, node *no, FILE *fp)
 node *le_no(int RRN, FILE *fp)
 {
     node *no_lido;
-    int byte_offset = 65*RRN;
+    int byte_offset = (65*RRN) + 1;
     char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
     fp = fopen("ibtree.idx", "r");
+    //char c = fgetc(fp);
     fseek(fp, byte_offset, SEEK_SET);
     //fread(linha, 81, 1, fp);
     //printf("%s \n", linha);
@@ -746,7 +533,7 @@ int novo_RRN_no(FILE *fp)
     return novo;
 }
 
-void  insere_folha(node *folha, char *chave, int RRN)
+int insere_folha(node *folha, char *chave, int RRN)
 {
     if(folha->numeroChaves != 0)
     {
@@ -765,7 +552,7 @@ void  insere_folha(node *folha, char *chave, int RRN)
             if(strcmp(chave, temp1[i]) == 0)
             {
                 printf("Essa chave já existe, não é possível realizar a inserção\n");
-                break;
+                return -1;
             }
             else if(strcmp(chave, temp1[i]) < 0)
             {
@@ -796,6 +583,8 @@ void  insere_folha(node *folha, char *chave, int RRN)
         folha->dadosRRN[0] = RRN;
         folha->numeroChaves++;
     }
+
+    return 1;
 }
 
 node *busca_no(node *raiz, char *chave, FILE *fp)
@@ -814,7 +603,6 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
         for(int i = 0; i < no_atual->numeroChaves; i++)
         {
             strcpy(temp1[i], no_atual->chaves[i]);
-            printf("%s ", temp1[i]);
         }
 
         for(int i = 0; i < no_atual->numeroChaves; i++)
@@ -826,10 +614,7 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
             }
             else if(strcmp(chave, temp1[i]) < 0)
             {   
-                printf("2 - ENtra aqui");
-                //printf("Filhos: %d \n", no_atual->filhos[i]);
                 no_atual = le_no((no_atual->filhos[i]), fp);
-                //printf("%d ", no_atual->RRN);
                 break;
             }
             else if(i+1 == no_atual->numeroChaves)
@@ -843,49 +628,51 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
     return no_atual;
 }
 
-void inserir(char *chave, int RRN_dado, node **raiz, FILE *fp)
+int inserir(char *chave, int RRN_dado, node **raiz, FILE *fp)
 {
    node *no_antigo;
 
    no_antigo = busca_no((*raiz), chave, fp);
-   printf("No antigo: %d\n", no_antigo->RRN); 
-   insere_folha(no_antigo, chave, RRN_dado);
+   int flag = insere_folha(no_antigo, chave, RRN_dado);
 
-   if(no_antigo->numeroChaves == ordem)
+   if(flag == 1)
    {
-        node *novo_no = cria_no();
-        novo_no->folha = 1;
-        novo_no->pai = no_antigo->pai;
-        int meio = (ordem/2);
-        for(int i = meio; i < ordem; i++)
+        if(no_antigo->numeroChaves == ordem)
         {
-            strcpy(novo_no->chaves[i-meio], no_antigo->chaves[i]);
-            novo_no->dadosRRN[i-meio] = no_antigo->dadosRRN[i]; 
+            node *novo_no = cria_no();
+            novo_no->folha = 1;
+            novo_no->pai = no_antigo->pai;
+            int meio = (ordem/2);
+            for(int i = meio; i < ordem; i++)
+            {
+                strcpy(novo_no->chaves[i-meio], no_antigo->chaves[i]);
+                novo_no->dadosRRN[i-meio] = no_antigo->dadosRRN[i]; 
 
-            strcpy(no_antigo->chaves[i], "#####");
-            no_antigo->dadosRRN[i] = 0;
+                strcpy(no_antigo->chaves[i], "#####");
+                no_antigo->dadosRRN[i] = 0;
+            }
+            novo_no->numeroChaves = no_antigo->numeroChaves = ordem/2;
+            novo_no->RRN = novo_RRN_no(fp);
+            novo_no->prox = no_antigo->prox;
+            no_antigo->prox = novo_no->RRN;
+            escreve_no(no_antigo->RRN, no_antigo, fp);
+            escreve_no(novo_no->RRN, novo_no, fp);
+            //VER POSSIBILIDADE DE CRIAR NOVO NÓ COM RRN CERTO, OU SETAR DEPOIS(PARA NÃO ATRAPALHAR NO CADO DE NÓS AUXILIXARES)
+            //ESCREVER OS NOVSO NÓS(COM AS CHAVES SEPARADAS) NO ARQUIVO AGORA?
+            //ESCREVER O NÓ QUE RECEBE NOVA CHAVE QUANDO?
+            //ACHO QUE REESCREVER NO ANTIGO E ESCREVER NOVO NÓ AGORA 
+            //NA FUNÇÃO INSERIR NO PAI, ESCREVER A CADA CHAMADA RECURSIVA?
+            
+            insere_pai(no_antigo, novo_no->chaves[0], novo_no, raiz, fp);
         }
-        novo_no->numeroChaves = no_antigo->numeroChaves = ordem/2;
-        novo_no->RRN = novo_RRN_no(fp);
-        novo_no->prox = no_antigo->prox;
-        no_antigo->prox = novo_no->RRN;
-        escreve_no(no_antigo->RRN, no_antigo, fp);
-        escreve_no(novo_no->RRN, novo_no, fp);
-        getchar();
-        //VER POSSIBILIDADE DE CRIAR NOVO NÓ COM RRN CERTO, OU SETAR DEPOIS(PARA NÃO ATRAPALHAR NO CADO DE NÓS AUXILIXARES)
-        //ESCREVER OS NOVSO NÓS(COM AS CHAVES SEPARADAS) NO ARQUIVO AGORA?
-        //ESCREVER O NÓ QUE RECEBE NOVA CHAVE QUANDO?
-        //ACHO QUE REESCREVER NO ANTIGO E ESCREVER NOVO NÓ AGORA 
-        //NA FUNÇÃO INSERIR NO PAI, ESCREVER A CADA CHAMADA RECURSIVA?
-        
-        insere_pai(no_antigo, novo_no->chaves[0], novo_no, raiz, fp);
-   }
-   else
-   {
-        escreve_no(no_antigo->RRN, no_antigo, fp);
-        getchar();
-   }
-   //else -> escreve no arquivo
+        else
+        {
+            escreve_no(no_antigo->RRN, no_antigo, fp);
+        }
+        return flag;
+    }
+    else
+    return flag;
 }
 
 void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **raiz, FILE *fp)
@@ -904,7 +691,6 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         escreve_no(no_antigo->RRN, no_antigo, fp);
         escreve_no(novo_no->RRN, novo_no, fp);
         escreve_no((*raiz)->RRN, (*raiz), fp);
-        getchar();
 
         //RRN DA NOVA RAIZ VAI PRECISAR SER SOBREESCRITO NO HEADER DO ARQUIVO
         //VERIFICAÇÃO NA MAIN-> SE ARQUIVO IBTREE NÃO EXISTE, RAIZ É 0 E CRIA PRIMEIRO NÓ
@@ -916,30 +702,16 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
     char temp2[ordem][6];
     int tam = pai->numeroChaves + 1;
 
-    //printf("RNN nó antigo: %d", no_antigo->RRN);
-    //printf("\nRRN no novo: %d", novo_no->RRN);
     for(int i = 0; i < tam; i++)
-    {
-        temp1[i] = pai->filhos[i];
-        printf("%d ", temp1[i]);
-    }
-    
+    temp1[i] = pai->filhos[i];
     
     for(int i = 0; i < tam - 1; i++)
-    {
-        strcpy(temp2[i], pai->chaves[i]);
-        printf("%s ", temp2[i]);
-    }
-    
-    printf("no antigo rrn: %d", no_antigo->RRN);
-
+    strcpy(temp2[i], pai->chaves[i]);
+        
     for(int i = 0; i < tam; i++)
     {
-        printf("entra aqui");
-        printf("%d ", temp1[i]);
         if(temp1[i] == no_antigo->RRN)
         {
-            printf("Entra aqui split i = %d", i);
             strcpy(pai->chaves[i], chave_promovida);
             pai->filhos[i+1] = novo_no->RRN;
 
@@ -996,7 +768,6 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         else
         {
             escreve_no(pai->RRN, pai, fp);
-            getchar();
             //talvez reescrever os filhos também
         }
     }
