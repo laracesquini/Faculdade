@@ -151,13 +151,16 @@ int main()
 
                          printf("Digite a chave do filme buscado: ");
                          scanf(" %s", chave);
-                         //auxp = busca(vetp, chave);
-                         /*if(auxp == NULL)
-                         printf("Filme não encontrado!");
+                         int RRN_buscado = busca(raiz, chave, fp);
+
+                         if(RRN_buscado == -1)
+                         {
+                              printf("Esse filme não existe! Tente novamente.\n");
+                         }
                          else
                          {
-                              imprime_filme(auxp, fd);
-                         }*/
+                              imprime_filme(RRN_buscado, fd);
+                         }
                     }
                     else if(op_busca == 2)
                     {
@@ -165,13 +168,15 @@ int main()
 
                          printf("Digite o título: ");
                          scanf(" %[^\n]s", titulo);
-                         //busca_secundario(vetp, vets, titulo, fd);
+                         busca_secundario(raiz, vets, titulo, fd, fp);
                     }
                }
                else if(op == 4)
                {
                   //imprime o catálogo dos filmes disponíveis
-                    catalogo(fd);  
+                    catalogo(fd, fp);  
+
+                    //FALTA TERMINAR AQUI E RESOLVER A QUESTÃO DE ESCRITA E LEITURA NOS ARQUIVOS
                }
                else
                {

@@ -324,9 +324,9 @@ void att_arquivo(FILE *fd, int RRN, char *nota)
 }
 
 //função que imprime o filme buscado pelo usuário
-void imprime_filme(Iprimario *aux, FILE *fd)
+void imprime_filme(int RRN, FILE *fd)
 {
-    int byte_offset = 192*aux->RRN;
+    int byte_offset = 192*RRN;
     char filme[193], *token;
     char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
     
@@ -352,24 +352,20 @@ void imprime_filme(Iprimario *aux, FILE *fd)
 }
 
 //função que busca o filme pelo título e printa os filmes encontrados
-void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd)
+void busca_secundario(node *raiz, Isecundario *vets , char *titulo, FILE *fd, FILE *fp)
 {
     Isecundario *auxs;
-    Iprimario *auxp;
-    int stt = 0;
+    int stt = 0, RRN_buscado;
 
     auxs = vets;
+    
     while(auxs != NULL)
     {
         if(strcmp(auxs->titulo, titulo) == 0)
         {
             stt = 1;
-            auxp = vetp;
-            while(auxp != NULL && strcmp(auxp->first_key, auxs->first_key) != 0)
-            {
-                auxp = auxp->prox;
-            }
-            imprime_filme(auxp, fd);
+            RRN_buscado = busca(raiz, auxs->first_key, fp);
+            imprime_filme(RRN_buscado, fd);
             auxs = auxs->prox;
         }
         else
@@ -381,8 +377,9 @@ void busca_secundario(Iprimario *vetp, Isecundario *vets, char *titulo, FILE *fd
 }
 
 //função que printa o catálogo 
-void catalogo(FILE *fd)
+void catalogo(FILE *fd, FILE *fp)
 {
+    //FALTA TERMINAR ESSA FUNÇÃO
     char filme[193], *token;
     char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
     int j =1;
@@ -531,6 +528,20 @@ int novo_RRN_no(FILE *fp)
     novo = (novo/65);
 
     return novo;
+}
+
+void att_raiz(int RRN, FILE *fp)
+{
+    char c;
+
+    fp = fopen("ibtree.idx", "r+");
+    c = fgetc(fp);
+    fseek(fp, 0, SEEK_SET);
+    fputc((RRN + '0'), fp);
+
+    fclose(fp);
+
+    return;
 }
 
 int insere_folha(node *folha, char *chave, int RRN)
@@ -693,7 +704,7 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         escreve_no((*raiz)->RRN, (*raiz), fp);
 
         //RRN DA NOVA RAIZ VAI PRECISAR SER SOBREESCRITO NO HEADER DO ARQUIVO
-        //VERIFICAÇÃO NA MAIN-> SE ARQUIVO IBTREE NÃO EXISTE, RAIZ É 0 E CRIA PRIMEIRO NÓ
+        att_raiz((*raiz)->RRN, fp);
         return;
     }
 
