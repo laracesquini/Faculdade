@@ -8,6 +8,7 @@ int menu(int flag);
 Tdados insercao();
 char *modificacao();
 int busca_filme();
+int menu_catalogo();
 
 int main()
 {
@@ -173,8 +174,29 @@ int main()
                }
                else if(op == 4)
                {
+                    int op_catalogo;
+                    node *no_inicio;
+
+                    op_catalogo = menu_catalogo();
+
+                    if(op_catalogo == 1)
+                    {
+                         char chave_inicio[6];
+
+                         printf("Digite a chave:");
+                         scanf(" %s", chave_inicio);
+
+                         printf("chega aqui");
+                         no_inicio = busca_no(raiz, chave_inicio, fp);
+                         catalogo(fd, fp, no_inicio->RRN, 1, chave_inicio);
+                    }
+                    else if(op_catalogo == 2)
+                    {
+                         no_inicio = busca_inicio(raiz, fp);
+                         catalogo(fd, fp, no_inicio->RRN, 2, NULL);
+                    }
                   //imprime o catálogo dos filmes disponíveis
-                    catalogo(fd, fp);  
+                   
 
                     //FALTA TERMINAR AQUI E RESOLVER A QUESTÃO DE ESCRITA E LEITURA NOS ARQUIVOS
                }
@@ -267,6 +289,24 @@ int busca_filme()
           printf("[3]Voltar\n");
           scanf("%d", &op);
           if(op < 1 || op > 3)
+          printf("Opção Inválida!\n");
+     }while(op < 1 || op > 3);
+
+     return op;
+}
+
+int menu_catalogo()
+{
+     int op;
+
+     printf("Escolha uma opção: \n");
+
+     do{
+          printf("[1]Listar filmes a partir de uma chave\n");
+          printf("[2]Listar todos os filmes\n");
+          printf("[3]Voltar\n");
+          scanf("%d", &op);
+          if(op > 3 || op < 1)
           printf("Opção Inválida!\n");
      }while(op < 1 || op > 3);
 

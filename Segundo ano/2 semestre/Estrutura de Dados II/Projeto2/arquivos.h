@@ -57,4 +57,5 @@ void att_arquivo(FILE *fd, int RRN, char *nota);
 void att_raiz(int RRN, FILE *fp);
 void imprime_filme(int RRN, FILE *fd);
 void busca_secundario(node *raiz, Isecundario *vets , char *titulo, FILE *fd, FILE *fp);
-void catalogo(FILE *fd, FILE *fp);
+void catalogo(FILE *fd, FILE *fp, int RRN_inicio, int operacao, char *chave);
+node *busca_inicio(node *raiz, FILE *fp);

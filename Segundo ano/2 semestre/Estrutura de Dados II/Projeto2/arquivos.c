@@ -377,40 +377,76 @@ void busca_secundario(node *raiz, Isecundario *vets , char *titulo, FILE *fd, FI
 }
 
 //função que printa o catálogo 
-void catalogo(FILE *fd, FILE *fp)
+void catalogo(FILE *fd, FILE *fp, int RRN_inicio, int operacao, char *chave)
 {
-    //FALTA TERMINAR ESSA FUNÇÃO
     char filme[193], *token;
     char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
-    int j =1;
-    
-    fd = fopen("movies.dat", "r");
+    int j =1, i, stt = 0;
+    node *aux;
 
-    while(fread(filme, 192, 1, fd) == 1)
+    if(operacao == 1)
     {
-        if(filme[0] == '*')
-        continue;
+        aux = le_no(RRN_inicio, fp);
+
+        for(i = 0; i < aux->numeroChaves; i++)
+        {
+            if(strcmp(aux->chaves[i], chave) == 0)
+            {
+                stt = 1;
+                break;
+            }
+        }
+
+        if(stt == 0)
+        {
+            printf("Essa chave não foi encontrada!\n");
+            return;
+        }
         else
         {
-            token = strtok(filme, "@");
+            for(int k = i; k < aux->numeroChaves; k++)
+            imprime_filme(aux->dadosRRN[k], fd);
+        }
 
-            int i = 0;
-            printf("\nFilme %d: \n", j);
-            while(token != NULL && i < 7)
-            {
-                printf(campos[i]);
-                printf("%s\n", token);
-                token = strtok(NULL, "@");
-                i++;
-            }
-            j++;
+        while(aux->prox != 0)
+        {
+            aux = le_no(aux->prox, fp);
+            for(int k = 0; k < aux->numeroChaves; k++)
+            imprime_filme(aux->dadosRRN[k], fd);
         }
     }
-    printf("\n");
-    
-    fclose(fd);
+    else
+    {
+        aux = le_no(RRN_inicio, fp);
+        for(int k = 0; k < aux->numeroChaves; k++)
+        imprime_filme(aux->dadosRRN[k], fd);
 
+        while(aux->prox != 0)
+        {
+            aux = le_no(aux->prox, fp);
+            for(int k = 0; k < aux->numeroChaves; k++)
+            imprime_filme(aux->dadosRRN[k], fd);
+        }
+    }
+    
     return;
+}
+
+node *busca_inicio(node *raiz, FILE *fp)
+{
+    node *no_atual;
+
+    if(raiz->RRN == 0)
+    no_atual = raiz;
+    else
+    no_atual = le_no(raiz->RRN, fp);
+
+    while(no_atual->folha == 0)
+    {
+        no_atual = le_no(no_atual->filhos[0], fp);
+    }
+
+    return no_atual;
 }
 
 void escreve_no(int RRN, node *no, FILE *fp)
