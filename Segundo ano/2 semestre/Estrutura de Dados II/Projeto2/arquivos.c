@@ -284,7 +284,7 @@ int busca(node *raiz, char *chave, FILE *fp)
 }
 
 //função que remove o filme do arquivo de filmes
-void remove_arquivo(Iprimario *aux, FILE *fd)
+/*void remove_arquivo(Iprimario *aux, FILE *fd)
 {
     int byte_offset = 192*aux->RRN;
     
@@ -296,7 +296,7 @@ void remove_arquivo(Iprimario *aux, FILE *fd)
     fclose(fd);
 
     return;
-}
+}*/
 
 //função que atualiza a nota no arquivo de dados
 void att_arquivo(FILE *fd, int RRN, char *nota)
@@ -451,13 +451,14 @@ node *busca_inicio(node *raiz, FILE *fp)
 
 void escreve_no(int RRN, node *no, FILE *fp)
 {
-    int byte_offset = (65*RRN) + 1;
+    int byte_offset = (sizeof(node)*RRN) + 4;
     
     fp = fopen("ibtree.idx", "r+");
     fseek(fp, byte_offset, SEEK_SET);
+    fwrite(no, sizeof(node), 1, fp);
     //FORMATAR NÓS
     //APARENTEMENTE FUNCIONANDO
-    fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
+    /*fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
 
     for(int i = 0; i < ordem - 1; i++)
     {
@@ -473,22 +474,22 @@ void escreve_no(int RRN, node *no, FILE *fp)
     {
         fprintf(fp, "%d,", no->filhos[i]);
     }
-    fputc('@', fp);
+    fputc('@', fp);*/
     fclose(fp);
 }
 
 node *le_no(int RRN, FILE *fp)
 {
-    node *no_lido;
-    int byte_offset = (65*RRN) + 1;
+    node *no_lido = malloc(sizeof(node));
+    int byte_offset = (sizeof(node)*RRN) + 4;
     char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
     fp = fopen("ibtree.idx", "r");
     //char c = fgetc(fp);
     fseek(fp, byte_offset, SEEK_SET);
-    //fread(linha, 81, 1, fp);
+    fread(no_lido, sizeof(node), 1, fp);
     //printf("%s \n", linha);
-    fscanf(fp, "%[^@]s", linha);
+    /*fscanf(fp, "%[^@]s", linha);
     no_lido = cria_no();
 
     no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
@@ -523,7 +524,7 @@ node *le_no(int RRN, FILE *fp)
     {
         aux4 = strtok(NULL, ",");
         no_lido->filhos[i] = strtol(aux4, &aux5, 10);;
-    } 
+    }*/
     fclose(fp);
 
     return no_lido;
@@ -561,19 +562,21 @@ int novo_RRN_no(FILE *fp)
 
     fclose(fp);
     
-    novo = (novo/65);
+    novo = (novo/sizeof(node));
 
     return novo;
 }
 
 void att_raiz(int RRN, FILE *fp)
 {
-    char c;
+    int c;
 
     fp = fopen("ibtree.idx", "r+");
-    c = fgetc(fp);
+    fread(&c, sizeof(int), 1, fp);
+    //c = fgetc(fp);
     fseek(fp, 0, SEEK_SET);
-    fputc((RRN + '0'), fp);
+    fwrite(&RRN, sizeof(int), 1, fp);
+    //fputc((RRN + '0'), fp);
 
     fclose(fp);
 
@@ -799,12 +802,14 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
             {
                 node *aux = le_no(pai->filhos[i], fp);
                 aux->pai = pai->RRN;
+                escreve_no(aux->RRN, aux, fp);
             }
 
             for(int i = 0; i < outro_no->numeroChaves + 1; i++)
             {
                 node *aux = le_no(outro_no->filhos[i], fp);
                 aux->pai = outro_no->RRN;
+                escreve_no(aux->RRN, aux, fp);
             }
             escreve_no(pai->RRN, pai, fp);
             escreve_no(outro_no->RRN, outro_no, fp);
