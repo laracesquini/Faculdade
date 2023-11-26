@@ -28,11 +28,12 @@ int main()
         printf("\t*O atributo nota só permite números de 0 a 9.\n");
         printf("\tAperte enter para iniciar ");
         getchar();
-
+     
         raiz = cria_no();
         raiz->folha = 1;
+        int RRN_raiz = 0;
         fp = fopen("ibtree.idx", "w");
-        fputc('0', fp);
+        fwrite(&RRN_raiz, sizeof(int), 1, fp);
         fclose(fp);
         
         do{
@@ -57,10 +58,11 @@ int main()
      }
      else
      {
+          int raiz;
           fp = fopen("ibtree.idx", "r");
-          char c = fgetc(fp);
+          fread(&raiz, sizeof(int), 1, fp);
           fclose(fp);
-          raiz = le_no((c - '0'), fp);
+          raiz = le_no(raiz, fp);
           //verifica se os arquivos de índices existem. Se existir, verifica as flags
           if(file_exists("ititle.idx"))
           {

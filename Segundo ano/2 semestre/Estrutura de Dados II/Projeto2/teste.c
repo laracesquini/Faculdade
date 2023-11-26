@@ -32,9 +32,7 @@ int main()
         printf("%d ", teste->filhos[i]);
     }
 
-    //inserir("CUL12", 7, teste, fp);
-    //inserir("DOI34", 8, teste, fp);
-    //inserir("GOL23", 9, teste, fp);*/
+   
     /*teste->folha = 1;
     inserir("ABV12", 0, &teste, fp);
     inserir("OLU23", 1, &teste, fp);
