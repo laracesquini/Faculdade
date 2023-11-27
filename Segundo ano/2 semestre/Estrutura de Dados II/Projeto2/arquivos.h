@@ -24,13 +24,13 @@ typedef struct ititle{
 
 typedef struct no{
     int RRN;
-    int folha; //0 não é, 1 é
+    int folha; 
     char chaves[ordem][6]; 
-    int dadosRRN[ordem]; //só usado se for folha
-    int filhos[ordem + 1]; //usado se não for folha
+    int dadosRRN[ordem]; 
+    int filhos[ordem + 1]; 
     int numeroChaves;
     int pai;
-    int prox; //so nó folha
+    int prox; 
 }node;
 
 //declaração dos protótipos das funções utilizadas

@@ -57,7 +57,7 @@ Isecundario *insereS(Isecundario *h, Isecundario *p)
         p->prox = aux;
         return h;
     }
-    else if(strcmp(p->titulo, aux->titulo)>0) //insere como ultimo elemento
+    else if(strcmp(p->titulo, aux->titulo)>0) //insere como último elemento
     {
         p->prox = aux->prox;
         aux->prox = p;
@@ -272,31 +272,18 @@ int busca(node *raiz, char *chave, FILE *fp)
 {
     node *no;
 
+    //usa a função busca_no para encontrar o nó folha em que a chave está ou deveria estar
     no = busca_no(raiz, chave, fp);
 
     for(int i = 0; i<no->numeroChaves; i++)
-    {
+    {   
+        //verifica se a chave está no nó e se estiver, retorna o RRN associado a ela
         if(strcmp(no->chaves[i], chave) == 0)
         return no->dadosRRN[i];
     }
 
     return -1;
 }
-
-//função que remove o filme do arquivo de filmes
-/*void remove_arquivo(Iprimario *aux, FILE *fd)
-{
-    int byte_offset = 192*aux->RRN;
-    
-    fd = fopen("movies.dat", "r+");
-
-    fseek(fd, byte_offset, SEEK_SET);
-    fprintf(fd, "*|");
-
-    fclose(fd);
-
-    return;
-}*/
 
 //função que atualiza a nota no arquivo de dados
 void att_arquivo(FILE *fd, int RRN, char *nota)
@@ -307,7 +294,9 @@ void att_arquivo(FILE *fd, int RRN, char *nota)
     count = 0;
     fd = fopen("movies.dat", "r+");
     
+    //encontra a posição do registro no arquivo, usando o RRN
     fseek(fd, byte_offset, SEEK_SET);
+    //encontra o campo referente a nota
     while(count < 7)
     {
         c = fgetc(fd);
@@ -315,6 +304,7 @@ void att_arquivo(FILE *fd, int RRN, char *nota)
         count++;
     }
 
+    //atualiza a nota
     fseek(fd, -2, SEEK_CUR);
     fprintf(fd, "%s", nota);
 
@@ -332,6 +322,7 @@ void imprime_filme(int RRN, FILE *fd)
     
     fd = fopen("movies.dat", "r");
 
+    //encontra o registro e printa todas as informações
     fseek(fd, byte_offset, SEEK_SET);
     fscanf(fd, " %[^#]s", filme);
     token = strtok(filme, "@");
@@ -359,8 +350,10 @@ void busca_secundario(node *raiz, Isecundario *vets , char *titulo, FILE *fd, FI
 
     auxs = vets;
     
+    //percorre a lista até encontrar o filme referente ao título digitado
     while(auxs != NULL)
     {
+        //Se encontrar, busca o RRN do filme usando a chave primária e imprime o filme
         if(strcmp(auxs->titulo, titulo) == 0)
         {
             stt = 1;
@@ -379,13 +372,13 @@ void busca_secundario(node *raiz, Isecundario *vets , char *titulo, FILE *fd, FI
 //função que printa o catálogo 
 void catalogo(FILE *fd, FILE *fp, int RRN_inicio, int operacao, char *chave)
 {
-    char filme[193], *token;
-    char campos[7][50] = {"Chave: ", "Nome em português: ", "Nome original: ", "Diretor: ", "Ano de lançamento: ", "País: ", "Nota: "};
-    int j =1, i, stt = 0;
+    int i, stt = 0;
     node *aux;
 
+    //Imprime todos os filmes a partir de uma dada chave
     if(operacao == 1)
     {
+        //le o nó que contém a chave e encontra em que posição ela está
         aux = le_no(RRN_inicio, fp);
 
         for(i = 0; i < aux->numeroChaves; i++)
@@ -404,10 +397,12 @@ void catalogo(FILE *fd, FILE *fp, int RRN_inicio, int operacao, char *chave)
         }
         else
         {
+            //printa todas as chaves presentes naquele nó
             for(int k = i; k < aux->numeroChaves; k++)
             imprime_filme(aux->dadosRRN[k], fd);
         }
 
+        //para todos os outros nós folhas, avança pela lista printando todos os filmes
         while(aux->prox != 0)
         {
             aux = le_no(aux->prox, fp);
@@ -415,8 +410,9 @@ void catalogo(FILE *fd, FILE *fp, int RRN_inicio, int operacao, char *chave)
             imprime_filme(aux->dadosRRN[k], fd);
         }
     }
-    else
+    else //imprime todos os filmes ordenados pela chave primária
     {
+        //lê o primeiro nó folha, que está no começo da lista e printa todas as chaves dele, fazendo isso para todos os nós da lista
         aux = le_no(RRN_inicio, fp);
         for(int k = 0; k < aux->numeroChaves; k++)
         imprime_filme(aux->dadosRRN[k], fd);
@@ -432,6 +428,7 @@ void catalogo(FILE *fd, FILE *fp, int RRN_inicio, int operacao, char *chave)
     return;
 }
 
+//função que busca o início da lista composta por todos os nós folhas, descendo sempre para a esquerda a partir da raiz
 node *busca_inicio(node *raiz, FILE *fp)
 {
     node *no_atual;
@@ -449,9 +446,10 @@ node *busca_inicio(node *raiz, FILE *fp)
     return no_atual;
 }
 
+//função que escreve o nó no arquivo que contém a árvore B+
 void escreve_no(int RRN, node *no, FILE *fp)
 {
-    int byte_offset = (sizeof(node)*RRN) + sizeof(int);
+    int byte_offset = (sizeof(node)*RRN) + sizeof(int); 
     
     fp = fopen("ibtree.idx", "r+");
     fseek(fp, byte_offset, SEEK_SET);
@@ -479,11 +477,12 @@ void escreve_no(int RRN, node *no, FILE *fp)
     fclose(fp);
 }
 
+//função que lê um nó do arquivo que contém a árvore B+
 node *le_no(int RRN, FILE *fp)
 {
     node *no_lido = malloc(sizeof(node));
     int byte_offset = (sizeof(node)*RRN) + 4;
-    char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
+    //char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
     fp = fopen("ibtree.idx", "r");
     //char c = fgetc(fp);
@@ -531,6 +530,7 @@ node *le_no(int RRN, FILE *fp)
     return no_lido;
 }
 
+//função que cria e inicializa um nó genérico
 node *cria_no()
 {
     node *no;
@@ -551,6 +551,7 @@ node *cria_no()
     return no;
 }
 
+//função que encontra o RRN do novo nó que será escrito no arquivo de dados
 int novo_RRN_no(FILE *fp)
 {
     int novo;
@@ -558,7 +559,6 @@ int novo_RRN_no(FILE *fp)
     fp = fopen("ibtree.idx", "r");
 
     fseek(fp, 0, SEEK_END);
-
     novo = ftell(fp);
 
     fclose(fp);
@@ -568,6 +568,7 @@ int novo_RRN_no(FILE *fp)
     return novo;
 }
 
+//função que atualiza o cabeçalho do arquivo que contém a árvore B+ quando a raiz mudar
 void att_raiz(int RRN, FILE *fp)
 {
     int c;
@@ -584,14 +585,16 @@ void att_raiz(int RRN, FILE *fp)
     return;
 }
 
+//função que insere uma chave em um nó folha
 int insere_folha(node *folha, char *chave, int RRN)
 {
+    //verifica se o nó está vazio
     if(folha->numeroChaves != 0)
     {
         char temp1[ordem][6]; 
         int RRNs[ordem], tam; 
 
-        for(int i = 0; i < folha->numeroChaves; i++)
+        for(int i = 0; i < folha->numeroChaves; i++) //copias todas as chaves presentes no nó para um vetor auxiliar, assim como seus RRNs
         {
             strcpy(temp1[i], folha->chaves[i]);
             RRNs[i] = folha->dadosRRN[i];
@@ -600,15 +603,15 @@ int insere_folha(node *folha, char *chave, int RRN)
         tam = folha->numeroChaves + 1;
         for(int i = 0; i < tam; i++)
         {
-            if(strcmp(chave, temp1[i]) == 0)
+            if(strcmp(chave, temp1[i]) == 0) //se a chave já existir, não insere
             {
                 printf("Essa chave já existe, não é possível realizar a inserção\n");
                 return -1;
             }
-            else if(strcmp(chave, temp1[i]) < 0)
+            else if(strcmp(chave, temp1[i]) < 0) //se a chave a ser inserida for menor que a chave atual
             {
-                
-                strcpy(folha->chaves[i], chave);
+                //insere a chave na posição i e copia as chaves a partir dessa posição para um posição a direita, assim como os RRNs
+                strcpy(folha->chaves[i], chave); 
                 folha->dadosRRN[i] = RRN;
                 
                 for(int j = i+1; j < tam; j++)
@@ -619,7 +622,7 @@ int insere_folha(node *folha, char *chave, int RRN)
                 folha->numeroChaves++;
                 break;
             }
-            else if(i + 1 == (tam - 1))
+            else if(i + 1 == (tam - 1)) //se a chave a ser inserida for maior que todas as chaves presentes no nó, insere ela na última posição, assim como o RRN
             {
                 strcpy(folha->chaves[i+1], chave);
                 folha->dadosRRN[i+1] = RRN;
@@ -628,7 +631,7 @@ int insere_folha(node *folha, char *chave, int RRN)
             }
         }
     }
-    else
+    else //se o nó estiver vazio, insere a chave e seu  RRN na primeira posição
     {
         strcpy(folha->chaves[0], chave);
         folha->dadosRRN[0] = RRN;
@@ -638,17 +641,20 @@ int insere_folha(node *folha, char *chave, int RRN)
     return 1;
 }
 
+//função que busca o nó em que uma chave deve ser inserida
 node *busca_no(node *raiz, char *chave, FILE *fp)
 {
     node *no_atual;
     char temp1[ordem][6];
     int RRNs[ordem], tam; 
 
+    //lê a raiz da árvore
     if(raiz->RRN == 0)
     no_atual = raiz;
     else
     no_atual = le_no(raiz->RRN, fp);
 
+    //enquanto o nó atual for interno, continua a busca
     while(no_atual->folha == 0)
     {
         for(int i = 0; i < no_atual->numeroChaves; i++)
@@ -658,17 +664,17 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
 
         for(int i = 0; i < no_atual->numeroChaves; i++)
         {
-            if(strcmp(chave, temp1[i]) == 0)
+            if(strcmp(chave, temp1[i]) == 0) //se a chave a ser inserida for igual a uma chave presente em um nó interno, descer para o filho direito do nó atual
             {
                 no_atual = le_no(no_atual->filhos[i+1], fp);
                 break;
             }
-            else if(strcmp(chave, temp1[i]) < 0)
+            else if(strcmp(chave, temp1[i]) < 0) //se a chave a ser inserida for menor que uma chave presente em um nó interno, descer para o filho esquerdo do no atual
             {   
                 no_atual = le_no((no_atual->filhos[i]), fp);
                 break;
             }
-            else if(i+1 == no_atual->numeroChaves)
+            else if(i+1 == no_atual->numeroChaves) //se a chave a ser inserida for maior que todas as chaves presentes em um nó interno, descer para o filho direito do no atual
             {
                 no_atual = le_no((no_atual->filhos[i+1]), fp);
                 break;
@@ -679,18 +685,21 @@ node *busca_no(node *raiz, char *chave, FILE *fp)
     return no_atual;
 }
 
+//função que insere uma chave na árvore B+
 int inserir(char *chave, int RRN_dado, node **raiz, FILE *fp)
 {
    node *no_antigo;
 
+   //busca o nó folha em que a chave deve ser inserida e insere
    no_antigo = busca_no((*raiz), chave, fp);
    int flag = insere_folha(no_antigo, chave, RRN_dado);
 
+   //verifica se a chave foi inserida corretamente
    if(flag == 1)
    {
-        if(no_antigo->numeroChaves == ordem)
+        if(no_antigo->numeroChaves == ordem) //verifica se é necessário realizar um split, ou seja, com a inserção da nova chave, o número máximo de chaves foi ultrapassado
         {
-            node *novo_no = cria_no();
+            node *novo_no = cria_no(); //cria um novo nó, setando suas informações e redistribui as chaves
             novo_no->folha = 1;
             novo_no->pai = no_antigo->pai;
             int meio = (ordem/2);
@@ -706,17 +715,12 @@ int inserir(char *chave, int RRN_dado, node **raiz, FILE *fp)
             novo_no->RRN = novo_RRN_no(fp);
             novo_no->prox = no_antigo->prox;
             no_antigo->prox = novo_no->RRN;
-            escreve_no(no_antigo->RRN, no_antigo, fp);
+            escreve_no(no_antigo->RRN, no_antigo, fp); //escreve o nó antigo alterado e o novo nó no arquivo
             escreve_no(novo_no->RRN, novo_no, fp);
-            //VER POSSIBILIDADE DE CRIAR NOVO NÓ COM RRN CERTO, OU SETAR DEPOIS(PARA NÃO ATRAPALHAR NO CADO DE NÓS AUXILIXARES)
-            //ESCREVER OS NOVSO NÓS(COM AS CHAVES SEPARADAS) NO ARQUIVO AGORA?
-            //ESCREVER O NÓ QUE RECEBE NOVA CHAVE QUANDO?
-            //ACHO QUE REESCREVER NO ANTIGO E ESCREVER NOVO NÓ AGORA 
-            //NA FUNÇÃO INSERIR NO PAI, ESCREVER A CADA CHAMADA RECURSIVA?
             
-            insere_pai(no_antigo, novo_no->chaves[0], novo_no, raiz, fp);
+            insere_pai(no_antigo, novo_no->chaves[0], novo_no, raiz, fp); //chama a função para inserir a chave promovida no nó pai
         }
-        else
+        else //se não houver necessidade de split, somente escreve a atualização feita no arquivo
         {
             escreve_no(no_antigo->RRN, no_antigo, fp);
         }
@@ -726,12 +730,14 @@ int inserir(char *chave, int RRN_dado, node **raiz, FILE *fp)
     return flag;
 }
 
+//função que insere uma chave promovida em um nó
 void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **raiz, FILE *fp)
 {
+    //verifica se o nó antigo era a raiz, se for o caso, é preciso criar uma nova raiz
     if((*raiz)->RRN == no_antigo->RRN)
     {
-        node *nova_raiz = cria_no();
-        strcpy(nova_raiz->chaves[0], chave_promovida);
+        node *nova_raiz = cria_no(); //cria a raiz e seta suas informações
+        strcpy(nova_raiz->chaves[0], chave_promovida); //copia a chave promovida para a raiz
         nova_raiz->numeroChaves = 1;
         nova_raiz->filhos[0] = no_antigo->RRN;
         nova_raiz->filhos[1] = novo_no->RRN;
@@ -740,16 +746,15 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         no_antigo->pai = (*raiz)->RRN;
         novo_no->pai = (*raiz)->RRN;
         
-        escreve_no(no_antigo->RRN, no_antigo, fp);
+        escreve_no(no_antigo->RRN, no_antigo, fp); //escreve as mudanças no arquivo
         escreve_no(novo_no->RRN, novo_no, fp);
         escreve_no((*raiz)->RRN, (*raiz), fp);
 
-        //RRN DA NOVA RAIZ VAI PRECISAR SER SOBREESCRITO NO HEADER DO ARQUIVO
-        att_raiz((*raiz)->RRN, fp);
+        att_raiz((*raiz)->RRN, fp); //atualiza o RRN da raiz presente no cabeçalho do arquivo de dados
         return;
     }
 
-    node *pai = le_no(no_antigo->pai, fp);
+    node *pai = le_no(no_antigo->pai, fp); //caso o antigo nó não seja a raiz, carrega seu pai, onde será inserida a chave promovida
     int temp1[ordem];
     char temp2[ordem][6];
     int tam = pai->numeroChaves + 1;
@@ -762,9 +767,9 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         
     for(int i = 0; i < tam; i++)
     {
-        if(temp1[i] == no_antigo->RRN)
+        if(temp1[i] == no_antigo->RRN) //encontra onde a chave deve ser inserida
         {
-            strcpy(pai->chaves[i], chave_promovida);
+            strcpy(pai->chaves[i], chave_promovida); //copia a chave para a posição adequada e reorganiza as outras, assim como os filhos
             pai->filhos[i+1] = novo_no->RRN;
 
             for(int j = i+1; j < tam; j++)
@@ -775,14 +780,15 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
             pai->numeroChaves++;
         }
 
+        //verifica se, com essa nova inserção, é necessário realizar um split no nó pai
         if(pai->numeroChaves == ordem)
         {
-            node *outro_no = cria_no();
+            node *outro_no = cria_no(); //cria um novo nó setando suas informações
             outro_no->folha = 0;
             outro_no->pai = pai->pai;
 
             int meio = (ordem/2);
-            for(int i = meio+1; i < ordem; i++)
+            for(int i = meio+1; i < ordem; i++) //redistribui as chaves e os filhos
             {
                 strcpy(outro_no->chaves[i-(meio+1)], pai->chaves[i]);
                  
@@ -800,7 +806,7 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
             outro_no->numeroChaves = (ordem/2) - 1;
             outro_no->RRN = novo_RRN_no(fp);
             
-            for(int i = 0; i < pai->numeroChaves + 1; i++)
+            for(int i = 0; i < pai->numeroChaves + 1; i++) //atualiza o pai dos nós que agora tem o nó criado como pai
             {
                 node *aux = le_no(pai->filhos[i], fp);
                 aux->pai = pai->RRN;
@@ -813,18 +819,13 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
                 aux->pai = outro_no->RRN;
                 escreve_no(aux->RRN, aux, fp);
             }
-            escreve_no(pai->RRN, pai, fp);
+            escreve_no(pai->RRN, pai, fp); //escreve as mudanças no arquivo
             escreve_no(outro_no->RRN, outro_no, fp);
 
-            insere_pai(pai, chave_promovida, outro_no, raiz, fp);
-            //talvez reescrever os filhos aqui
+            insere_pai(pai, chave_promovida, outro_no, raiz, fp); //chama a função recursivamente para repetir o processo
         }
-        else
-        {
-            escreve_no(pai->RRN, pai, fp);
-            //talvez reescrever os filhos também
-        }
+        else //caso o split não seja necessário, somente escreve as mudanças do nó pai no arquivo
+        escreve_no(pai->RRN, pai, fp);
+        
     }
-    //ACHO QUE ATÉ AQUI ESTÁ CERTO, CONFIRMAR DEPOIS 
-    //RESOLVER QUESTÃO DE LIDA E ESCRITA NO ARQUIVO-> RRNS MAIORES QUE 9, VAI MUDAR O BYTEOFFSET
 }

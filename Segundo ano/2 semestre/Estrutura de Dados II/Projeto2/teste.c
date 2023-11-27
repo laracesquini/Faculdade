@@ -11,14 +11,14 @@ int main()
     FILE *fp;
     int RRN = 0, lido;
 
-    fp = fopen("ibtree.idx", "w");
-    fwrite(&RRN, sizeof(int), 1, fp);
-    fclose(fp);
+    //fp = fopen("ibtree.idx", "w");
+    //fwrite(&RRN, sizeof(int), 1, fp);
+    //fclose(fp);
 
-   // teste = le_no(2, fp);
-    teste = cria_no();
+    teste = le_no(0, fp);
+    //teste = cria_no();
 
-    teste->folha = 1;
+    //teste->folha = 1;
     inserir("ABV12", 0, &teste, fp);
     inserir("OLU23", 1, &teste, fp);
     inserir("RLU23", 2, &teste, fp);
@@ -27,7 +27,7 @@ int main()
     inserir("BLU23", 4, &teste, fp);
     inserir("FLU23", 5, &teste, fp);
    
-    inserir("TLU23", 9, &teste, fp);
+    /*inserir("TLU23", 9, &teste, fp);
     inserir("ULU23", 8, &teste, fp);
     inserir("VLU23", 5, &teste, fp);
 
