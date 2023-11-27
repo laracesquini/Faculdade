@@ -1,4 +1,4 @@
-#define ordem 6
+#define ordem 4
 //declaração das estruturas utilizadas
 typedef struct dados{
     char first_key[6];

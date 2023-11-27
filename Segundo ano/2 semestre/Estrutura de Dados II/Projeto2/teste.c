@@ -3,37 +3,21 @@
 #include <string.h>
 #include "arquivos.h"
 
-#define ordem 6
+#define ordem 4
 
 int main()
 {
-    
     node *teste, *raiz;
     FILE *fp;
     int RRN = 2, lido;
 
-    
-    //raiz = le_no(0, fp);
-    //escreve_no(0, raiz, fp);
-    //teste = le_no(2, fp);
-    
-    teste = le_no(0, fp);
-    
-    //fp = fopen("ibtree.idx", "w");
-    printf("RRN: %d, Num chaves: %d, Prox: %d, Pai: %d, Folha: %d\n", teste->RRN, teste->numeroChaves, teste->prox, teste->pai, teste->folha);
-    printf("Chaves: ");
-    for(int i = 0; i < teste->numeroChaves; i++)
-    {
-        printf("%s ", teste->chaves[i]);
-    }
-    printf("\nFilhos: ");
-    for(int i = 0; i < teste->numeroChaves; i++)
-    {
-        printf("%d ", teste->filhos[i]);
-    }
+    fp = fopen("ibtree.idx", "w");
+    fclose(fp);
 
-   
-    /*teste->folha = 1;
+   // teste = le_no(2, fp);
+    teste = cria_no();
+
+    teste->folha = 1;
     inserir("ABV12", 0, &teste, fp);
     inserir("OLU23", 1, &teste, fp);
     inserir("RLU23", 2, &teste, fp);
@@ -57,6 +41,28 @@ int main()
 
     inserir("WVU23", 9, &teste, fp);
     inserir("XXU23", 8, &teste, fp);
-    inserir("YFU23", 5, &teste, fp);*/
+    inserir("YFU23", 5, &teste, fp);
+    
+    
+    int i = 0;
+    while(i < 15)
+    {
+        teste = le_no(i, fp);
+    
+    //fp = fopen("ibtree.idx", "w");
+        printf("RRN: %d, Num chaves: %d, Prox: %d, Pai: %d, Folha: %d\n", teste->RRN, teste->numeroChaves, teste->prox, teste->pai, teste->folha);
+        printf("Chaves: ");
+        for(int i = 0; i < teste->numeroChaves; i++)
+        {
+            printf("%s ", teste->chaves[i]);
+        }
+        printf("\nFilhos: ");
+        for(int i = 0; i < teste->numeroChaves + 1; i++)
+        {
+            printf("%d ", teste->filhos[i]);
+        }
+        printf("\n\n");
+        i++;
+    } 
 }
 

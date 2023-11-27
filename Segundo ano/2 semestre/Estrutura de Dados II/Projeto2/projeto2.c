@@ -58,11 +58,11 @@ int main()
      }
      else
      {
-          int raiz;
+          int raiz_RRN;
           fp = fopen("ibtree.idx", "r");
-          fread(&raiz, sizeof(int), 1, fp);
+          fread(&raiz_RRN, sizeof(int), 1, fp);
           fclose(fp);
-          raiz = le_no(raiz, fp);
+          raiz = le_no(raiz_RRN, fp);
           //verifica se os arquivos de índices existem. Se existir, verifica as flags
           if(file_exists("ititle.idx"))
           {
