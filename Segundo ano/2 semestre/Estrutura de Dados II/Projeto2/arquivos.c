@@ -451,10 +451,11 @@ node *busca_inicio(node *raiz, FILE *fp)
 
 void escreve_no(int RRN, node *no, FILE *fp)
 {
-    int byte_offset = (sizeof(node)*RRN) + 4;
+    int byte_offset = (sizeof(node)*RRN) + sizeof(int);
     
     fp = fopen("ibtree.idx", "r+");
     fseek(fp, byte_offset, SEEK_SET);
+    //printf("Chave: %s Prox: %d\n", no->chaves[0], no->prox);
     fwrite(no, sizeof(node), 1, fp);
     //FORMATAR NÓS
     //APARENTEMENTE FUNCIONANDO
@@ -738,6 +739,7 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         *raiz = nova_raiz;
         no_antigo->pai = (*raiz)->RRN;
         novo_no->pai = (*raiz)->RRN;
+        
         escreve_no(no_antigo->RRN, no_antigo, fp);
         escreve_no(novo_no->RRN, novo_no, fp);
         escreve_no((*raiz)->RRN, (*raiz), fp);
@@ -787,7 +789,7 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
 
                 strcpy(pai->chaves[i], "#####");
             }
-            for(int i = meio+1; i< ordem + 1; i++)
+            for(int i = meio+1; i < ordem + 1; i++)
             {
                 outro_no->filhos[i-(meio+1)] = pai->filhos[i];
                 pai->filhos[i] = 0;
