@@ -453,27 +453,8 @@ void escreve_no(int RRN, node *no, FILE *fp)
     
     fp = fopen("ibtree.idx", "r+");
     fseek(fp, byte_offset, SEEK_SET);
-    //printf("Chave: %s Prox: %d\n", no->chaves[0], no->prox);
     fwrite(no, sizeof(node), 1, fp);
-    //FORMATAR NÓS
-    //APARENTEMENTE FUNCIONANDO
-    /*fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
-
-    for(int i = 0; i < ordem - 1; i++)
-    {
-        fprintf(fp, "%s,", no->chaves[i]);
-    }
-    fputc('|', fp);
-    for(int i = 0; i < ordem - 1 ; i++)
-    {
-        fprintf(fp, "%d,", no->dadosRRN[i]);
-    }
-    fputc('|', fp);
-    for(int i = 0; i < ordem; i++)
-    {
-        fprintf(fp, "%d,", no->filhos[i]);
-    }
-    fputc('@', fp);*/
+    
     fclose(fp);
 }
 
@@ -482,49 +463,12 @@ node *le_no(int RRN, FILE *fp)
 {
     node *no_lido = malloc(sizeof(node));
     int byte_offset = (sizeof(node)*RRN) + 4;
-    //char linha[100], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
 
     fp = fopen("ibtree.idx", "r");
-    //char c = fgetc(fp);
+
     fseek(fp, byte_offset, SEEK_SET);
     fread(no_lido, sizeof(node), 1, fp);
-    //printf("%s \n", linha);
-    /*fscanf(fp, "%[^@]s", linha);
-    no_lido = cria_no();
-
-    no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
-    no_lido->folha = strtol(strtok(NULL, "|"), &aux2, 10);
-    no_lido->numeroChaves = strtol(strtok(NULL, "|"), &aux2, 10);
-    no_lido->pai = strtol(strtok(NULL, "|"), &aux2, 10);
-    no_lido->prox = strtol(strtok(NULL, "|"), &aux2, 10);
-
-    aux1 = strtok(NULL, "|");
-    aux2 = strtok(NULL, "|");
-    aux3 = strtok(NULL, "|");
-
-    aux4 = strtok(aux1, ",");
-    strcpy(no_lido->chaves[0], aux4);
-    for(int i = 1; i<no_lido->numeroChaves; i++)
-    {
-        aux4 = strtok(NULL, ",");
-        strcpy(no_lido->chaves[i], aux4);
-    }
     
-    aux4 = strtok(aux2, ",");
-    no_lido->dadosRRN[0] = strtol(aux4, &aux5, 10);
-    for(int i = 1; i<no_lido->numeroChaves; i++)
-    {
-        aux4 = strtok(NULL, ",");
-        no_lido->dadosRRN[i] = strtol(aux4, &aux5, 10);
-    }
-
-    aux4 = strtok(aux3, ",");
-    no_lido->filhos[0] = strtol(aux4, &aux5, 10);
-    for(int i = 1; i<(no_lido->numeroChaves + 1); i++)
-    {
-        aux4 = strtok(NULL, ",");
-        no_lido->filhos[i] = strtol(aux4, &aux5, 10);;
-    }*/
     fclose(fp);
 
     return no_lido;
@@ -575,10 +519,8 @@ void att_raiz(int RRN, FILE *fp)
 
     fp = fopen("ibtree.idx", "r+");
     fread(&c, sizeof(int), 1, fp);
-    //c = fgetc(fp);
     fseek(fp, 0, SEEK_SET);
     fwrite(&RRN, sizeof(int), 1, fp);
-    //fputc((RRN + '0'), fp);
 
     fclose(fp);
 
@@ -826,6 +768,5 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         }
         else //caso o split não seja necessário, somente escreve as mudanças do nó pai no arquivo
         escreve_no(pai->RRN, pai, fp);
-        
     }
 }

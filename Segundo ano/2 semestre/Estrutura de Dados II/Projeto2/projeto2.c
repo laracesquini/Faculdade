@@ -13,14 +13,14 @@ int menu_catalogo();
 
 int main()
 {
+     Isecundario *vets = NULL, *auxs;
      int stt, flags, op, op_busca;
      FILE *fd, *fp, *fs;
      node *raiz;
-     Isecundario *vets = NULL, *auxs;
      Tdados aux;
      char *dados;
      
-     //verificar se o arquivo de filmes existe. Se não existir, cria ele e permite que o usuário insira novos filmes. Se existir, verifica se o arquivo de índices existe
+     //verificar se o arquivo de filmes existe. Se não existir, cria ele e permite que o usuário insira novos filmes.
      if(file_exists("movies.dat") == 0)
      {
         printf("Olá! Essa é sua primeira interação com o programa. Leia as regras para melhor entendimento de seu funcionamento.\n");
@@ -29,7 +29,8 @@ int main()
         printf("\t*O atributo nota só permite números de 0 a 9.\n");
         printf("\tAperte enter para iniciar ");
         getchar();
-     
+
+        //definir a raiz na primeira inserção, setando seu RRN como 0 e escrevendo-o no arquivo que contém a árvore B+
         raiz = cria_no();
         raiz->folha = 1;
         int RRN_raiz = 0;
@@ -44,7 +45,7 @@ int main()
 
           if(op == 1)
           {
-               
+               //insere o filme na árvore B+ e no arquivo de dados
                aux = insercao();
                stt = inserir(aux.first_key, novo_RRN(fd), &raiz, fp); 
                if(stt == 1)
@@ -57,14 +58,15 @@ int main()
           }
         }while(op != 2);
      }
-     else
+     else //caso o arquivo de filmes já exista
      {
           int raiz_RRN;
           fp = fopen("ibtree.idx", "r");
-          fread(&raiz_RRN, sizeof(int), 1, fp);
+          fread(&raiz_RRN, sizeof(int), 1, fp); //lê o RRN da raiz no arquivo que contém a árvore B+
           fclose(fp);
           raiz = le_no(raiz_RRN, fp);
-          //verifica se os arquivos de índices existem. Se existir, verifica as flags
+
+          //verifica se o arquivo de índice secundário existe. Se existir, verifica a flag
           if(file_exists("ititle.idx"))
           {
                fs = fopen("ititle.idx", "r");
@@ -73,9 +75,9 @@ int main()
 
                fclose(fs);
                
-               if(flags == 1)
+               if(flags == 1) //se a flag for 1, o arquivo está atualizado, carrega os índices para a RAM
                vets = carrega_indicesS(fs, vets);
-               else
+               else //caso contrário, reconstroi os índices e carrage eles para RAM
                {
                     cria_indices(fd, fs, vets, flags);
 
@@ -83,7 +85,7 @@ int main()
                     flags = 1;
                }
           }
-          else //se os arquivos de índices não existem, criar os índices com base no arquivo de dados e carregar eles para a memória RAM
+          else //se o arquivo de índice secundário não existe, criar o índice com base no arquivo de dados e carregar ele para a memória RAM
           {
                cria_indices(fd, fs, vets, 0);
 
@@ -99,7 +101,7 @@ int main()
                
                if(op == 1)
                {
-                    //insere nas listas de índices e no arquivo de dados. Atualizando a flag se necessário
+                    //insere na lista de índice secundário, na árvore B+ e no arquivo de dados. Atualizando a flag se necessário
                     aux = insercao();
                     dados = formata_dados(aux);
                     stt = inserir(aux.first_key, novo_RRN(fd), &raiz, fp);
@@ -177,12 +179,13 @@ int main()
                }
                else if(op == 4)
                {
+                    //imprimir os filmes
                     int op_catalogo;
                     node *no_inicio;
 
                     op_catalogo = menu_catalogo();
 
-                    if(op_catalogo == 1)
+                    if(op_catalogo == 1) //imprime todos os filmes a partir de uma chave digitada pelo usuário
                     {
                          char chave_inicio[6];
 
@@ -193,19 +196,15 @@ int main()
                          no_inicio = busca_no(raiz, chave_inicio, fp);
                          catalogo(fd, fp, no_inicio->RRN, 1, chave_inicio);
                     }
-                    else if(op_catalogo == 2)
+                    else if(op_catalogo == 2) //imprime todos os filmes disponíveis
                     {
                          no_inicio = busca_inicio(raiz, fp);
                          catalogo(fd, fp, no_inicio->RRN, 2, NULL);
                     }
-                  //imprime o catálogo dos filmes disponíveis
-                   
-
-                    //FALTA TERMINAR AQUI E RESOLVER A QUESTÃO DE ESCRITA E LEITURA NOS ARQUIVOS
                }
                else
                {
-                    //salva as alterações nos arquivos de índices se eles existirem
+                    //salva as alterações no arquivo de índice secundário se ele existire
                     if(file_exists("ititle.idx"))
                     salvar(fs, vets, 0);
                }
@@ -298,6 +297,7 @@ int busca_filme()
      return op;
 }
 
+//função para que o usuário escolha se deseja ver todos os filmes disponíveis ou somente os filmes a partir de uma chave, retornando a opção escolhida
 int menu_catalogo()
 {
      int op;
