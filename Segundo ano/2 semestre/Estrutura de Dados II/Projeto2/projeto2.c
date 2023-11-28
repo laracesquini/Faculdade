@@ -33,10 +33,17 @@ int main()
         //definir a raiz na primeira inserção, setando seu RRN como 0 e escrevendo-o no arquivo que contém a árvore B+
         raiz = cria_no();
         raiz->folha = 1;
+        att_raiz(0, fp, 0);
+        /*fp = fopen("ibtree.idx", "w");
+        fputc('0', fp);
+        fclose(fp);*/
+
+        /*raiz = cria_no();
+        raiz->folha = 1;
         int RRN_raiz = 0;
         fp = fopen("ibtree.idx", "w");
         fwrite(&RRN_raiz, sizeof(int), 1, fp);
-        fclose(fp);
+        fclose(fp);*/
         
         do{
           do{
@@ -60,10 +67,17 @@ int main()
      }
      else //caso o arquivo de filmes já exista
      {
-          int raiz_RRN;
+          /*int raiz_RRN;
           fp = fopen("ibtree.idx", "r");
           fread(&raiz_RRN, sizeof(int), 1, fp); //lê o RRN da raiz no arquivo que contém a árvore B+
           fclose(fp);
+          raiz = le_no(raiz_RRN, fp);*/
+
+          fp = fopen("ibtree.idx", "r");
+          char c[6];
+          fscanf(fp, " %[^#]s", c);
+          fclose(fp);
+          int raiz_RRN = atoi(c);
           raiz = le_no(raiz_RRN, fp);
 
           //verifica se o arquivo de índice secundário existe. Se existir, verifica a flag

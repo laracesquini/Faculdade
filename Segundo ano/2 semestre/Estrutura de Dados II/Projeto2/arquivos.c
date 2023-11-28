@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "arquivos.h"
-
+ 
 //função que verifica se um arquivo existe, retorna 1 se ele existe e 0 se não existe
 int file_exists(char *nome)
 {
@@ -446,8 +446,46 @@ node *busca_inicio(node *raiz, FILE *fp)
     return no_atual;
 }
 
-//função que escreve o nó no arquivo que contém a árvore B+
 void escreve_no(int RRN, node *no, FILE *fp)
+{
+    int byte_offset = (192*RRN);
+    char aux[6];
+    
+    fp = fopen("ibtree.idx", "r+");
+    fscanf(fp, " %[^@]s", aux);
+    fgetc(fp);
+    fseek(fp, byte_offset, SEEK_CUR);
+    //FORMATAR NÓS
+    //APARENTEMENTE FUNCIONANDO
+    fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
+    for(int i = 0; i < ordem - 1; i++)
+    {
+        fprintf(fp, "%s,", no->chaves[i]);
+    }
+    fputc('|', fp);
+    for(int i = 0; i < ordem - 1 ; i++)
+    {
+        fprintf(fp, "%d,", no->dadosRRN[i]);
+    }
+    fputc('|', fp);
+    for(int i = 0; i < ordem; i++)
+    {
+        fprintf(fp, "%d,", no->filhos[i]);
+    }
+    fputc('@', fp);
+
+    int escrito, falta, posicao_atual = ftell(fp);
+    escrito = posicao_atual - (192*RRN) - 6; //colocar aqui o comprimento da raiz
+    falta = 192 - escrito;
+
+    for(int i =0; i < falta; i++)
+    {
+        fputc('#', fp);
+    }
+    fclose(fp);
+}
+//função que escreve o nó no arquivo que contém a árvore B+
+/*void escreve_no(int RRN, node *no, FILE *fp)
 {
     int byte_offset = (sizeof(node)*RRN) + sizeof(int); 
     
@@ -456,13 +494,59 @@ void escreve_no(int RRN, node *no, FILE *fp)
     fwrite(no, sizeof(node), 1, fp);
     
     fclose(fp);
-}
+}*/
 
-//função que lê um nó do arquivo que contém a árvore B+
 node *le_no(int RRN, FILE *fp)
 {
+    node *no_lido;
+    int byte_offset = (192*RRN);
+    char linha[100], aux[6], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
+    fp = fopen("ibtree.idx", "r");
+    fscanf(fp, " %[^@]s", aux);
+    fgetc(fp); //ler tamanho da raiz
+    fseek(fp, byte_offset, SEEK_CUR);
+    //fread(linha, 81, 1, fp);
+    //printf("%s \n", linha);
+    fscanf(fp, "%[^@]s", linha);
+    no_lido = cria_no();
+    no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
+    no_lido->folha = strtol(strtok(NULL, "|"), &aux2, 10);
+    no_lido->numeroChaves = strtol(strtok(NULL, "|"), &aux2, 10);
+    no_lido->pai = strtol(strtok(NULL, "|"), &aux2, 10);
+    no_lido->prox = strtol(strtok(NULL, "|"), &aux2, 10);
+    aux1 = strtok(NULL, "|");
+    aux2 = strtok(NULL, "|");
+    aux3 = strtok(NULL, "|");
+    aux4 = strtok(aux1, ",");
+    strcpy(no_lido->chaves[0], aux4);
+    for(int i = 1; i<no_lido->numeroChaves; i++)
+    {
+        aux4 = strtok(NULL, ",");
+        strcpy(no_lido->chaves[i], aux4);
+    }
+    
+    aux4 = strtok(aux2, ",");
+    no_lido->dadosRRN[0] = strtol(aux4, &aux5, 10);
+    for(int i = 1; i<no_lido->numeroChaves; i++)
+    {
+        aux4 = strtok(NULL, ",");
+        no_lido->dadosRRN[i] = strtol(aux4, &aux5, 10);
+    }
+    aux4 = strtok(aux3, ",");
+    no_lido->filhos[0] = strtol(aux4, &aux5, 10);
+    for(int i = 1; i<(no_lido->numeroChaves + 1); i++)
+    {
+        aux4 = strtok(NULL, ",");
+        no_lido->filhos[i] = strtol(aux4, &aux5, 10);;
+    } 
+    fclose(fp);
+    return no_lido;
+}
+//função que lê um nó do arquivo que contém a árvore B+
+/*node *le_no(int RRN, FILE *fp)
+{
     node *no_lido = malloc(sizeof(node));
-    int byte_offset = (sizeof(node)*RRN) + 4;
+    int byte_offset = (sizeof(node)*RRN) + sizeof(int);
 
     fp = fopen("ibtree.idx", "r");
 
@@ -472,7 +556,7 @@ node *le_no(int RRN, FILE *fp)
     fclose(fp);
 
     return no_lido;
-}
+}*/
 
 //função que cria e inicializa um nó genérico
 node *cria_no()
@@ -507,13 +591,50 @@ int novo_RRN_no(FILE *fp)
 
     fclose(fp);
     
-    novo = (novo/sizeof(node));
+    novo = (novo/192);
 
     return novo;
 }
 
+void att_raiz(int RRN, FILE *fp, int flag)
+{
+    char *str = (char *)malloc(6);
+
+    sprintf(str, "%d", RRN);
+
+    int len = strlen(str);
+
+    for(int i = len; i < 5; i++)
+    {
+        str[i] = '#';
+    }
+
+    str[5] = '\0';
+
+    if(flag == 0)
+    {
+        fp = fopen("ibtree.idx", "w");
+        fprintf(fp, "%s", str);
+        fputc('@', fp);
+        fclose(fp);
+    }
+    else
+    {
+        char aux[6];
+        fp = fopen("ibtree.idx", "r+");
+        fscanf(fp, " %[^@]s", aux);
+        fgetc(fp);
+        fseek(fp, 0, SEEK_SET);
+        fprintf(fp, "%s", str);
+        fputc('@', fp);
+        fclose(fp);
+    }
+   
+    return;
+}
+
 //função que atualiza o cabeçalho do arquivo que contém a árvore B+ quando a raiz mudar
-void att_raiz(int RRN, FILE *fp)
+/*void att_raiz(int RRN, FILE *fp)
 {
     int c;
 
@@ -525,7 +646,7 @@ void att_raiz(int RRN, FILE *fp)
     fclose(fp);
 
     return;
-}
+}*/
 
 //função que insere uma chave em um nó folha
 int insere_folha(node *folha, char *chave, int RRN)
@@ -692,7 +813,7 @@ void insere_pai(node *no_antigo, char *chave_promovida, node *novo_no, node **ra
         escreve_no(novo_no->RRN, novo_no, fp);
         escreve_no((*raiz)->RRN, (*raiz), fp);
 
-        att_raiz((*raiz)->RRN, fp); //atualiza o RRN da raiz presente no cabeçalho do arquivo de dados
+        att_raiz((*raiz)->RRN, fp, 1); //atualiza o RRN da raiz presente no cabeçalho do arquivo de dados
         return;
     }
 

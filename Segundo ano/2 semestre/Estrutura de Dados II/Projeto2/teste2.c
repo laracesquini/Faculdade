@@ -3,16 +3,33 @@
 #include <string.h>
 #include "arquivos.h"
 
-#define ordem 6
-
 int main()
 {
-    char vetor[5][6];
+    node *teste = cria_no(), *aux;
+    FILE *fp;
+    
+    /*fp = fopen("ibtree.idx", "w");
+    fputc('0', fp);
+    fclose(fp);
+    escreve_no(0, teste, fp);
+    escreve_no(1, teste, fp);*/
 
-    strcpy(vetor[0], "ola");
-    strcpy(vetor[1], "sla");
+    //att_raiz(10, fp, 1);
 
-    int tam = sizeof(vetor)/sizeof(vetor[0]);
 
-    printf("%d", tam);
+
+    aux = le_no(0, fp);
+    printf("RRN: %d, Num chaves: %d, Prox: %d, Pai: %d, Folha: %d\n", aux->RRN, aux->numeroChaves, aux->prox, aux->pai, aux->folha);
+        printf("Chaves: ");
+        for(int i = 0; i < ordem - 1; i++)
+        {
+            printf("%s ", aux->chaves[i]);
+        }
+        printf("\nFilhos: ");
+        for(int i = 0; i < ordem; i++)
+        {
+            printf("%d ", aux->filhos[i]);
+        }
+        printf("\n\n");
+
 }
