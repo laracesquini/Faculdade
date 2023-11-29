@@ -34,16 +34,6 @@ int main()
         raiz = cria_no();
         raiz->folha = 1;
         att_raiz(0, fp, 0);
-        /*fp = fopen("ibtree.idx", "w");
-        fputc('0', fp);
-        fclose(fp);*/
-
-        /*raiz = cria_no();
-        raiz->folha = 1;
-        int RRN_raiz = 0;
-        fp = fopen("ibtree.idx", "w");
-        fwrite(&RRN_raiz, sizeof(int), 1, fp);
-        fclose(fp);*/
         
         do{
           do{
@@ -67,12 +57,7 @@ int main()
      }
      else //caso o arquivo de filmes já exista
      {
-          /*int raiz_RRN;
-          fp = fopen("ibtree.idx", "r");
-          fread(&raiz_RRN, sizeof(int), 1, fp); //lê o RRN da raiz no arquivo que contém a árvore B+
-          fclose(fp);
-          raiz = le_no(raiz_RRN, fp);*/
-
+          //lê o RRN da raiz no arquivo que contém a árvore B+ e carrega a raiz para a RAM
           fp = fopen("ibtree.idx", "r");
           char c[6];
           fscanf(fp, " %[^#]s", c);
@@ -206,7 +191,6 @@ int main()
                          printf("Digite a chave:");
                          scanf(" %s", chave_inicio);
 
-                         printf("chega aqui");
                          no_inicio = busca_no(raiz, chave_inicio, fp);
                          catalogo(fd, fp, no_inicio->RRN, 1, chave_inicio);
                     }
@@ -218,7 +202,7 @@ int main()
                }
                else
                {
-                    //salva as alterações no arquivo de índice secundário se ele existire
+                    //salva as alterações no arquivo de índice secundário se ele existir
                     if(file_exists("ititle.idx"))
                     salvar(fs, vets, 0);
                }

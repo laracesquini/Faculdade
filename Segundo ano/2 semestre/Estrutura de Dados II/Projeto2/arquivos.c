@@ -267,7 +267,7 @@ void atualiza_flag(FILE *file, char *nome)
     return;
 }
 
-//função que busca um índice primário pela chave, retorna o elemento encontrado ou NULL
+//função que busca um registro pela chave primária, retorna o RRN do elemento no arquivo de dados ou -1, caso não seja encontrado
 int busca(node *raiz, char *chave, FILE *fp)
 {
     node *no;
@@ -446,17 +446,18 @@ node *busca_inicio(node *raiz, FILE *fp)
     return no_atual;
 }
 
+//função que escreve o nó no arquivo que contém a árvore B+
 void escreve_no(int RRN, node *no, FILE *fp)
 {
     int byte_offset = (192*RRN);
     char aux[6];
     
+    //posiciona o ponteiro no lugar certo a ser escrito e escreve todas as informações
     fp = fopen("ibtree.idx", "r+");
     fscanf(fp, " %[^@]s", aux);
     fgetc(fp);
+
     fseek(fp, byte_offset, SEEK_CUR);
-    //FORMATAR NÓS
-    //APARENTEMENTE FUNCIONANDO
     fprintf(fp, "%d|%d|%d|%d|%d|", no->RRN, no->folha, no->numeroChaves, no->pai, no->prox);
     for(int i = 0; i < ordem - 1; i++)
     {
@@ -474,8 +475,9 @@ void escreve_no(int RRN, node *no, FILE *fp)
     }
     fputc('@', fp);
 
+    //preenche o espaço que faltou com o caracter '#'
     int escrito, falta, posicao_atual = ftell(fp);
-    escrito = posicao_atual - (192*RRN) - 6; //colocar aqui o comprimento da raiz
+    escrito = posicao_atual - (192*RRN) - 6;
     falta = 192 - escrito;
 
     for(int i =0; i < falta; i++)
@@ -484,29 +486,21 @@ void escreve_no(int RRN, node *no, FILE *fp)
     }
     fclose(fp);
 }
-//função que escreve o nó no arquivo que contém a árvore B+
-/*void escreve_no(int RRN, node *no, FILE *fp)
-{
-    int byte_offset = (sizeof(node)*RRN) + sizeof(int); 
-    
-    fp = fopen("ibtree.idx", "r+");
-    fseek(fp, byte_offset, SEEK_SET);
-    fwrite(no, sizeof(node), 1, fp);
-    
-    fclose(fp);
-}*/
 
+//função que lê um nó do arquivo que contém a árvore B+
 node *le_no(int RRN, FILE *fp)
 {
     node *no_lido;
     int byte_offset = (192*RRN);
     char linha[100], aux[6], *aux1, *aux2, *aux3, *aux4, *aux5, *aux6;
+
+    //posiciona o ponteiro no lugar certo a ser lido
     fp = fopen("ibtree.idx", "r");
     fscanf(fp, " %[^@]s", aux);
-    fgetc(fp); //ler tamanho da raiz
+    fgetc(fp);
     fseek(fp, byte_offset, SEEK_CUR);
-    //fread(linha, 81, 1, fp);
-    //printf("%s \n", linha);
+    
+    //lê todo o registro, salvando-o em uma string e vai separando as informações, colocando-as na variável do tipo node
     fscanf(fp, "%[^@]s", linha);
     no_lido = cria_no();
     no_lido->RRN = strtol(strtok(linha, "|"), &aux2, 10);
@@ -540,23 +534,8 @@ node *le_no(int RRN, FILE *fp)
         no_lido->filhos[i] = strtol(aux4, &aux5, 10);;
     } 
     fclose(fp);
-    return no_lido;
+    return no_lido; //retorna o nó lido
 }
-//função que lê um nó do arquivo que contém a árvore B+
-/*node *le_no(int RRN, FILE *fp)
-{
-    node *no_lido = malloc(sizeof(node));
-    int byte_offset = (sizeof(node)*RRN) + sizeof(int);
-
-    fp = fopen("ibtree.idx", "r");
-
-    fseek(fp, byte_offset, SEEK_SET);
-    fread(no_lido, sizeof(node), 1, fp);
-    
-    fclose(fp);
-
-    return no_lido;
-}*/
 
 //função que cria e inicializa um nó genérico
 node *cria_no()
@@ -596,10 +575,12 @@ int novo_RRN_no(FILE *fp)
     return novo;
 }
 
+//função que atualiza o cabeçalho do arquivo que contém a árvore B+ quando a raiz for criada ou mudar
 void att_raiz(int RRN, FILE *fp, int flag)
 {
     char *str = (char *)malloc(6);
 
+    //transformando o RRN da raiz em uma string de tamanho fixo
     sprintf(str, "%d", RRN);
 
     int len = strlen(str);
@@ -611,14 +592,14 @@ void att_raiz(int RRN, FILE *fp, int flag)
 
     str[5] = '\0';
 
-    if(flag == 0)
+    if(flag == 0) //primeira inserção, escrever a raiz no arquivo, tendo RRN = 0
     {
         fp = fopen("ibtree.idx", "w");
         fprintf(fp, "%s", str);
         fputc('@', fp);
         fclose(fp);
     }
-    else
+    else //atualizar a raiz, lendo a raiz antiga e escrevendo a atual
     {
         char aux[6];
         fp = fopen("ibtree.idx", "r+");
@@ -632,21 +613,6 @@ void att_raiz(int RRN, FILE *fp, int flag)
    
     return;
 }
-
-//função que atualiza o cabeçalho do arquivo que contém a árvore B+ quando a raiz mudar
-/*void att_raiz(int RRN, FILE *fp)
-{
-    int c;
-
-    fp = fopen("ibtree.idx", "r+");
-    fread(&c, sizeof(int), 1, fp);
-    fseek(fp, 0, SEEK_SET);
-    fwrite(&RRN, sizeof(int), 1, fp);
-
-    fclose(fp);
-
-    return;
-}*/
 
 //função que insere uma chave em um nó folha
 int insere_folha(node *folha, char *chave, int RRN)
