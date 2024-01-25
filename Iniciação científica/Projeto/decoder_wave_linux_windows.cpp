@@ -186,11 +186,12 @@ double modulo(double num)
 
 int *identifica_picos(double *y, int m)
 {
+        //ANTES DISSO -> AUTOCORRELAÇÃO DO SINAL
         int i, num_picos = 0, j = 0;
 
         for(i = 1; i < (m-1); i++)
         {
-                if((y[i] > y[i-1]) && y[i] > y[i+1])
+                if((y[i] > y[i-1]) && y[i] > y[i+1]) //parcialmente certo
                 num_picos++;
         }
 
@@ -199,12 +200,32 @@ int *identifica_picos(double *y, int m)
 
         for(i = 1; i < (m-1); i++)
         {
-                if((y[i] > y[i-1]) && y[i] > y[i+1])
+                if((y[i] > y[i-1]) && y[i] > y[i+1]) //parcialmente certo, y[i] também deve ser maior que um certo valor 
                 {
                         posicao_picos[j] = i;
                         j++;
                 }
         }
+
+        //TALVEZ NADA DISSO SEJA NECESSÁRIO, FAZER posicao_picos[i] - posicao_picos[i-1]
+        int k, num_amostras = 0;
+        double DOi[num_picos];
+        j = 0;
+
+        for(i = 0; i < (num_picos - 1); i++)
+        {
+                k = posicao_picos[i];
+                while(k < posicao_picos[i + 1])
+                {
+                        num_amostras++;
+                        k++;
+                }
+                DOi[j] = num_amostras/1000; // SO UM EXEMPLO, SUBSTITUIR PELA TAXA DE AMOSTRAGEM DEPOIS
+                j++;
+                num_amostras = 0;
+        }
+
+
 
         return posicao_picos;
 }
