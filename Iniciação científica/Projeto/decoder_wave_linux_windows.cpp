@@ -184,6 +184,31 @@ double modulo(double num)
         return (-num);
 }
 
+int *identifica_picos(double *y, int m)
+{
+        int i, num_picos = 0, j = 0;
+
+        for(i = 1; i < (m-1); i++)
+        {
+                if((y[i] > y[i-1]) && y[i] > y[i+1])
+                num_picos++;
+        }
+
+        int *posicao_picos;
+        posicao_picos = (int *)malloc(num_picos*(sizeof(int)));
+
+        for(i = 1; i < (m-1); i++)
+        {
+                if((y[i] > y[i-1]) && y[i] > y[i+1])
+                {
+                        posicao_picos[j] = i;
+                        j++;
+                }
+        }
+
+        return posicao_picos;
+}
+
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
 {
         int i; 
@@ -222,6 +247,8 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         y[0] = s[1];
         y[m] = s[1];
 
+        int *picos = identifica_picos(y, m);
+        
 }
 
 
