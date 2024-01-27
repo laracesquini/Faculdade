@@ -268,8 +268,6 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         x[0] = s[1];
         x[m] = s[1];
 
-        //int *picos = identifica_picos(y, m);
-        
         //Autocorrelação do sinal
         int n = m + m - 1;
         y = new double[n];
@@ -302,6 +300,9 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         {
                 printf("%.5f, ", y[i]);
         }
+
+        //NÃO ESQUECER DE USAR O TAMANHO N PARA TRATAR DO SINAL AUTOCORRELACIONADO
+        //int *picos = identifica_picos(y, m);
 }
 
 
