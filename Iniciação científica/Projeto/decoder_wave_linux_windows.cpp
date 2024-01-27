@@ -233,7 +233,7 @@ int *identifica_picos(double *y, int m)
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
 {
         int i; 
-        double maior, media = 0, y[m];
+        double maior, media = 0, x[m], *y;
 
         //PRÉ- PROCESSAMENTO
         //normalização da amplitude
@@ -263,13 +263,45 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         //remoção da irradiação labial, pré-ênfases
         for(i = 1; i<(m-1); i++)
         {
-                y[i] = s[i] + (0.95*y[i-1]);
+                x[i] = s[i] + (0.95*x[i-1]);
         }
-        y[0] = s[1];
-        y[m] = s[1];
+        x[0] = s[1];
+        x[m] = s[1];
 
-        int *picos = identifica_picos(y, m);
+        //int *picos = identifica_picos(y, m);
         
+        //Autocorrelação do sinal
+        int n = m + m - 1;
+        y = new double[n];
+        for(i = 0; i < n; i++)
+        {
+                y[i] = 0;
+                for(int k = 0; k < m; k++)
+                {
+                        if((i-k >= 0) && (i-k < m))
+                        {
+                                y[i] += x[i-k]*x[m-k-1];
+                        }
+                }
+        }
+
+        //Normalizar o sinal novamente
+        maior = modulo(y[0]);
+        for(i = 0; i < n; i++)
+        {
+                if(modulo(y[i]) > maior)
+                maior = modulo(y[i]);
+        }
+        for(i = 0; i < n; i++)
+        {
+                y[i] = y[i]/maior;
+        }
+
+        printf("\n");
+        for(i = 0; i < n; i++)
+        {
+                printf("%.5f, ", y[i]);
+        }
 }
 
 
