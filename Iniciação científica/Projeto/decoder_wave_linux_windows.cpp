@@ -301,6 +301,34 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
                 printf("%.5f, ", y[i]);
         }
 
+        double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
+        int flag = 0;
+        i = 1;
+
+        while(flag == 0)
+        {
+                if((y[i] > y[i-1]) && (y[i] > y[i+1]))
+                {
+                        ponto_1[0] = (double)i;
+                        ponto_1[1] = y[i];
+                        flag = 1;
+                }
+                i++;
+        }
+
+        //Encontrar a reta que ajudará na identificação dos picos
+        int tam = n/2;
+        ponto_2[0] = (double)tam;
+        ponto_2[1] = y[n/2];
+
+        printf("\nPonto 1 : (%f, %f) e Ponto 2: (%f, %f)", ponto_1[0], ponto_1[1], ponto_2[0], ponto_2[1]);
+
+        coef_inclinacao = (ponto_2[1] - ponto_1[1])/(ponto_2[0] - ponto_1[0]);
+        a = coef_inclinacao;
+        b = ponto_2[1] - (a*ponto_2[0]);
+
+        printf("\nA: %f B: %f", a, b);
+
         //NÃO ESQUECER DE USAR O TAMANHO N PARA TRATAR DO SINAL AUTOCORRELACIONADO
         //int *picos = identifica_picos(y, m);
 }
