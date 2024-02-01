@@ -184,52 +184,6 @@ double modulo(double num)
         return (-num);
 }
 
-int *identifica_picos(double *y, int m)
-{
-        //ANTES DISSO -> AUTOCORRELAÇÃO DO SINAL
-        int i, num_picos = 0, j = 0;
-
-        for(i = 1; i < (m-1); i++)
-        {
-                if((y[i] > y[i-1]) && y[i] > y[i+1]) //parcialmente certo
-                num_picos++;
-        }
-
-        int *posicao_picos;
-        posicao_picos = (int *)malloc(num_picos*(sizeof(int)));
-
-        for(i = 1; i < (m-1); i++)
-        {
-                if((y[i] > y[i-1]) && y[i] > y[i+1]) //parcialmente certo, y[i] também deve ser maior que um certo valor 
-                {
-                        posicao_picos[j] = i;
-                        j++;
-                }
-        }
-
-        //TALVEZ NADA DISSO SEJA NECESSÁRIO, FAZER posicao_picos[i] - posicao_picos[i-1]
-        int k, num_amostras = 0;
-        double DOi[num_picos];
-        j = 0;
-
-        for(i = 0; i < (num_picos - 1); i++)
-        {
-                k = posicao_picos[i];
-                while(k < posicao_picos[i + 1])
-                {
-                        num_amostras++;
-                        k++;
-                }
-                DOi[j] = num_amostras/1000; // SO UM EXEMPLO, SUBSTITUIR PELA TAXA DE AMOSTRAGEM DEPOIS
-                j++;
-                num_amostras = 0;
-        }
-
-
-
-        return posicao_picos;
-}
-
 void normalizacao_amplitude(double *s, int m)
 {
         double maior;
@@ -305,6 +259,55 @@ double *autocorrelacao(double *x, int m)
 
         return y;
 }
+
+int *identifica_picos(double *y, int n, double a, double b)
+{
+        //ANTES DISSO -> AUTOCORRELAÇÃO DO SINAL
+        int i, num_picos = 0, j = 0;
+
+        for(i = 1; i < (n-1); i++)
+        {
+                if((y[i] > y[i-1]) && (y[i] > y[i+1]) && (y[i] > 0.95*(a*y[i] + b)))
+                num_picos++;
+        }
+
+        int *posicao_picos;
+        posicao_picos = (int *)malloc(num_picos*(sizeof(int)));
+
+        for(i = 1; i < (n-1); i++)
+        {
+                if((y[i] > y[i-1]) && (y[i] > y[i+1]) && (y[i] > 0.95*(a*y[i] + b))) //parcialmente certo, y[i] também deve ser maior que um certo valor 
+                {
+                        posicao_picos[j] = i;
+                        j++;
+                }
+        }
+
+        //TALVEZ NADA DISSO SEJA NECESSÁRIO, FAZER posicao_picos[i] - posicao_picos[i-1]
+        int k, num_amostras = 0;
+        int DOi[num_picos];
+        j = 0;
+
+        for(i = 0; i < (num_picos - 1); i++)
+        {
+                k = posicao_picos[i] + 1;
+                while(k < posicao_picos[i + 1])
+                {
+                        num_amostras++;
+                        k++;
+                }
+                DOi[j] = num_amostras; // SO UM EXEMPLO, SUBSTITUIR PELA TAXA DE AMOSTRAGEM DEPOIS
+                j++;
+                num_amostras = 0;
+        }
+
+        printf("\nDOI: ");
+        for(i = 0; i < 15; i++)
+        printf("%d, ", DOi[i]);
+
+        return posicao_picos;
+}
+
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
 {
         int i, n; 
@@ -327,11 +330,11 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         n = m + m - 1;
         normalizacao_amplitude(&y[0], n);
 
-        printf("\n");
+        /*printf("\n");
         for(i = 0; i < n; i++)
         {
                 printf("%.5f, ", y[i]);
-        }
+        }*/
 
         double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
         int flag = 0;
@@ -361,8 +364,13 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
 
         printf("\nA: %f B: %f", a, b);
 
-        //NÃO ESQUECER DE USAR O TAMANHO N PARA TRATAR DO SINAL AUTOCORRELACIONADO
-        //int *picos = identifica_picos(y, m);
+        int *picos = identifica_picos(y, n, a, b);
+
+        printf("\n");
+        for(i = 0; i < 20; i++)
+        {
+                printf("%d, ", picos[i]);
+        }
 }
 
 
