@@ -267,12 +267,14 @@ double *frequencia_fundamental(double *y, int n, double a, double b)
 {
         int i, num_picos = 0, j = 0;
 
+        //contagem dos picos
         for(i = 1; i < (n-1); i++)
         {
                 if((y[i] > y[i-1]) && (y[i] > y[i+1]) && (y[i] > 0.95*(a*y[i] + b)))
                 num_picos++;
         }
 
+        //identificação de picos
         int *posicao_picos;
         posicao_picos = (int *)malloc(num_picos*(sizeof(int)));
 
@@ -285,6 +287,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b)
                 }
         }
 
+        //contagem das amostras entre picos
         double POi[num_picos - 1], *F0i;
         j = 0;
 
@@ -294,6 +297,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b)
                 j++;
         }
 
+        //cálculo do F0i
         F0i = (double *)malloc((num_picos - 1)*sizeof(double));
         for(i = 0; i < (num_picos-1); i++)
         {
@@ -331,6 +335,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
                 printf("%.5f, ", y[i]);
         }*/
 
+        //identificação do menor e maior pico
         double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
         int flag = 0;
         i = 1;
@@ -364,6 +369,8 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         {
                 printf("%f, ", F0i[i]);
         }
+
+        //provavelmente vou precisar saber o tamanho de F0i, considerar opções. Ideia: ponteiro de inteiro que é alterado na função frequencia_fundamental, guardando essa informação.
 }
 
 
