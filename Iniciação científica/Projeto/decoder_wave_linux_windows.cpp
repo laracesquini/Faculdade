@@ -2,6 +2,8 @@
 #include<math.h>
 #include<string.h>
 #include<iostream>
+
+unsigned int taxa_amostragem;
 //---------------------------------------
 int main(int i,char* n[])
 {
@@ -61,6 +63,7 @@ if(((fr=fopen(n[1],"rb"))!=NULL))
         std::cout<<"\nTaxa de amostragem: "<<wave_chunk.samplingrate;
         std::cout<<"\nMedia do num. de bps: "<<wave_chunk.avgbytespersecond;
         std::cout<<"\nAlinhamento do bloco em bytes: "<<wave_chunk.blockalign;
+        taxa_amostragem = wave_chunk.samplingrate;
 
         //////////////////////////////////////////////////////////////////////////////
 
@@ -260,9 +263,8 @@ double *autocorrelacao(double *x, int m)
         return y;
 }
 
-int *identifica_picos(double *y, int n, double a, double b)
+double *frequencia_fundamental(double *y, int n, double a, double b)
 {
-        //ANTES DISSO -> AUTOCORRELAÇÃO DO SINAL
         int i, num_picos = 0, j = 0;
 
         for(i = 1; i < (n-1); i++)
@@ -276,36 +278,29 @@ int *identifica_picos(double *y, int n, double a, double b)
 
         for(i = 1; i < (n-1); i++)
         {
-                if((y[i] > y[i-1]) && (y[i] > y[i+1]) && (y[i] > 0.95*(a*y[i] + b))) //parcialmente certo, y[i] também deve ser maior que um certo valor 
+                if((y[i] > y[i-1]) && (y[i] > y[i+1]) && (y[i] > 0.95*(a*y[i] + b))) 
                 {
                         posicao_picos[j] = i;
                         j++;
                 }
         }
 
-        //TALVEZ NADA DISSO SEJA NECESSÁRIO, FAZER posicao_picos[i] - posicao_picos[i-1]
-        int k, num_amostras = 0;
-        int DOi[num_picos];
+        double POi[num_picos - 1], *F0i;
         j = 0;
 
-        for(i = 0; i < (num_picos - 1); i++)
+        for(i = 1; i < num_picos ; i++)
         {
-                k = posicao_picos[i] + 1;
-                while(k < posicao_picos[i + 1])
-                {
-                        num_amostras++;
-                        k++;
-                }
-                DOi[j] = num_amostras; // SO UM EXEMPLO, SUBSTITUIR PELA TAXA DE AMOSTRAGEM DEPOIS
+                POi[j] = (double)(posicao_picos[i] - posicao_picos[i-1] - 1)/(double)taxa_amostragem;
                 j++;
-                num_amostras = 0;
         }
 
-        printf("\nDOI: ");
-        for(i = 0; i < 15; i++)
-        printf("%d, ", DOi[i]);
+        F0i = (double *)malloc((num_picos - 1)*sizeof(double));
+        for(i = 0; i < (num_picos-1); i++)
+        {
+                F0i[i] = 1/POi[i];
+        }
 
-        return posicao_picos;
+       return F0i;     
 }
 
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
@@ -362,14 +357,12 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         a = coef_inclinacao;
         b = ponto_2[1] - (a*ponto_2[0]);
 
-        printf("\nA: %f B: %f", a, b);
+        printf("\nA: %f B: %f\n", a, b);
 
-        int *picos = identifica_picos(y, n, a, b);
-
-        printf("\n");
-        for(i = 0; i < 20; i++)
+        double *F0i = frequencia_fundamental(y, n, a, b);
+        for(i = 0; i < 15; i++)
         {
-                printf("%d, ", picos[i]);
+                printf("%f, ", F0i[i]);
         }
 }
 
