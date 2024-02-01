@@ -230,13 +230,11 @@ int *identifica_picos(double *y, int m)
         return posicao_picos;
 }
 
-void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
+void normalizacao_amplitude(double *s, int m)
 {
-        int i; 
-        double maior, media = 0, x[m], *y;
+        double maior;
+        int i;
 
-        //PRÉ- PROCESSAMENTO
-        //normalização da amplitude
         maior = modulo(s[0]);
         for(i = 0; i<m; i++)
         {
@@ -248,7 +246,14 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
                 s[i] = s[i]/maior;
         }
 
-        //remoção da frequência 0 hrtz
+        return;
+}
+
+void remocao_media(double *s, int m)
+{
+        double media = 0;
+        int i;
+
         for(i=0; i<m; i++)
         {
                 media = media + s[i];
@@ -260,7 +265,15 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
                 s[i] = s[i] - media;
         }
 
-        //remoção da irradiação labial, pré-ênfases
+        return; 
+}
+
+double *remocao_irradiacao_labial(double *s, int m)
+{
+        int i;
+        double *x;
+        x = (double *)malloc(m*(sizeof(double)));
+
         for(i = 1; i<(m-1); i++)
         {
                 x[i] = s[i] + (0.95*x[i-1]);
@@ -268,8 +281,15 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         x[0] = s[1];
         x[m] = s[1];
 
-        //Autocorrelação do sinal
-        int n = m + m - 1;
+        return x;
+}
+
+double *autocorrelacao(double *x, int m)
+{
+        int n, i;
+        double *y;
+
+        n = m + m - 1;
         y = new double[n];
         for(i = 0; i < n; i++)
         {
@@ -283,17 +303,29 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
                 }
         }
 
+        return y;
+}
+void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
+{
+        int i, n; 
+        double *x, *y;
+
+        //PRÉ- PROCESSAMENTO
+        //normalização da amplitude
+        normalizacao_amplitude(&s[0], m);
+       
+        //remoção da frequência 0 hrtz
+        remocao_media(&s[0], m);
+
+        //remoção da irradiação labial, pré-ênfases
+        x = remocao_irradiacao_labial(&s[0], m);
+
+        //Autocorrelação do sinal
+        y = autocorrelacao(&x[0], m);
+
         //Normalizar o sinal novamente
-        maior = modulo(y[0]);
-        for(i = 0; i < n; i++)
-        {
-                if(modulo(y[i]) > maior)
-                maior = modulo(y[i]);
-        }
-        for(i = 0; i < n; i++)
-        {
-                y[i] = y[i]/maior;
-        }
+        n = m + m - 1;
+        normalizacao_amplitude(&y[0], n);
 
         printf("\n");
         for(i = 0; i < n; i++)
