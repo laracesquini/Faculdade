@@ -263,7 +263,7 @@ double *autocorrelacao(double *x, int m)
         return y;
 }
 
-double *frequencia_fundamental(double *y, int n, double a, double b)
+double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
 {
         int i, num_picos = 0, j = 0;
 
@@ -299,12 +299,28 @@ double *frequencia_fundamental(double *y, int n, double a, double b)
 
         //cálculo do F0i
         F0i = (double *)malloc((num_picos - 1)*sizeof(double));
+        *tam = (num_picos - 1);
         for(i = 0; i < (num_picos-1); i++)
         {
                 F0i[i] = 1/POi[i];
         }
 
        return F0i;     
+}
+
+double media(double *F0i, int tam)
+{
+        int i;
+        double media, soma;
+
+        for(i = 0; i < tam; i++)
+        {
+                soma = soma + F0i[i];
+        }
+
+        media = soma/tam;
+
+        return media;
 }
 
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
@@ -329,12 +345,6 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         n = m + m - 1;
         normalizacao_amplitude(&y[0], n);
 
-        /*printf("\n");
-        for(i = 0; i < n; i++)
-        {
-                printf("%.5f, ", y[i]);
-        }*/
-
         //identificação do menor e maior pico
         double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
         int flag = 0;
@@ -352,25 +362,28 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         }
 
         //Encontrar a reta que ajudará na identificação dos picos
-        int tam = n/2;
+        int tam = n/2, tam_F0i;
         ponto_2[0] = (double)tam;
         ponto_2[1] = y[n/2];
 
-        printf("\nPonto 1 : (%f, %f) e Ponto 2: (%f, %f)", ponto_1[0], ponto_1[1], ponto_2[0], ponto_2[1]);
+        //printf("\nPonto 1 : (%f, %f) e Ponto 2: (%f, %f)", ponto_1[0], ponto_1[1], ponto_2[0], ponto_2[1]);
 
         coef_inclinacao = (ponto_2[1] - ponto_1[1])/(ponto_2[0] - ponto_1[0]);
         a = coef_inclinacao;
         b = ponto_2[1] - (a*ponto_2[0]);
 
-        printf("\nA: %f B: %f\n", a, b);
+        //printf("\nA: %f B: %f\n", a, b);
 
-        double *F0i = frequencia_fundamental(y, n, a, b);
-        for(i = 0; i < 15; i++)
+        double *F0i = frequencia_fundamental(y, n, a, b, &tam_F0i);
+        /*for(i = 0; i < 15; i++)
         {
                 printf("%f, ", F0i[i]);
-        }
+        }*/
 
-        //provavelmente vou precisar saber o tamanho de F0i, considerar opções. Ideia: ponteiro de inteiro que é alterado na função frequencia_fundamental, guardando essa informação.
+        //extração de características
+        double c[8];
+
+        c[0] = media(F0i, tam_F0i);
 }
 
 
