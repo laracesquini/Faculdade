@@ -311,16 +311,41 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
 double media(double *F0i, int tam)
 {
         int i;
-        double media, soma;
+        double media, soma = 0;
 
         for(i = 0; i < tam; i++)
-        {
-                soma = soma + F0i[i];
-        }
-
+        soma = soma + F0i[i];
+        
         media = soma/tam;
 
         return media;
+}
+
+double media_geometrica(double *F0i, int tam)
+{
+        int i;
+        double mult = 1, media_g;
+
+        for(i = 0; i < tam; i++)
+        mult = mult*F0i[i];
+        
+        media_g = pow(mult, (1/tam));
+
+        return media_g;
+}
+
+double RMS(double *F0i, int tam)
+{
+        int i;
+        double soma = 0, media, rms;
+
+        for(i = 0; i < tam; i++)
+        soma = soma + pow(F0i[i], 2);
+
+        media = soma/tam;
+        rms = sqrt(media);
+
+        return rms;     
 }
 
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
@@ -384,6 +409,8 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         double c[8];
 
         c[0] = media(F0i, tam_F0i);
+        c[1] = media_geometrica(F0i, tam_F0i);
+        c[2] = RMS(F0i, tam_F0i);
 }
 
 
