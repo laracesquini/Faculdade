@@ -179,6 +179,8 @@ return(((msb&0x80)>>7)*(32768) +
        ((lsb&0x02)>>1)*(2) +
        (lsb&0x01));
 }
+
+//cálculo do módulo de um número
 double modulo(double num)
 {
         if(num > 0)
@@ -187,17 +189,20 @@ double modulo(double num)
         return (-num);
 }
 
+//normalização da amplitude do sinal - garante que todas as amostras estejam entre -1 e 1
 void normalizacao_amplitude(double *s, int m)
 {
         double maior;
         int i;
 
+        //identificar o maior valor em módulo
         maior = modulo(s[0]);
         for(i = 0; i<m; i++)
         {
                 if(modulo(s[i]) > maior)
                 maior = modulo(s[i]);
         }
+        //dividir todas as amotras pelo maior valor
         for(i=0; i<m; i++)
         {
                 s[i] = s[i]/maior;
@@ -206,17 +211,20 @@ void normalizacao_amplitude(double *s, int m)
         return;
 }
 
+//remoção da media do sinal ou frequência 0 hrtz (aquilo que não oscila) - apenas translada o sinal no eixo
 void remocao_media(double *s, int m)
 {
         double media = 0;
         int i;
 
+        //calcular a media dos valores das amostras
         for(i=0; i<m; i++)
         {
                 media = media + s[i];
         }
         media = media/m;
 
+        //remover a média 
         for(i=0; i<m; i++)
         {
                 s[i] = s[i] - media;
@@ -225,22 +233,25 @@ void remocao_media(double *s, int m)
         return; 
 }
 
+//remoção da irradiação labial - limpa o sinal
 double *remocao_irradiacao_labial(double *s, int m)
 {
         int i;
         double *x;
-        x = (double *)malloc(m*(sizeof(double)));
+        x = (double *)malloc(m*(sizeof(double))); //sinal sem contribuição labial
 
+        //aplicação de um filtro FIR com 2 coeficientes - altera levemente a forma de onda
+        x[0] = s[1];
         for(i = 1; i<(m-1); i++)
         {
                 x[i] = s[i] + (0.95*x[i-1]);
         }
-        x[0] = s[1];
         x[m] = s[1];
 
         return x;
 }
 
+//autocorrelação do sinal - relação do sinal com ele mesmo considerando certo deslocamento. O sinal autocorrelacionado será simétrico, com os picos crescendo do começo até a metade.
 double *autocorrelacao(double *x, int m)
 {
         int n, i;
@@ -263,6 +274,7 @@ double *autocorrelacao(double *x, int m)
         return y;
 }
 
+//cálculo da frequência fundamental de vibração das cordas vocais ao longo do sinal.
 double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
 {
         int i, num_picos = 0, j = 0;
@@ -287,7 +299,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 }
         }
 
-        //contagem das amostras entre picos
+        //contagem das amostras entre picos e cálculo do POi(Período de Oscilação Inicial)
         double POi[num_picos - 1], *F0i;
         j = 0;
 
@@ -308,6 +320,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
        return F0i;     
 }
 
+//obtenção da média do sinal, considerando o F0i
 double media(double *F0i, int tam)
 {
         int i;
@@ -321,10 +334,11 @@ double media(double *F0i, int tam)
         return media;
 }
 
+//obtenção da média geométrica do sinal, considerando o F0i
 double media_geometrica(double *F0i, int tam)
 {
         int i;
-        double mult = 1, media_g;
+        long double mult = 1.0, media_g;
 
         for(i = 0; i < tam; i++)
         mult = mult*F0i[i];
@@ -334,6 +348,7 @@ double media_geometrica(double *F0i, int tam)
         return media_g;
 }
 
+//obtenção do RMS(Root Mean Squared) do sinal, considerando o F0i
 double RMS(double *F0i, int tam)
 {
         int i;
@@ -348,6 +363,7 @@ double RMS(double *F0i, int tam)
         return rms;     
 }
 
+//obtenção da dispersão do sinal, considerando o F0i
 double dispersao(double *F0i, int tam, double media)
 {
         int i;
@@ -362,6 +378,7 @@ double dispersao(double *F0i, int tam, double media)
         return dispersao;
 }
 
+//obtenção do percentual de variabilidade do sinal, considerando o F0i
 double percentual_variabilidade(double *F0i, int tam, double media)
 {
         int i;
@@ -376,6 +393,7 @@ double percentual_variabilidade(double *F0i, int tam, double media)
         return pv;
 }
 
+//obtenção do coeficiente de consitência do sinal, considerando o F0i
 double coeficiente_consistencia(double *F0i, int tam, double media)
 {
         int i;
@@ -433,19 +451,11 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         ponto_2[0] = (double)tam;
         ponto_2[1] = y[n/2];
 
-        //printf("\nPonto 1 : (%f, %f) e Ponto 2: (%f, %f)", ponto_1[0], ponto_1[1], ponto_2[0], ponto_2[1]);
-
         coef_inclinacao = (ponto_2[1] - ponto_1[1])/(ponto_2[0] - ponto_1[0]);
         a = coef_inclinacao;
         b = ponto_2[1] - (a*ponto_2[0]);
 
-        //printf("\nA: %f B: %f\n", a, b);
-
         double *F0i = frequencia_fundamental(y, n, a, b, &tam_F0i);
-        /*for(i = 0; i < 15; i++)
-        {
-                printf("%f, ", F0i[i]);
-        }*/
 
         //extração de características
         double c[7];
@@ -454,7 +464,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         c[1] = media_geometrica(F0i, tam_F0i);
         c[2] = RMS(F0i, tam_F0i);
         c[3] = dispersao(F0i, tam_F0i, c[0]);
-        c[4] = c[3]/c[0];
+        c[4] = c[3]/c[0]; //obtenção do coeficiente de variação
         c[5] = percentual_variabilidade(F0i, tam_F0i, c[0]);
         c[6] = coeficiente_consistencia(F0i, tam_F0i, c[0]);
 
