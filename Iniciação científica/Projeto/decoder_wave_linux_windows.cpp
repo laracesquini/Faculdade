@@ -324,15 +324,12 @@ double media(double *F0i, int tam)
 double media_geometrica(double *F0i, int tam)
 {
         int i;
-        double mult = 1, media_g, aux;
+        double mult = 1, media_g;
 
         for(i = 0; i < tam; i++)
         mult = mult*F0i[i];
         
-        printf("\nmult: %f", mult);
-        aux = 1/tam;
-        media_g = pow(mult, aux);
-        printf("\nmedia_g: %f", media_g);
+        media_g = pow(mult, 1.0/tam);
 
         return media_g;
 }
@@ -451,7 +448,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         }*/
 
         //extração de características
-        /*double c[7];
+        double c[7];
 
         c[0] = media(F0i, tam_F0i);
         c[1] = media_geometrica(F0i, tam_F0i);
@@ -459,18 +456,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         c[3] = dispersao(F0i, tam_F0i, c[0]);
         c[4] = c[3]/c[0];
         c[5] = percentual_variabilidade(F0i, tam_F0i, c[0]);
-        c[6] = coeficiente_consistencia(F0i, tam_F0i, c[0]);*/
-
-        //teste
-        double c[7], d[10] = {9, 4, 2, 7, 9, 2, 4, 7, 4, 10};
-
-        c[0] = media(d, 10);
-        c[1] = media_geometrica(d, 10); //RESOLVER ESSEEEE
-        c[2] = RMS(d, 10);
-        c[3] = dispersao(d, 10, c[0]);
-        c[4] = c[3]/c[0];
-        c[5] = percentual_variabilidade(d, 10, c[0]);
-        c[6] = coeficiente_consistencia(d, 10, c[0]);
+        c[6] = coeficiente_consistencia(F0i, tam_F0i, c[0]);
 
         printf("\nC: ");
         for(i = 0; i < 7; i++)
