@@ -249,8 +249,7 @@ void remocao_media(double *s, int m)
 void remocao_irradiacao_labial(double *s, int m, double *x)
 {
         int i;
-        //x = (double *)malloc(m*(sizeof(double))); //sinal sem contribuição labial
-
+        
         //aplicação de um filtro FIR com 2 coeficientes - altera levemente a forma de onda
         x[0] = s[1];
         for(i = 1; i<(m-1); i++)
@@ -318,10 +317,12 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 POi[j] = (double)(posicao_picos[i] - posicao_picos[i-1] - 1)/(double)taxa_amostragem;
                 j++;
         }
+
         printf("POi:");
         imprimir(POi, num_picos - 1);
+
         //cálculo do F0i
-        //F0i = (double *)malloc((num_picos - 1)*(sizeof(double))); //problema de alocação aqui, resolver 
+        //F0i = (double *)malloc((num_picos - 1)*(sizeof(double))); //problema de alocação
         //F0i = new double[num_picos - 1];
         F0i = aux;
         *tam = (num_picos - 1);
@@ -442,12 +443,10 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         
         //Autocorrelação do sinal
         autocorrelacao(x, m, &y[0]);
-        //delete [] x;
 
         //Normalizar o sinal novamente
         n = m + m - 1;
         normalizacao_amplitude(&y[0], n);
-        //imprimir(y, n);
 
         //identificação do menor e maior pico
         double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
@@ -474,7 +473,6 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         a = coef_inclinacao;
         b = ponto_2[1] - (a*ponto_2[0]);
 
-        //printf("\na: %f e b: %f\n", a, b);
         double *F0i = frequencia_fundamental(y, n, a, b, &tam_F0i);
         delete [] y;
         
@@ -494,16 +492,6 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         {
                 printf("%.5f,", c[i]);
         }
-
-        //patológicas primeiro
-        /*FILE *fp = fopen("caracteristicas.txt", "a+");
-        for(i = 0; i < 7; i++)
-        {
-                fprintf(fp, "%.5f,", c[i]);
-        }
-        fputs("\n", fp);
-
-        fclose(fp);*/
 
         return;
 }
