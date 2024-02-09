@@ -7,8 +7,8 @@ plot(data);
 hold on; % Manter o gráfico atual
 
 % Coeficientes da reta
-a = 0.000014; 
-b = -0.000749;  
+a = 0.000017; 
+b = -0.000328;  
 
 reta_y = a * (1:length(data)/2) + b; % pega valores para x de 1 até metade do sinal 
 

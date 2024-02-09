@@ -189,6 +189,18 @@ double modulo(double num)
         return (-num);
 }
 
+void imprimir(double *vet, int m)
+{
+        int i;
+
+        printf("\n");
+        for(i = 0; i < m; i++)
+        {
+                printf("%d:%f, ", i, vet[i]);
+        }
+        printf("\n");
+}
+
 //normalização da amplitude do sinal - garante que todas as amostras estejam entre -1 e 1
 void normalizacao_amplitude(double *s, int m)
 {
@@ -234,11 +246,10 @@ void remocao_media(double *s, int m)
 }
 
 //remoção da irradiação labial - limpa o sinal
-double *remocao_irradiacao_labial(double *s, int m)
+void remocao_irradiacao_labial(double *s, int m, double *x)
 {
         int i;
-        double *x;
-        x = (double *)malloc(m*(sizeof(double))); //sinal sem contribuição labial
+        //x = (double *)malloc(m*(sizeof(double))); //sinal sem contribuição labial
 
         //aplicação de um filtro FIR com 2 coeficientes - altera levemente a forma de onda
         x[0] = s[1];
@@ -248,17 +259,16 @@ double *remocao_irradiacao_labial(double *s, int m)
         }
         x[m] = s[1];
 
-        return x;
+        return;
 }
 
 //autocorrelação do sinal - relação do sinal com ele mesmo considerando certo deslocamento. O sinal autocorrelacionado será simétrico, com os picos crescendo do começo até a metade.
-double *autocorrelacao(double *x, int m)
+void autocorrelacao(double *x, int m, double *y)
 {
         int n, i;
-        double *y;
-
+        
         n = m + m - 1;
-        y = new double[n];
+
         for(i = 0; i < n; i++)
         {
                 y[i] = 0;
@@ -271,7 +281,7 @@ double *autocorrelacao(double *x, int m)
                 }
         }
 
-        return y;
+        return;
 }
 
 //cálculo da frequência fundamental de vibração das cordas vocais ao longo do sinal.
@@ -287,9 +297,8 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
         }
 
         //identificação de picos
-        int *posicao_picos;
-        posicao_picos = (int *)malloc(num_picos*(sizeof(int)));
-
+        int posicao_picos[num_picos];
+        
         for(i = 1; i < (n-1); i++)
         {
                 if((y[i] > y[i-1]) && (y[i] > y[i+1]) && (y[i] > 0.95*(a*y[i] + b))) 
@@ -300,7 +309,8 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
         }
 
         //contagem das amostras entre picos e cálculo do POi(Período de Oscilação Inicial)
-        double POi[num_picos - 1], *F0i;
+        double POi[num_picos - 1], aux[num_picos - 1];
+        double *F0i;
         j = 0;
 
         for(i = 1; i < num_picos ; i++)
@@ -308,28 +318,33 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 POi[j] = (double)(posicao_picos[i] - posicao_picos[i-1] - 1)/(double)taxa_amostragem;
                 j++;
         }
-
+        printf("POi:");
+        imprimir(POi, num_picos - 1);
         //cálculo do F0i
-        F0i = (double *)malloc((num_picos - 1)*sizeof(double));
+        //F0i = (double *)malloc((num_picos - 1)*(sizeof(double))); //problema de alocação aqui, resolver 
+        //F0i = new double[num_picos - 1];
+        F0i = aux;
         *tam = (num_picos - 1);
         for(i = 0; i < (num_picos-1); i++)
         {
-                F0i[i] = 1/POi[i];
+                F0i[i] = 1.0/POi[i];
         }
 
-       return F0i;     
+        printf("F0i:");
+        imprimir(F0i, num_picos - 1);
+        return F0i;     
 }
 
 //obtenção da média do sinal, considerando o F0i
 double media(double *F0i, int tam)
 {
         int i;
-        double media, soma = 0;
+        double media, soma = 0.0;
 
-        for(i = 0; i < tam; i++)
+        for(i = 0; i < 400; i++)
         soma = soma + F0i[i];
         
-        media = soma/tam;
+        media = soma/(double)tam;
 
         return media;
 }
@@ -412,6 +427,8 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
 {
         int i, n; 
         double *x, *y;
+        x = new double[m];
+        y = new double[m + m -1];
 
         //PRÉ- PROCESSAMENTO
         //normalização da amplitude
@@ -419,16 +436,18 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
        
         //remoção da frequência 0 hrtz
         remocao_media(&s[0], m);
-
+        
         //remoção da irradiação labial, pré-ênfases
-        x = remocao_irradiacao_labial(&s[0], m);
-
+        remocao_irradiacao_labial(s, m, &x[0]);
+        
         //Autocorrelação do sinal
-        y = autocorrelacao(&x[0], m);
+        autocorrelacao(x, m, &y[0]);
+        //delete [] x;
 
         //Normalizar o sinal novamente
         n = m + m - 1;
         normalizacao_amplitude(&y[0], n);
+        //imprimir(y, n);
 
         //identificação do menor e maior pico
         double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
@@ -455,8 +474,10 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         a = coef_inclinacao;
         b = ponto_2[1] - (a*ponto_2[0]);
 
+        //printf("\na: %f e b: %f\n", a, b);
         double *F0i = frequencia_fundamental(y, n, a, b, &tam_F0i);
-
+        delete [] y;
+        
         //extração de características
         double c[7];
 
@@ -467,13 +488,24 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         c[4] = c[3]/c[0]; //obtenção do coeficiente de variação
         c[5] = percentual_variabilidade(F0i, tam_F0i, c[0]);
         c[6] = coeficiente_consistencia(F0i, tam_F0i, c[0]);
-
+        
         printf("\nC: ");
+        for(i = 0; i< 7; i++)
+        {
+                printf("%.5f,", c[i]);
+        }
+
+        //patológicas primeiro
+        /*FILE *fp = fopen("caracteristicas.txt", "a+");
         for(i = 0; i < 7; i++)
         {
-                printf("%f, ", c[i]);
+                fprintf(fp, "%.5f,", c[i]);
         }
-        
+        fputs("\n", fp);
+
+        fclose(fp);*/
+
+        return;
 }
 
 
