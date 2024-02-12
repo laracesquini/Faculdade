@@ -20,6 +20,14 @@ void imprimir_matriz(double **matriz)
     return;
 }
 
+double modulo(double num)
+{
+        if(num > 0)
+        return num;
+        else
+        return (-num);
+}
+
 double **ler_dados(char *nome)
 {
     FILE *fp;
@@ -51,11 +59,35 @@ double **ler_dados(char *nome)
     return matriz;
 }
 
+void normaliza_matriz(double **matriz)
+{
+    int i, j;
+    double maior;
+
+    for(i = 0; i < linhas; i++)
+    {
+        maior = modulo(matriz[i][0]);
+        for(j = 0; j < colunas; j++)
+        {
+            if(modulo(matriz[i][j]) > maior)
+            maior = modulo(matriz[i][j]);
+        }
+
+        for(j = 0; j < colunas; j++)
+        {
+            matriz[i][j] = matriz[i][j]/maior;
+        }
+    }
+
+    return;
+}
+
 int main()
 {
     double **classe_patologicas, **classe_nao_patologicas;
     classe_patologicas = ler_dados("caracteristicas_patologicas.txt");
     classe_nao_patologicas = ler_dados("caracteristicas_nao_patologicas.txt");
 
+    normaliza_matriz(classe_nao_patologicas);
     imprimir_matriz(classe_nao_patologicas);
 }
