@@ -88,6 +88,7 @@ int main()
     classe_patologicas = ler_dados("caracteristicas_patologicas.txt");
     classe_nao_patologicas = ler_dados("caracteristicas_nao_patologicas.txt");
 
+    normaliza_matriz(classe_patologicas);
     normaliza_matriz(classe_nao_patologicas);
-    imprimir_matriz(classe_nao_patologicas);
+    
 }
