@@ -222,7 +222,16 @@ double overlap(double **classe1, double **classe2, double *maiores_valores_1, do
     {
         for(i = 0; i < linhas; i++)
         {
-            if(((classe1[i][j] <= maiores_valores_2[j]) && (classe1[i][j] >= menores_valores_2[j])) || ((classe2[i][j] <= maiores_valores_1[j]) && (classe2[i][j] >= menores_valores_1[j])))
+            if(((classe1[i][j] <= maiores_valores_2[j]) && (classe1[i][j] >= menores_valores_2[j])))
+            R++;
+        }
+    }
+
+    for(j = 0; j < colunas; j++)
+    {
+        for(i = 0; i < linhas; i++)
+        {
+            if(((classe2[i][j] <= maiores_valores_1[j]) && (classe2[i][j] >= menores_valores_1[j])))
             R++;
         }
     }
