@@ -11,12 +11,13 @@ void normaliza_matriz(double **matriz);
 double *calculo_vetor_similaridade(double **matriz);
 void calculo_vetor_alcance(double **matriz, double *maior, double *menor);
 double media(double *vet);
+double overlap(double **classe1, double **classe2, double *maiores_valores_1, double *menores_valores_1, double *maiores_valores_2, double *menores_valores_2);
 
 int main()
 {   
     double **classe_patologicas, **classe_nao_patologicas; //declaração de matrizes
     double *vetor_similaridade_1, *vetor_similaridade_2, *menores_valores_1, *maiores_valores_1, *menores_valores_2, *maiores_valores_2; //declaração de vetores
-    double alpha, aux; //declaração de variáveis
+    double alpha, aux, R; //declaração de variáveis
 
     //leitura dos dados
     classe_patologicas = ler_dados("caracteristicas_patologicas.txt");
@@ -47,8 +48,22 @@ int main()
 
     calculo_vetor_alcance(classe_patologicas, &maiores_valores_1[0], &menores_valores_1[0]);
     calculo_vetor_alcance(classe_nao_patologicas, &maiores_valores_2[0], &menores_valores_2[0]);
+    printf("\nClasse 1\nSimilaridade: ");
+    for(int i = 0; i < colunas; i++)
+    printf("%.5f, ", vetor_similaridade_1[i]);
+
+    printf("\nMaiores");
+    for(int i = 0; i < colunas; i++)
+    printf("%.5f, ", maiores_valores_1[i]);
+
+    printf("\nMenores: ");
+    for(int i = 0; i < colunas; i++)
+    printf("%.5f, ", menores_valores_1[i]);
 
     //cálculo do R
+    R = overlap(classe_patologicas, classe_nao_patologicas, maiores_valores_1, menores_valores_1, maiores_valores_2, menores_valores_2);
+
+    printf("R: %f", R);
 }
 
 void imprimir_matriz(double **matriz)
@@ -196,4 +211,21 @@ double media(double *vet)
     media = media/colunas;
 
     return media;
+}
+
+double overlap(double **classe1, double **classe2, double *maiores_valores_1, double *menores_valores_1, double *maiores_valores_2, double *menores_valores_2)
+{
+    double R = 0;
+    int i, j;
+
+    for(j = 0; j < colunas; j++)
+    {
+        for(i = 0; i < linhas; i++)
+        {
+            if(((classe1[i][j] <= maiores_valores_2[j]) && (classe1[i][j] >= menores_valores_2[j])) || ((classe2[i][j] <= maiores_valores_1[j]) && (classe2[i][j] >= menores_valores_1[j])))
+            R++;
+        }
+    }
+
+    return R;
 }
