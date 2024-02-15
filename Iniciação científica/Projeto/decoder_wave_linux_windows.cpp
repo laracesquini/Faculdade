@@ -196,9 +196,10 @@ void imprimir(double *vet, int m)
         printf("\n");
         for(i = 0; i < m; i++)
         {
-                printf("%d:%f, ", i, vet[i]);
+                printf("%f,", vet[i]);
         }
         printf("\n");
+        printf("Tamanho: %d", m);
 }
 
 //normalização da amplitude do sinal - garante que todas as amostras estejam entre -1 e 1
@@ -319,7 +320,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
         }
 
         printf("POi:");
-        imprimir(POi, num_picos - 1);
+        //imprimir(POi, num_picos - 1);
 
         //cálculo do F0i
         //F0i = (double *)malloc((num_picos - 1)*(sizeof(double))); //problema de alocação
@@ -331,8 +332,8 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 F0i[i] = 1.0/POi[i];
         }
 
-        printf("F0i:");
-        imprimir(F0i, num_picos - 1);
+        //printf("F0i:");
+        //imprimir(F0i, num_picos - 1);
         return F0i;     
 }
 
@@ -354,7 +355,7 @@ double media(double *F0i, int tam)
 double media_geometrica(double *F0i, int tam)
 {
         int i;
-        long double mult = 1.0, media_g;
+        double mult = 1.0, media_g;
 
         for(i = 0; i < tam; i++)
         mult = mult*F0i[i];
@@ -474,10 +475,17 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         b = ponto_2[1] - (a*ponto_2[0]);
 
         double *F0i = frequencia_fundamental(y, n, a, b, &tam_F0i);
-        delete [] y;
+        FILE *fp;
+        fp = fopen("F0i.txt", "w");
+        fprintf(fp, "%d\n", tam_F0i);
+        for(i = 0; i < tam_F0i; i++)
+        {
+                fprintf(fp, "%.5f,", F0i[i]);
+        }
+        fclose(fp);
         
         //extração de características
-        double c[7];
+        /*double c[7];
 
         c[0] = media(F0i, tam_F0i);
         c[1] = media_geometrica(F0i, tam_F0i);
@@ -491,7 +499,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         for(i = 0; i< 7; i++)
         {
                 printf("%.5f,", c[i]);
-        }
+        }*/
 
         return;
 }
