@@ -319,9 +319,6 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 j++;
         }
 
-        printf("POi:");
-        //imprimir(POi, num_picos - 1);
-
         //cálculo do F0i
         //F0i = (double *)malloc((num_picos - 1)*(sizeof(double))); //problema de alocação
         //F0i = new double[num_picos - 1];
@@ -332,97 +329,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 F0i[i] = 1.0/POi[i];
         }
 
-        //printf("F0i:");
-        //imprimir(F0i, num_picos - 1);
         return F0i;     
-}
-
-//obtenção da média do sinal, considerando o F0i
-double media(double *F0i, int tam)
-{
-        int i;
-        double media, soma = 0.0;
-
-        for(i = 0; i < 400; i++)
-        soma = soma + F0i[i];
-        
-        media = soma/(double)tam;
-
-        return media;
-}
-
-//obtenção da média geométrica do sinal, considerando o F0i
-double media_geometrica(double *F0i, int tam)
-{
-        int i;
-        double mult = 1.0, media_g;
-
-        for(i = 0; i < tam; i++)
-        mult = mult*F0i[i];
-        
-        media_g = pow(mult, 1.0/tam);
-
-        return media_g;
-}
-
-//obtenção do RMS(Root Mean Squared) do sinal, considerando o F0i
-double RMS(double *F0i, int tam)
-{
-        int i;
-        double soma = 0, media, rms;
-
-        for(i = 0; i < tam; i++)
-        soma = soma + pow(F0i[i], 2);
-
-        media = soma/tam;
-        rms = sqrt(media);
-
-        return rms;     
-}
-
-//obtenção da dispersão do sinal, considerando o F0i
-double dispersao(double *F0i, int tam, double media)
-{
-        int i;
-        double dispersao, soma = 0;
-
-        for(i = 0; i < tam; i++)
-        soma = soma + pow((F0i[i] - media), 2);
-        
-        dispersao = soma/(tam-1);
-        dispersao = sqrt(dispersao);
-
-        return dispersao;
-}
-
-//obtenção do percentual de variabilidade do sinal, considerando o F0i
-double percentual_variabilidade(double *F0i, int tam, double media)
-{
-        int i;
-        double soma = 0, pv;
-
-        for(i = 0; i < tam; i++)
-        soma = soma + modulo((F0i[i] - media));
-        
-        pv = soma/tam;
-        pv = pv/media;
-
-        return pv;
-}
-
-//obtenção do coeficiente de consitência do sinal, considerando o F0i
-double coeficiente_consistencia(double *F0i, int tam, double media)
-{
-        int i;
-        double soma = 0, cc;
-
-        for(i = 0; i < tam; i++)
-        soma = soma + modulo((F0i[i] - media));
-        
-        cc = soma/tam;
-        cc = media/cc;
-
-        return cc;
 }
 
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
@@ -484,25 +391,5 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         }
         fclose(fp);
         
-        //extração de características
-        /*double c[7];
-
-        c[0] = media(F0i, tam_F0i);
-        c[1] = media_geometrica(F0i, tam_F0i);
-        c[2] = RMS(F0i, tam_F0i);
-        c[3] = dispersao(F0i, tam_F0i, c[0]);
-        c[4] = c[3]/c[0]; //obtenção do coeficiente de variação
-        c[5] = percentual_variabilidade(F0i, tam_F0i, c[0]);
-        c[6] = coeficiente_consistencia(F0i, tam_F0i, c[0]);
-        
-        printf("\nC: ");
-        for(i = 0; i< 7; i++)
-        {
-                printf("%.5f,", c[i]);
-        }*/
-
         return;
 }
-
-
-//-------------------------------------------------------------
