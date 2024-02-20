@@ -285,10 +285,10 @@ void autocorrelacao(double *x, int m, double *y)
 }
 
 //cálculo da frequência fundamental de vibração das cordas vocais ao longo do sinal.
-double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
-{
+void frequencia_fundamental(double *y, int n, double a, double b)
+{       
         int i, num_picos = 0, j = 0;
-
+        
         //contagem dos picos
         for(i = 1; i < (n-1); i++)
         {
@@ -309,8 +309,7 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
         }
 
         //contagem das amostras entre picos e cálculo do POi(Período de Oscilação Inicial)
-        double POi[num_picos - 1], aux[num_picos - 1];
-        double *F0i;
+        double POi[num_picos - 1], F0i[num_picos - 1];
         j = 0;
 
         for(i = 1; i < num_picos ; i++)
@@ -318,18 +317,23 @@ double *frequencia_fundamental(double *y, int n, double a, double b, int *tam)
                 POi[j] = (double)(posicao_picos[i] - posicao_picos[i-1] - 1)/(double)taxa_amostragem;
                 j++;
         }
-
+        
         //cálculo do F0i
-        //F0i = (double *)malloc((num_picos - 1)*(sizeof(double))); //problema de alocação
-        //F0i = new double[num_picos - 1];
-        F0i = aux;
-        *tam = (num_picos - 1);
         for(i = 0; i < (num_picos-1); i++)
         {
                 F0i[i] = 1.0/POi[i];
         }
 
-        return F0i;     
+        int tam_F0i = (num_picos - 1);
+        FILE *fp;
+        fp = fopen("F0i.txt", "w");
+        fprintf(fp, "%d\n", tam_F0i);
+        for(i = 0; i < tam_F0i; i++)
+        {
+                fprintf(fp, "%.5f,", F0i[i]);
+        }
+        fclose(fp);
+        return;     
 }
 
 void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
@@ -355,7 +359,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         //Normalizar o sinal novamente
         n = m + m - 1;
         normalizacao_amplitude(&y[0], n);
-
+        
         //identificação do menor e maior pico
         double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
         int flag = 0;
@@ -381,15 +385,8 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         a = coef_inclinacao;
         b = ponto_2[1] - (a*ponto_2[0]);
 
-        double *F0i = frequencia_fundamental(y, n, a, b, &tam_F0i);
-        FILE *fp;
-        fp = fopen("F0i.txt", "w");
-        fprintf(fp, "%d\n", tam_F0i);
-        for(i = 0; i < tam_F0i; i++)
-        {
-                fprintf(fp, "%.5f,", F0i[i]);
-        }
-        fclose(fp);
+        
+        frequencia_fundamental(y, n, a, b);
         
         return;
 }

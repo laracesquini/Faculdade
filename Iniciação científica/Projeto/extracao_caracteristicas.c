@@ -132,7 +132,7 @@ int main()
     c[5] = percentual_variabilidade(F0i, tam_F0i, c[0]);
     c[6] = coeficiente_consistencia(F0i, tam_F0i, c[0]);
     
-    fp = fopen("nao_patologicas.txt", "a+");
+    fp = fopen("patologicas.txt", "a+");
     for(int i = 0; i< 7; i++)
     {
         fprintf(fp, "%.5f,", c[i]);
