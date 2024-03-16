@@ -104,13 +104,11 @@ void validacao_cruzada(double **matriz)
 
 int *converter_decimal_binario(long num)
 {
-    int num;
-    num = tam_conjunto;
     int *binario, i = 0;
 
-    binario = (int *)malloc(num*sizeof(int));
+    binario = (int *)malloc(tam_conjunto*sizeof(int));
 
-    for(int j = 0; j < num; j++)
+    for(int j = 0; j < tam_conjunto; j++)
     {
         binario[j] = 0;
     }
