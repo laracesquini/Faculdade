@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define linhas 30
-#define colunas 7
+#define colunas 4
 
 typedef struct ponto
 {
