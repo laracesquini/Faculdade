@@ -73,7 +73,7 @@ int KNN(double **matriz, int *binario, double *teste)
 void validacao_cruzada(double **matriz)
 {
     long i, j;
-    int *binario, **combinacoes, num_combinacoes = 0;
+    int *binario, **combinacoes, num_combinacoes = 0, resultado;
 
     combinacoes = (int **)malloc(tam_conjunto * sizeof(int *));
     for(i = pow(2, (tam_conjunto/2)) - 1; i < pow(2, tam_conjunto); i++)
@@ -89,9 +89,16 @@ void validacao_cruzada(double **matriz)
         }
     }
 
-    for(j = 0; j < tam_conjunto; j++)
+    for(i = 0; i < num_combinacoes; i++)
     {
-
+        for(j = 0; j < tam_conjunto; j++)
+        {
+            if(combinacoes[i][j] == 0)
+            {
+                resultado = KNN(matriz, combinacoes[i], matriz[j]);
+                //fazer algo com o resultado
+            }
+        }
     }
 }
 
