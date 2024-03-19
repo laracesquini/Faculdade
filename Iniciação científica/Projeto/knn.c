@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define num_caracteristicas 4
-#define tam_conjunto 4
+#define tam_conjunto 20
 
 double distancia_euclidiana(double *v1, double *v2);
 int KNN(double matriz[tam_conjunto][num_caracteristicas], int *binario, double *teste);
@@ -17,14 +17,27 @@ int main()
     double dados[tam_conjunto][num_caracteristicas] = {
                     {142.71503,746.34085,4.40683,3.46999},
                     {168.56885,429.95539,1.84080,1.06057},
+                    {171.65993,840.52738,3.98946,3.53424},
+                    {169.54020,659.52995,3.15951,2.07910},
+                    {124.23503,291.65270,1.51780,1.10508},
+                    {108.72435,285.29126,1.79429,1.33462},
+                    {202.80963,851.54210,3.30822,2.84617},
+                    {175.90667,686.14636,3.03292,2.51132},
+                    {157.22425,971.25849,5.18112,5.16438},
+                    {148.67413,487.66803,2.43836,1.90917},
                     {378.68758,725.68889,1.29264,0.93640},
-                    {247.92413,409.44490,1.01512,0.35161}
+                    {247.92413,409.44490,1.01512,0.35161},
+                    {293.23062,557.98766,1.29039,0.79120},
+                    {241.25535,589.95850,1.69613,1.21203},
+                    {245.47455,650.88646,1.73610,1.56406},
+                    {349.69553,495.25630,1.00427,0.83565},
+                    {670.80700,818.62224,0.70081,0.60866},
+                    {207.77998,305.68711,1.08099,0.66202},
+                    {420.96427,562.11057,0.88626,0.82876},
+                    {724.52946,861.88543,0.64463,0.61750},
                     };
     
-    int aux;
-    scanf("%d", &aux);
-    //validacao_cruzada(dados);
-    int *teste = converter_decimal_binario(aux);
+    validacao_cruzada(dados);
 }
 
 double distancia_euclidiana(double *v1, double *v2)
@@ -47,12 +60,26 @@ int KNN(double matriz[tam_conjunto][num_caracteristicas], int *binario, double *
     double menor_dist = INFINITY, aux;
     int classe_menor_dist = -1, i;
 
+    /*printf("Combinação: ");
+    for(int k = 0; k < tam_conjunto; k++)
+    {
+        printf("%d ", binario[k]);
+    }
+
+    printf("Linha da matriz: ");
+    for(int k = 0; k < num_caracteristicas; k++)
+    {
+        printf("%lf ", teste[k]);
+    }
+
+    printf("\n");*/
     //1 - treino, 0 - teste
     for(i = 0; i < tam_conjunto; i++) 
     {
         if(binario[i] == 1)
         {
             aux = distancia_euclidiana(matriz[i], teste);
+            //printf("dist: %fl\n", aux);
 
             if(aux < menor_dist)
             {
@@ -71,43 +98,45 @@ int KNN(double matriz[tam_conjunto][num_caracteristicas], int *binario, double *
 void validacao_cruzada(double matriz[tam_conjunto][num_caracteristicas])
 {
     long i, j;
+    double VP, VN, FP, FN;
     int *binario, **combinacoes, num_combinacoes = 0, resultado;
+    
+    VP = VN = FP = FN = 0.0;
 
     combinacoes = (int **)malloc(tam_conjunto * sizeof(int *));
     for(i = pow(2, (tam_conjunto/2)) - 1; i < pow(2, tam_conjunto); i++)
     {
-        //printf("chega aqui\n");
+        printf("percent: %f\n", (i*100)/pow(2, tam_conjunto));
         binario = converter_decimal_binario(i);
         if(verifica_binario(tam_conjunto, binario) == 1)
         {   
-            combinacoes[num_combinacoes] = (int *)malloc(tam_conjunto * sizeof(int));
-            for (j = 0; j < tam_conjunto; j++) 
-            combinacoes[num_combinacoes][j] = binario[j];
-
-            num_combinacoes++;
-        }
-    }
-
-    for(i = 0; i < num_combinacoes; i++)
-    {
-        for(j = 0; j < tam_conjunto; j++)
-        {
-            printf("%d ", combinacoes[i][j]);
-        }
-        printf("\n");
-    }
-    
-    for(i = 0; i < num_combinacoes; i++)
-    {
-        for(j = 0; j < tam_conjunto; j++)
-        {
-            if(combinacoes[i][j] == 0)
+            for(j = 0; j < tam_conjunto; j++)
             {
-                resultado = KNN(matriz, combinacoes[i], matriz[j]);
-                //fazer algo com o resultado
+                if(binario[j] == 0)
+                {
+                    resultado = KNN(matriz, binario, matriz[j]);
+                    if(resultado == 0)
+                    {
+                        if(j < tam_conjunto/2)
+                        VN++;
+                        else
+                        FN++;
+                    }
+                    else
+                    {
+                        if(j > tam_conjunto/2)
+                        VP++;
+                        else
+                        FP++;
+                    }
+                }
             }
-        }
+        }  
     }
+
+    printf("Resultados: ");
+    printf("Acurácia: %lf\nPrecisão: %lf\nSensibilidade: %lf\nEspecificidade: %lf\n", (double)((VP+VN)/(VP+VN+FP+FN)), (double)(VP/(VP+FP)), (double)(VP/(VP+FN)), (double)(VN/(VN+FP)));
+    printf("VP: %lf\nVN: %lf\nFP: %lf\nFN: %lf\n", VP, VN, FP, FN);
 }
 
 int *converter_decimal_binario(long num)
