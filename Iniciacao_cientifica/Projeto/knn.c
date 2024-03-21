@@ -2,9 +2,11 @@
 #include <math.h>
 #include <stdlib.h>
 
+//definição de variáveis globais
 #define num_caracteristicas 4
 #define tam_conjunto 60
 
+//protótipo das funções utilizadas
 double distancia_euclidiana(double *v1, double *v2);
 int KNN(double matriz[tam_conjunto][num_caracteristicas], int *binario, double *teste);
 void validacao_cruzada(double matriz[tam_conjunto][num_caracteristicas]);
@@ -13,7 +15,7 @@ int verifica_binario(int tam, int *binario);
 
 int main()
 {
-    //primeiras (tam_conjunto/2) linhas são da classe não patológica(0) e o restante é da classe patológica(1)
+    //primeiras (tam_conjunto/2) linhas são da classe não patológica(0) e o restante é da classe patológica(1).
     double dados[tam_conjunto][num_caracteristicas] = {
                     {142.71503,746.34085,4.40683,3.46999},
                     {168.56885,429.95539,1.84080,1.06057},
@@ -80,6 +82,7 @@ int main()
     validacao_cruzada(dados);
 }
 
+//função para o cálculo da distância euclidiana
 double distancia_euclidiana(double *v1, double *v2)
 {
     double dist = 0.0;
@@ -95,19 +98,19 @@ double distancia_euclidiana(double *v1, double *v2)
     return dist;
 }
 
+//função que implementa o algoritmo KNN, recebe a matriz de Vetores de Característica(VC), a combinação utilizada para a separação dos dados em treino/teste e um VC que será classificado.
 int KNN(double matriz[tam_conjunto][num_caracteristicas], int *binario, double *teste)
 {
     double menor_dist = INFINITY, aux;
     int classe_menor_dist = -1, i;
 
-    //1 - treino, 0 - teste
-    for(i = 0; i < tam_conjunto; i++) 
+    for(i = 0; i < tam_conjunto; i++) //percorre o vetor contendo o número binário, que representa a combinação atual que está sendo usada para a divisao dos VCs.
     {
-        if(binario[i] == 1)
+        if(binario[i] == 1) //se o elemento do vetor for 1, a linha da matriz de VCs associada a esse elemento contém um VC de treino.
         {
-            aux = distancia_euclidiana(matriz[i], teste);
+            aux = distancia_euclidiana(matriz[i], teste); //calcula a distância entre o VC passado como o parâmetro teste e o de treino atual. Esse processo é feito para cada VC de treino.
 
-            if(aux < menor_dist)
+            if(aux < menor_dist) //verifica se a distância encontrada é a menor e classifica o VC com base na organização das classes na matriz de VCs.
             {
                 menor_dist = aux;
                 if(i < tam_conjunto/2)
@@ -121,6 +124,7 @@ int KNN(double matriz[tam_conjunto][num_caracteristicas], int *binario, double *
     return classe_menor_dist;
 }
 
+//função que implementa o algoritmo de validação cruzada.
 void validacao_cruzada(double matriz[tam_conjunto][num_caracteristicas])
 {
     long long i, j;
@@ -129,19 +133,19 @@ void validacao_cruzada(double matriz[tam_conjunto][num_caracteristicas])
     
     VP = VN = FP = FN = 0.0;
 
-    for(i = pow(2, (tam_conjunto/2)) - 1; i < pow(2, tam_conjunto); i++)
+    for(i = pow(2, (tam_conjunto/2)) - 1; i < pow(2, tam_conjunto); i++) //considera todas as combinações possíveis, a partir de 2^(tam_conjunto/2) -1, que é o primeiro valor que será usado efetivamente.
     {
-        printf("percent:\r%f \t\t%ld", (i*100)/pow(2, tam_conjunto), i); //arrumar porcentagem 
-        binario = converter_decimal_binario(i);
+        printf("percent:\r%f \t\t%ld", (i*100)/pow(2, tam_conjunto), i);  
+        binario = converter_decimal_binario(i); //converte o valor decimal de i para um número binário.
 
-        if(verifica_binario(tam_conjunto, binario) == 1)
+        if(verifica_binario(tam_conjunto, binario) == 1) //verifica se o número de 0s e 1s no número binário é o mesmo, ou seja, verifica se os dados foram divididos em duas partes iguais
         {   
-            for(j = 0; j < tam_conjunto; j++)
+            for(j = 0; j < tam_conjunto; j++) //percorre o número binário
             {
-                if(binario[j] == 0)
+                if(binario[j] == 0) //se o elemento do vetor for 0, a linha da matriz de VCs associada a esse elemento contém um VC de teste.
                 {
-                    resultado = KNN(matriz, binario, matriz[j]);
-                    if(resultado == 0)
+                    resultado = KNN(matriz, binario, matriz[j]); //chama a função KNN para clasificar esse VC.
+                    if(resultado == 0) //verifica se o VC foi classificado corretamente, atualizando os valores que controlam a classificação.
                     {
                         if(j < tam_conjunto/2)
                         VN++;
@@ -161,17 +165,20 @@ void validacao_cruzada(double matriz[tam_conjunto][num_caracteristicas])
         free(binario); 
     }
 
+    //mostra na tela as métricas usadas para a avaliação do algoritmo.
     printf("Resultados: ");
     printf("Acurácia: %lf\nPrecisão: %lf\nSensibilidade: %lf\nEspecificidade: %lf\n", (double)((VP+VN)/(VP+VN+FP+FN)), (double)(VP/(VP+FP)), (double)(VP/(VP+FN)), (double)(VN/(VN+FP)));
     printf("VP: %lf\nVN: %lf\nFP: %lf\nFN: %lf\n", VP, VN, FP, FN);
 }
 
+//função que converte um número decimal em binário.
 int *converter_decimal_binario(long long num)
 {
-    int *binario, i, n = 0, j, m;
+    int *binario, i, j, n = 0, m;
 
     binario = (int *)malloc(tam_conjunto*sizeof(int));
 
+    //laço para encontrar quantos bits serão necessários para representar o número.
     while(num >= pow(2, n))
     {
         n++;
@@ -179,11 +186,13 @@ int *converter_decimal_binario(long long num)
     
     m = tam_conjunto - n;
 
+    //zerando todo o vetor
     for(i = 0; i < tam_conjunto; i++)
     {
         binario[i] = 0;
     }
     
+    //partindo do final, preenche o vetor com o número binário.
     for(j = (tam_conjunto - 1); j >= m; j--)
     {
         binario[j] = num%2;
@@ -193,6 +202,7 @@ int *converter_decimal_binario(long long num)
     return binario;
 }
 
+//função que verifica se o número binário tem a mesma quantidade de 0s e 1s.
 int verifica_binario(int tam, int *binario)
 {
     int count1 = 0, count0 = 0, i;
@@ -210,4 +220,3 @@ int verifica_binario(int tam, int *binario)
     else
     return 0;
 }
-
