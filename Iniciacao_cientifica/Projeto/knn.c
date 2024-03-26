@@ -135,11 +135,19 @@ void validacao_cruzada(double matriz[tam_conjunto][num_caracteristicas])
 
     for(i = pow(2, (tam_conjunto/2)) - 1; i < pow(2, tam_conjunto); i++) //considera todas as combinações possíveis, a partir de 2^(tam_conjunto/2) -1, que é o primeiro valor que será usado efetivamente.
     {
-        printf("percent:\r%f \t\t%ld", (i*100)/pow(2, tam_conjunto), i);  
-        binario = converter_decimal_binario(i); //converte o valor decimal de i para um número binário.
-
-        if(verifica_binario(tam_conjunto, binario) == 1) //verifica se o número de 0s e 1s no número binário é o mesmo, ou seja, verifica se os dados foram divididos em duas partes iguais
+        //long long aux = pow(2, tam_conjunto) - pow(2,tam_conjunto/2);
+        double percent = (100*(i-pow(2, tam_conjunto/2)))/(pow(2, tam_conjunto) - pow(2, tam_conjunto/2));
+        printf("percent:\r%.15lf \t\t%ld", percent, i);  
+        //binario = converter_decimal_binario(i); //converte o valor decimal de i para um número binário.
+        if(((i&1) + ((i&2)/2) + ((i&4)/4) + ((i&8)/8) + ((i&16)/16) + ((i&32)/32) + ((i&64)/64) + ((i&128)/128) + ((i&256)/256) + ((i&512)/512) + ((i&1024)/1024) + ((i&2048)/2048) + ((i&4096)/4096) + ((i&8192)/8192) + ((i&16384)/16384) + ((i&32768)/32768) + ((i&65536)/65536) + ((i&131072)/131072) + ((i&262144)/262144) + ((i&524288)/524288) + ((i&1048576)/1048576) + ((i&2097152)/2097152) + ((i&4194304)/4194304) + ((i&8388608)/8388608) + ((i&16777216)/16777216) + ((i&33554432)/33554432) + ((i&67108864)/67108864) + ((i&134217728)/134217728) + ((i&268435456)/268435456) + ((i&536870912)/536870912) + ((i&1073741824)/1073741824) + ((i&2147483648)/2147483648) + ((i&4294967296)/4294967296) + ((i&8589934592)/8589934592) + ((i&17179869184)/17179869184) + ((i&34359738368)/34359738368) + ((i&68719476736)/68719476736) + ((i&137438953472)/137438953472) + ((i&274877906944)/274877906944) + ((i&549755813888)/549755813888) + ((i&1099511627776)/1099511627776) + ((i&2199023255552)/2199023255552) + ((i&4398046511104)/4398046511104) + ((i&8796093022208)/8796093022208) + ((i&17592186044416)/17592186044416) + ((i&35184372088832)/35184372088832) + ((i&70368744177664)/70368744177664) + ((i&140737488355328)/140737488355328) + ((i&281474976710656)/281474976710656) + ((i&562949953421312)/562949953421312) + ((i&1125899906842624)/1125899906842624) + ((i&2251799813685248)/2251799813685248) + ((i&4503599627370496)/4503599627370496) + ((i&9007199254740992)/9007199254740992) + ((i&18014398509481984)/18014398509481984) + ((i&36028797018963968)/36028797018963968) + ((i&72057594037927936)/72057594037927936) + ((i&144115188075855872)/144115188075855872) + ((i&288230376151711744)/288230376151711744) + ((i&576460752303423488)/576460752303423488))==30) //verifica se o número de 0s e 1s no número binário é o mesmo, ou seja, verifica se os dados foram divididos em duas partes iguais
         {   
+            printf("chega aqui\n");
+	        binario = converter_decimal_binario(i);
+            for(int k = 0; k < tam_conjunto; k++)
+            {
+                printf("%d ", binario[k]);
+            }
+            printf("\n");
             for(j = 0; j < tam_conjunto; j++) //percorre o número binário
             {
                 if(binario[j] == 0) //se o elemento do vetor for 0, a linha da matriz de VCs associada a esse elemento contém um VC de teste.
