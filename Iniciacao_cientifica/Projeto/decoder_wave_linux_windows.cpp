@@ -361,7 +361,7 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         normalizacao_amplitude(&y[0], n);
         
         //identificação do menor e maior pico
-        double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
+        /*double ponto_1[2], ponto_2[2], coef_inclinacao, a, b;
         int flag = 0;
         i = 1;
 
@@ -386,7 +386,11 @@ void analisa_dados_brutos(double* s, int m) //sinal e seu tamanho
         b = ponto_2[1] - (a*ponto_2[0]);
 
         
-        frequencia_fundamental(y, n, a, b);
+        frequencia_fundamental(y, n, a, b);*/
+
+        printf("\n");
+        for(i = 0; i < n; i++)
+        printf("%.5f,", y[i]);
         
         return;
 }

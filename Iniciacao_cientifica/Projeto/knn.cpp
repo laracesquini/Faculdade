@@ -8,7 +8,7 @@
 //definição de variáveis globais
 #define num_caracteristicas 4
 #define tam_conjunto 60
-#define max_iteracoes 10000
+#define max_iteracoes 100000
 
 //protótipo das funções utilizadas
 double distancia_euclidiana(double *v1, double *v2);
