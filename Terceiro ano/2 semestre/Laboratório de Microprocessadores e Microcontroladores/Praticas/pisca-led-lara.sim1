@@ -1,0 +1,43 @@
+<circuit version="1.1.0-SR0" rev="1917" stepSize="1000000" stepsPS="1000000" NLsteps="100000" reaStep="1000000" animate="0" >
+
+<item itemtype="MCU" CircId="p16F887-2" mainComp="false" Show_id="true" Show_Val="false" Pos="-36,-92" rotation="0" hflip="1" vflip="1" label="p16F887-2" idLabPos="0,-20" labelrot="0" valLabPos="-16,20" valLabRot="0" Frequency="20 MHz" Program="../../pisca-led-diego.X/pisca-led-diego.X/dist/default/production/pisca-led-diego.X.production.hex" Auto_Load="false" saveEepr="true" Rst_enabled="true" Ext_Osc="true" Clk_Out="false" SerialMon="-1" />
+
+<item itemtype="Rail" CircId="Rail-3" mainComp="false" ShowProp="Voltage" Show_id="false" Show_Val="true" Pos="-108,-112" rotation="90" hflip="1" vflip="1" label="Rail-3" idLabPos="-5,-10" labelrot="-90" valLabPos="-12,6" valLabRot="-90" Voltage="5 V" />
+
+<item itemtype="Resistor" CircId="Resistor-5" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="-108,-48" rotation="-270" hflip="1" vflip="1" label="Resistor-5" idLabPos="-16,-24" labelrot="0" valLabPos="-16,6" valLabRot="0" Resistance="10 kΩ" />
+
+<item itemtype="Switch" CircId="Switch-7" mainComp="false" Show_id="false" Show_Val="false" Pos="-132,68" rotation="0" hflip="1" vflip="1" label="Switch-7" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Norm_Close="false" DT="false" Poles="1" />
+
+<item itemtype="Ground" CircId="Ground-9" mainComp="false" Show_id="false" Show_Val="false" Pos="-184,92" rotation="0" hflip="1" vflip="1" label="Ground-9" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="Led" CircId="Led-10" mainComp="false" Show_id="false" Show_Val="false" Pos="88,-8" rotation="0" hflip="1" vflip="1" label="Led-10" idLabPos="-16,-24" labelrot="0" valLabPos="-16,20" valLabRot="0" Color="Yellow" Grounded="false" Threshold="2.4 V" MaxCurrent="30 mA" Resistance="0.6 Ω" />
+
+<item itemtype="Resistor" CircId="Resistor-11" mainComp="false" ShowProp="Resistance" Show_id="false" Show_Val="true" Pos="52,-32" rotation="-90" hflip="1" vflip="1" label="Resistor-11" idLabPos="-16,-24" labelrot="0" valLabPos="-16,6" valLabRot="0" Resistance="100 Ω" />
+
+<item itemtype="Ground" CircId="Ground-12" mainComp="false" Show_id="false" Show_Val="false" Pos="108,32" rotation="0" hflip="1" vflip="1" label="Ground-12" idLabPos="-16,8" labelrot="0" valLabPos="-16,20" valLabRot="0" />
+
+<item itemtype="Node" CircId="Node-6" mainComp="false" Pos="-108,-96" />
+
+<item itemtype="Node" CircId="Node-17" mainComp="false" Pos="-108,68" />
+
+<item itemtype="Connector" uid="Connector-3" startpinid="Resistor-5-lPin" endpinid="Node-6-1" pointList="-108,-64,-108,-96" />
+
+<item itemtype="Connector" uid="Connector-4" startpinid="Rail-3-outnod" endpinid="Node-6-0" pointList="-108,-96,-108,-96" />
+
+<item itemtype="Connector" uid="Connector-5" startpinid="Node-6-2" endpinid="p16F887-2-PORTE3" pointList="-108,-96,-108,-84,-44,-84" />
+
+<item itemtype="Connector" uid="Connector-10" startpinid="Ground-9-Gnd" endpinid="Switch-7-pinP0" pointList="-184,76,-184,68,-148,68" />
+
+<item itemtype="Connector" uid="Connector-13" startpinid="Led-10-rPin" endpinid="Ground-12-Gnd" pointList="104,-8,104,16,108,16" />
+
+<item itemtype="Connector" uid="Connector-12" startpinid="Resistor-11-lPin" endpinid="Led-10-lPin" pointList="52,-16,52,-8,72,-8" />
+
+<item itemtype="Connector" uid="Connector-11" startpinid="p16F887-2-PORTB2" endpinid="Resistor-11-rPin" pointList="20,-44,52,-44,52,-48" />
+
+<item itemtype="Connector" uid="Connector-25" startpinid="Node-17-1" endpinid="p16F887-2-PORTD0" pointList="-108,68,-72,68,-72,60,-44,60" />
+
+<item itemtype="Connector" uid="Connector-26" startpinid="Switch-7-switch0pinN" endpinid="Node-17-0" pointList="-116,68,-108,68" />
+
+<item itemtype="Connector" uid="Connector-27" startpinid="Node-17-2" endpinid="Resistor-5-rPin" pointList="-108,68,-108,-32" />
+
+</circuit>
