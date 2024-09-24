@@ -12,4 +12,8 @@
   * Flags e Coordenador
 ## Aula 06/08
 * Barreira de sincronismo
-  * 
+  * Árvore
+ * Barreiras simétricas
+   * Borboleta
+   * Disseminação
+   * Problema de usar somente um conjunto de flags
