@@ -33,3 +33,23 @@
 * signal_all(cv)
 * Algoritmo timer
 * Algoritmo barbeiro
+## Aula 26/08
+* Porque ou outros algoritmos não funcionam com prioridades
+* Primeira solução -> com request e release
+* Porque essa solução não é boa
+* Outra solução e seus benefícios
+* Saber como funciona cada procedimento
+## Aula 27/08
+* Comunicação assíncrona
+* Primitivas de comunicação
+* Bufferização de caracteres
+* Merge Sort
+## Aula 03/09
+* Comunicação síncrona
+* O que é RPC
+* Qual a estrutura do RPC
+## Aula 16/09
+* O que é rendezvous
+* Pra que serve rendezvous
+* Qual é sua estrutura e como funciona
+
