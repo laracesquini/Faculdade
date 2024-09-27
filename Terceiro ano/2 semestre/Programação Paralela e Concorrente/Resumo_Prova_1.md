@@ -48,6 +48,7 @@
 * Comunicação síncrona
 * O que é RPC
 * Qual a estrutura do RPC
+* Pra que serve RPC
 ## Aula 16/09
 * O que é rendezvous
 * Pra que serve rendezvous
@@ -55,5 +56,6 @@
 # Coisas para NÃO ESQUECER
 * Na declaração do monitor, não coloca parâmetros
 * No monitor, não precisa de semaforos porque já garante exclusão mutua, mas no rpc pode ser que precise, se for modificar uma variável que vai ser acessada por vários processos
-* Se for usar monitor, verificar se precisa ser variável condicional com prioridade ou não 
+* Se for usar monitor, verificar se precisa ser variável condicional com prioridade ou não
+* Em rendezvous o module tem um único processo, o servidor. Os processos clientes são feitos fora dele
 
