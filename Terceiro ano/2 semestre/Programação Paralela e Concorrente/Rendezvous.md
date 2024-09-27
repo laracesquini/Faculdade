@@ -25,6 +25,6 @@ Depois disso, pode ter outros processos clientes que vão chamar as operações 
 * Combina comunicação e sincronismo. Os dois processos, servidor e cliente precisam estar sincronizados.
 * O processo cliente chama a operação e ela é executada pelo processo servidor, que está esperando as requisições
 * Operações são atendidas uma por vez ao invés de concorrentemente
-* A implementação das operações exportadas vão ser feitas depois da -> do in e do []
+* A implementação das operações exportadas vão ser feitas depois da -> do in e do [ ]
 * Posso ter coisas depois de ni
 * Ver merge livro pag 379
