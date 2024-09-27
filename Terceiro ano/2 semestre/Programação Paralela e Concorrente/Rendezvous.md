@@ -21,4 +21,10 @@ end nomeModulo
 
 Depois disso, pode ter outros processos clientes que vão chamar as operações exportadas.
 
-Atende a chamada mais antiga
+* Atende a chamada mais antiga
+* Combina comunicação e sincronismo. Os dois processos, servidor e cliente precisam estar sincronizados.
+* O processo cliente chama a operação e ela é executada pelo processo servidor, que está esperando as requisições
+* Operações são atendidas uma por vez ao invés de concorrentemente
+* A implementação das operações exportadas vão ser feitas depois da -> do in e do []
+* Posso ter coisas depois de ni
+* Ver merge livro pag 379
