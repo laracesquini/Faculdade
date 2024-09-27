@@ -52,4 +52,8 @@
 * O que é rendezvous
 * Pra que serve rendezvous
 * Qual é sua estrutura e como funciona
+# Coisas para NÃO ESQUECER
+* Na declaração do monitor, não coloca parâmetros
+* No monitor, não precisa de semaforos porque já garante exclusão mutua, mas no rpc pode ser que precise, se for modificar uma variável que vai ser acessada por vários processos
+* Se for usar monitor, verificar se precisa ser variável condicional com prioridade ou não 
 
