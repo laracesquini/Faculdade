@@ -156,6 +156,58 @@ int tempo(int N) {
     }
 }
 
+int tempo2(int N) {
+  int B1 = HIGH, B3 = HIGH;
+    for(int i = 1; i <= N; i++) { 
+      B1 = digitalRead((Bot_S1)); 
+      B3 = digitalRead((Bot_S3)); 
+      if(B1 == LOW || B3 == LOW) {  // Verifica se o botão 2 foi pressionado
+            n++;         // Incrementa a variável de controle
+            break;       // Sai do loop
+        } 
+        else delay(1); // Aguarda 1 milissegundo
+    }
+
+    if(B1 == LOW)
+    {
+      return 1;
+    }
+    else if(B3 == LOW)
+    {
+      return 3;
+    }
+    else
+    {
+      return 0;
+    }
+}
+
+int tempo3(int N) {
+  int B1 = HIGH, B2 = HIGH;
+    for(int i = 1; i <= N; i++) { 
+      B1 = digitalRead((Bot_S1)); 
+      B2 = digitalRead((Bot_S2)); 
+      if(B1 == LOW || B2 == LOW) {  // Verifica se o botão 2 foi pressionado
+            n++;         // Incrementa a variável de controle
+            break;       // Sai do loop
+        } 
+        else delay(1); // Aguarda 1 milissegundo
+    }
+
+    if(B1 == LOW)
+    {
+      return 1;
+    }
+    else if(B2 == LOW)
+    {
+      return 2;
+    }
+    else
+    {
+      return 0;
+    }
+}
+
 void setup() {
   pinMode(semAverm, OUTPUT);
   pinMode(semAamar, OUTPUT);
@@ -253,23 +305,43 @@ void loop() {
 
   if(botao == 2)
   {
-    delay(4000);
-    vermelho_semA();
-    verde_semB();
-    verde_semC();
-    vermelho_semD();
-    botao = tempo (5000);
-    n = 0;
+    botao = tempo2(4000);
+    if(botao == 0) //nenhum botão pressionado durante os 4 segundos
+    {
+      vermelho_semA();
+      verde_semB();
+      verde_semC();
+      vermelho_semD();
+      botao = tempo(5000);
+      if(n != 0)
+      {
+        n = 0;
+      }
+    }
+    else
+    {
+      n = 0;
+    } 
   }
 
   if(botao == 3)
   {
-    delay(4000);
-    vermelho_semB();
-    verde_semA();
-    vermelho_semC();
-    verde_semD();
-    botao = tempo (5000);
+    botao = tempo3(4000);
+    if(botao == 0)
+    {
+      vermelho_semB();
+      verde_semA();
+      vermelho_semC();
+      verde_semD();
+      botao = tempo(5000);
+      if(n != 0)
+      {
+        n = 0;
+      }
+    }
+    else
+    {
+      n = 0;
+    }  
   }  
-
 }
