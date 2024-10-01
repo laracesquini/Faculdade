@@ -63,6 +63,30 @@ void verde_semB()
   digitalWrite(semBverd, HIGH);
 }
 
+void vermelho_semC()
+{
+  digitalWrite(semCverm, HIGH);
+  digitalWrite(semCverd, LOW);
+}
+
+void verde_semC()
+{
+  digitalWrite(semCverm, LOW);
+  digitalWrite(semCverd, HIGH);
+}
+
+void vermelho_semD()
+{
+  digitalWrite(semDverm, HIGH);
+  digitalWrite(semDverd, LOW);
+}
+
+void verde_semD()
+{
+  digitalWrite(semDverm, LOW);
+  digitalWrite(semDverd, HIGH);
+}
+
 void acende_amarelo_A_B()
 {
   digitalWrite(semAverm, LOW);
@@ -72,6 +96,12 @@ void acende_amarelo_A_B()
   digitalWrite(semBverm, LOW);
   digitalWrite(semBamar, HIGH);
   digitalWrite(semBverd, LOW);
+
+  digitalWrite(semCverm, LOW);
+  digitalWrite(semCverd, LOW);
+
+  digitalWrite(semDverm, LOW);
+  digitalWrite(semDverd, LOW);
 }
 
 void desliga()
@@ -85,14 +115,44 @@ void desliga()
   digitalWrite(semBverd, LOW);
 }
 
+void desliga_C_D()
+{
+  digitalWrite(semCverm, LOW);
+  digitalWrite(semCverd, LOW);
+
+  digitalWrite(semDverm, LOW);
+  digitalWrite(semDverd, LOW);
+}
+
 int n = 0; // Variável para controlar o loop
-void tempo(int N) {
-    for(int i = 1; i <= N; i++) {  // Executa um loop 'for' para contar o tempo
-      if(digitalRead(Bot_S1) == LOW ) {  // Verifica se o botão 2 foi pressionado
+int tempo(int N) {
+  int B1 = HIGH, B2 = HIGH, B3 = HIGH;
+    for(int i = 1; i <= N; i++) { 
+      B1 = digitalRead((Bot_S1)); 
+      B2 = digitalRead((Bot_S2)); 
+      B3 = digitalRead((Bot_S3)); 
+      if(B1 == LOW || B2 == LOW || B3 == LOW) {  // Verifica se o botão 2 foi pressionado
             n++;         // Incrementa a variável de controle
             break;       // Sai do loop
         } 
         else delay(1); // Aguarda 1 milissegundo
+    }
+
+    if(B1 == LOW)
+    {
+      return 1;
+    }
+    else if(B2 == LOW)
+    {
+      return 2;
+    }
+    else if(B3 == LOW)
+    {
+      return 3;
+    }
+    else
+    {
+      return 0;
     }
 }
 
@@ -116,12 +176,17 @@ void setup() {
   pinMode(Bot_S3, INPUT);
 }
 
+int botao = 0; //nenhum botão pressionado
 void loop() {
+  if(botao == 0)
+  {
     while(true)
     {
       vermelho_semA();
       verde_semB();
-      tempo(8000);
+      verde_semC();
+      vermelho_semD();
+      botao = tempo(8000);
       if(n != 0) 
       {
         n = 0;
@@ -130,7 +195,9 @@ void loop() {
     
       vermelho_semA();
       amarelo_semB();
-      tempo(2000);
+      verde_semC();
+      vermelho_semD();
+      botao = tempo(2000);
       if(n != 0) 
       {
         n = 0;
@@ -139,7 +206,9 @@ void loop() {
 
       verde_semA();
       vermelho_semB();
-      tempo(8000);
+      vermelho_semC();
+      verde_semD();
+      botao = tempo(8000);
       if(n != 0) 
       {
         n = 0;
@@ -148,29 +217,59 @@ void loop() {
 
       amarelo_semA();
       vermelho_semB();
-      tempo(2000);
+      vermelho_semC();
+      verde_semD();
+      botao = tempo(2000);
       if(n != 0) 
       {
         n = 0;
         break;
       }
     }
-    
+  }
+
+  if(botao == 1)
+  {
     while(true)
     {
       acende_amarelo_A_B();
-      tempo(1000);
+      botao = tempo(1000);
       if(n != 0) 
       {
         n = 0;
+        botao = 0;
         break;
       }
       desliga();
-      tempo(1000);
+      botao = tempo(1000);
       if(n != 0) 
       {
         n = 0;
+        botao = 0;
         break;
       }
     }
+  }
+
+  if(botao == 2)
+  {
+    delay(4000);
+    vermelho_semA();
+    verde_semB();
+    verde_semC();
+    vermelho_semD();
+    botao = tempo (5000);
+    n = 0;
+  }
+
+  if(botao == 3)
+  {
+    delay(4000);
+    vermelho_semB();
+    verde_semA();
+    vermelho_semC();
+    verde_semD();
+    botao = tempo (5000);
+  }  
+
 }
