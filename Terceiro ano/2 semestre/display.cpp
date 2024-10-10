@@ -1,12 +1,14 @@
 #include <GL/glut.h>
 #include "cubo.h"
 #include "esferas.h"
+#include "cone.h"
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    gluLookAt(0.0, 1.0, 3.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(0.0, 1.0, 6.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
     glTranslatef(-1.0, 0.0, 0.0);
     // Chama a função para desenhar as maçãs
     drawApple();
@@ -15,6 +17,7 @@ void display() {
     glTranslatef(2.5, 0.0, 0.0);
     DesenhaCenario(true);
 
+    drawCone();
     glutSwapBuffers();
 }
 
@@ -36,7 +39,7 @@ int main(int argc, char **argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("Display de Cubo e Maçãs");
+    glutCreateWindow("Display de Cubo, Esfera e Cone");
 
     init();
     glutDisplayFunc(display);
