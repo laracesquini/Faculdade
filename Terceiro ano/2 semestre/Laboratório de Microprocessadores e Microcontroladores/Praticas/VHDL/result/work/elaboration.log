@@ -1,0 +1,41 @@
+Riviera-PRO 2023.04.112.8911(Linux64) 2024-10-19 09:49:51
+
+Elaboration top modules:
+Architecture                  Behavioral(MULTI_GATE_TB)
+
+
+--------------------------------------------------------------------------------------------
+Entity        | Architecture | Library | Info | Compiler Version      | Compilation Options
+--------------------------------------------------------------------------------------------
+MULTI_GATE_TB | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+AND_GATE1     | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+AND_GATE2     | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+OR_GATE1      | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+OR_GATE2      | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+OR_GATE3      | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+AND_GATE3     | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+OR_FINAL      | Behavioral   | work    |      | 2023.04.112 (Linux64) |  -2019
+--------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------
+VHDL Package                 | Library | Info | Compiler Version      | Compilation Options
+--------------------------------------------------------------------------------------------
+standard                     | std     |      |                       | <unavailable>
+TEXTIO                       | std     |      | 2023.04.112 (Linux64) |  -2019
+std_logic_1164               | ieee    |      | 2023.04.112 (Linux64) |  -2008
+--------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------
+Library                      | Comment
+--------------------------------------------------------------------------------------------
+ieee                         | Standard IEEE packages library
+std                          | Standard VHDL library
+work                         | None
+--------------------------------------------------------------------------------------------
+
+
+Simulation Options: asim MULTI_GATE_TB
+
+License to run VHDL performance optimized simulation unavailable.
+
+The performance of simulation is reduced. Version EDU Edition
